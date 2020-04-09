@@ -33,14 +33,15 @@ Servo::Servo(PCA9685 pca_, int motorPin, int timeTerm)
 		exit(1);
 	}
 	length = maxVal - minVal;
-	rate = 20;
+	rate = 10;
 	value = centerVal;
 }
 void Servo::setValue(uint16_t set_val)
 {
 	if (set_val > maxVal) set_val = maxVal;
 	if (set_val < minVal) set_val = minVal;
-	cout << "pin :" << pin << ", value " << value << ", set_val :" << set_val << endl;
+	//cout << " @pin :" << pin << ", value " << value << ", set_val :" << set_val << endl;
+	cout << " @servo pin :" << pin << ", ratio : "<< (((double)(set_val - minVal)/(double)length)*100.0) << endl;
 	while (value < set_val)
 	{
 		value += 1;
@@ -61,7 +62,9 @@ void Servo::setRatio(double ratio)
 }
 void Servo::resetCenter()
 {
-	cout << "pin :" << pin << " centerVal :" << centerVal << endl;
+	cout << " @pin :" << pin << " centerVal :" << centerVal << endl;
+	setValue(centerVal+10);
+	setValue(centerVal-10);
 	setValue(centerVal);
 }
 void Servo::operator++(int)
@@ -85,7 +88,7 @@ Wheel::Wheel(PCA9685 pca_, int leftPin, int rightPin)
 	maxVal = 4000;
 	minVal = 0;
 	length = maxVal - minVal;
-	rate = 20;
+	rate = 10;
 }
 void Wheel::go(double speed)
 {
