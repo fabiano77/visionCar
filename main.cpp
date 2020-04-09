@@ -1,37 +1,61 @@
 #include <iostream>
+#include "opencv2/opencv.hpp"
 #include "kbhit.h"
 #include "CustomPicar.h"
 using namespace std;
 using namespace auto_car;
+using namespace cv;
 
 //void usleep(int); 
 // 왔다 갑니다 - SM
 
 int main()
 {
+	//board, servoMotor configuration
 	PCA9685 pca{};
 	pca.set_pwm_freq(60.0);
 	Servo steering(pca, Steering);			//set 0 :left,	100:right
 	Servo cam_tilt(pca, Tilt);				//set 0 :left,	100:right
 	Servo cam_pan(pca, Pan);				//set 0 :up,	100:down
 	Wheel DCmotor(pca, LeftWheel, RightWheel);		//여기까진 안봐도됩니다.
-
 	steering.resetCenter();					//중앙 정렬
-	usleep(100000);
 	cam_tilt.resetCenter();
-	usleep(100000);
 	cam_pan.resetCenter();
-	usleep(100000);
 	cout << "reset complete"<< endl <<endl;
+	
+	//OpenCV setting
+	bool cam_mode = true;
+	Mat frame;
+	VideoCapture videocap(0);
+	if (!videocap.isOpened())
+	{
+		cerr << "video capture fail!" << endl;
+		return -1;
+	}
+	Size videoSize(Size(cvRound(videocap.get(CAP_PROP_FRAME_WIDTH)), cvRound(videocap.get(CAP_PROP_FRAME_HEIGHT))));
+	double fps = videocap.get(CAP_PROP_FPS);
+	cout << "video width :" << videoSize.width << endl;
+	cout << "video height :" << videoSize.height << endl;
+	cout << "video FPS :" << fps << endl << endl;;
+	int delay = cvRound(1000 / fps);
+	for(int i = 0; cam_mode && i < 5; i++)
+	{
+		videocap.read(frame);
+		imshow("Live", frame);
+		waitKey(5);
+	}
+	cout << "camera test complete" << endl << endl;
+	
+	//main start
 	cout << "program start" << endl << endl;
 	cout << "mode 1 : show mode" << endl;
-	cout << "mode 2 : manual operation" << endl << endl;
+	cout << "mode 2 : manual mode" << endl << endl;
 	cout << "select mode : ";
 
 	int mode;
 	cin >> mode;
-
-	if (mode == 1)
+	
+	if (mode == 1)//show mode
 	{
 
 		steering.setRatio(100);			//바퀴 우측
@@ -76,18 +100,25 @@ int main()
 
 		DCmotor.stop();
 	}
-	else if (mode == 2)
+	else if (mode == 2)//manual mode
 	{
 		cout << "---------------------[key setting]------------------" << endl;
 		cout << "    w      : go & speed up  |   i      : up" << endl;
 		cout << "  a   d    : left, right    | j   l    : left, right" << endl;
 		cout << "    s      : stop           |   k      : down" <<endl;
-		cout << "  (move)                      (cam)" << endl;
-		cout << "   '0' is exit." << endl;
+		cout << "  (move)                    | (cam)" << endl;
+		cout << "   '0' is exit.             |" << endl;
+		cout << "----------------------------------------------------" << endl;
 		char c;
 		double speed = 40;
 		while (c != '0')
 		{
+			if(cam_mode)
+			{
+				videocap.read(frame);
+				imshow("Live", frame);
+				waitKey(1);
+			}
 			if (linux_kbhit())
 			{
 				c = linux_kbhit();
@@ -122,7 +153,7 @@ int main()
 					cam_tilt--;
 					break;
 				default:
-					cout << "wrong input" << endl;
+					cout << "cam output" << endl;
 					break;
 				}
 				usleep(2000);
