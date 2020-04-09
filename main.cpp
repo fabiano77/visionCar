@@ -4,7 +4,7 @@ using namespace std;
 using namespace auto_car;
 
 //void usleep(int); 
-// 
+// 왔다 갑니다 - SM
 
 int main()
 {
