@@ -29,7 +29,7 @@ bool calibImage(Mat& chessImg, Mat& intrinsicMat, Mat& distCoefMat) { // 흑백 입
 	for (int j = 0; j < numSquares; j++) {
 		obj.push_back(Point3f(j / numCornersH, j % numCornersH, 0.0f));
 	}
-	cvtColor(img, grayImg, CV_BGR2GRAY);
+	cvtColor(img, grayImg, COLOR_BGR2GRAY);
 	bool found = findChessboardCorners(grayImg, boardSize, corner, CALIB_CB_ADAPTIVE_THRESH | CALIB_CB_FILTER_QUADS);
 	if (found) {//corner찾으면
 		drawChessboardCorners(grayImg, boardSize, corner, found);
