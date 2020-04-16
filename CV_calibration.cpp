@@ -1,6 +1,6 @@
-#include<opencv2/opencv.hpp>
-#include<opencv2/highgui.hpp>
-#include"CV_calibration.h"
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui.hpp>
+#include "CV_calibration.h"
 using namespace std;
 using namespace cv;
 bool calibImage(Mat& chessImg, Mat& intrinsicMat, Mat& distCoefMat) { // 흑백 입력 필수
@@ -30,9 +30,8 @@ bool calibImage(Mat& chessImg, Mat& intrinsicMat, Mat& distCoefMat) { // 흑백 입
 		obj.push_back(Point3f(j / numCornersH, j % numCornersH, 0.0f));
 	}
 	cvtColor(img, grayImg, CV_BGR2GRAY);
-	bool found = findChessboardCorners(grayImg, boardSize, corner, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
+	bool found = findChessboardCorners(grayImg, boardSize, corner, CALIB_CB_ADAPTIVE_THRESH | CALIB_CB_FILTER_QUADS);
 	if (found) {//corner찾으면
-		cornerSubPix(grayImg, corner, Size(11, 11), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
 		drawChessboardCorners(grayImg, boardSize, corner, found);
 		cout << "found Corners" << endl;
 		imgPoints.push_back(corner);
@@ -78,11 +77,10 @@ bool calibImage(VideoCapture& inVideo, Mat& intrinsicMat, Mat& distCoefMat) { //
 	}
 	while (success < numBoards) {
 		inVideo >> img;
-		cvtColor(img, grayImg, CV_BGR2GRAY);
+		cvtColor(img, grayImg, COLOR_BGR2GRAY);
 		imshow("frame", grayImg);
-		bool found = findChessboardCorners(grayImg, boardSize, corner, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
+		bool found = findChessboardCorners(grayImg, boardSize, corner, CALIB_CB_ADAPTIVE_THRESH | CALIB_CB_FILTER_QUADS);
 		if (found) {//corner찾으면
-			cornerSubPix(grayImg, corner, Size(11, 11), Size(-1, -1), TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
 			drawChessboardCorners(grayImg, boardSize, corner, found);
 			keyForSnap++;
 			if (keyForSnap == 5) {

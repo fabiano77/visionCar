@@ -1,7 +1,7 @@
-#include"CV_drivingAngle.h"
-#include<opencv2/opencv.hpp>
-#include<opencv2/highgui.hpp>
-#include<iostream>
+#include "CV_drivingAngle.h"
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui.hpp>
+#include <iostream>
 using namespace cv;
 using namespace std;
 void drivingAngle(Mat& dst, vector<Vec4i> lines, double& stiring) {
@@ -205,7 +205,7 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 	int width = src.size().width;
 	int height = src.size().height;
 	filter_colors(src, filterImg);
-	cvtColor(filterImg, grayImg, CV_BGR2GRAY);
+	cvtColor(filterImg, grayImg, COLOR_BGR2GRAY);
 	imgBlur(grayImg, blurImg, 1);
 	imgBlur(blurImg, edgeImg, 2);
 	Point pt[4]= { Point(0,height * 2 / 5),Point(width,height * 2 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
@@ -214,6 +214,8 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 	vector<Vec4i> extractLines;
 	HoughLinesP(roiImg, extractLines, 1, CV_PI / 180.0, 30, 10, 20);
 	lines = extractLines;
+	return true;
+	
 }
 
 void filter_colors(Mat& src, Mat& img_filtered) {

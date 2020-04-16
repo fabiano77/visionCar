@@ -39,7 +39,7 @@ int main()
 	cout << "video FPS :" << fps << endl << endl;;
 	int delay = cvRound(1000 / fps);
 	for(int i = 0; cam_mode && i < 5; i++)
-	{
+	{//대희형
 		videocap.read(frame);
 		imshow("Live", frame);
 		waitKey(5);
