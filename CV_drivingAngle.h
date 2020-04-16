@@ -2,6 +2,7 @@
 #define CV_DRIVINGANGLE_H
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
+#include <opencv2/core/matx.hpp>
 #include <iostream>
 using namespace cv;
 using namespace std;

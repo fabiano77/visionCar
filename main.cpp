@@ -5,6 +5,7 @@
 #include "CustomPicar.h"
 #include "CV_calibration.h"
 #include "CV_drivingAngle.h"
+#include <opencv2/core/matx.hpp>
 
 using namespace std;
 using namespace auto_car;
@@ -181,7 +182,7 @@ int main()
 		undistort(frame, undistortImg, intrinsic, disCoeff);
 		imshow("Live", undistortImg);
 
-		extractLines(undistortImg, exLines);
+		bool Check = extractLines(undistortImg, exLines);
 		drivingAngle(undistortImg, exLines, stiring);
 		waitKey(33);
 	}
