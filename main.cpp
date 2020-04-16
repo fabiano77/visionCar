@@ -157,6 +157,27 @@ int main()
 			}
 		}
 	}
+	else if (mode == 3) {
+	Mat intrinsic;
+	Mat disCoeff;
+	if (calibImage(videocap, intrinsic, disCoeff)) {
+		cout << "Calibration Success!" << endl;
+	}
+	else {
+		cout << "Calibration Failed!" << endl;
+	}
+	while (1) {
+		videocap >> frame;
+		imshow(frame);
+		char key = linux_kbhit();
+		if (key == 'k') {
+			continue;
+		}
+		else if (key == 'c') {
+			break;
+		}
+	}
+}
 	else cout << "invalid mode selection" << endl;
 
 	cout << "program finished" << endl;
