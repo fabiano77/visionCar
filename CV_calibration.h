@@ -6,8 +6,8 @@ using namespace cv;
 using namespace std;
 
 
-int success = 0;//Calibration 성공 횟수
-int keyForSnap = 0;//적절하게 Frame이 잡혔는지 저장
+static int success = 0;//Calibration 성공 횟수
+static int keyForSnap = 0;//적절하게 Frame이 잡혔는지 저장
 bool calibImage(Mat& chessImg, Mat& intrinsicMat, Mat& distCoefMat);
 bool calibImage(VideoCapture&, Mat& intrinsicMat, Mat& distCoefMat);
 //undistort함수에 사용할 intrinsicMat,distance CoefficientMat 추출 함수
