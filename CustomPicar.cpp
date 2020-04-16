@@ -5,7 +5,7 @@ using namespace auto_car;
 Servo::Servo()
 {
 }
-Servo::Servo(PCA9685 pca_, int motorPin, int timeTerm)
+Servo::Servo(PCA9685 pca_, int motorPin, int timeTerm, bool printFlag)
 {
 	board = pca_;
 	pin = motorPin;
@@ -20,7 +20,7 @@ Servo::Servo(PCA9685 pca_, int motorPin, int timeTerm)
 	{
 		minVal = 190;
 		maxVal = 530;
-		centerVal = 360;	
+		centerVal = 360;
 	}
 	else if (pin == Tilt)
 	{
@@ -43,7 +43,7 @@ void Servo::setValue(uint16_t set_val)
 	if (set_val > maxVal) set_val = maxVal;
 	if (set_val < minVal) set_val = minVal;
 	//cout << " @pin :" << pin << ", value " << value << ", set_val :" << set_val << endl;
-	cout << " @servo pin :" << pin << ", ratio : "<< (((double)(set_val - minVal)/(double)length)*100.0) << endl;
+	if (print) cout << " @servo pin :" << pin << ", ratio : " << (((double)(set_val - minVal) / (double)length) * 100.0) << endl;
 	while (value < set_val)
 	{
 		value += 1;
@@ -64,9 +64,9 @@ void Servo::setRatio(double ratio)
 }
 void Servo::resetCenter()
 {
-	cout << " @pin :" << pin << " centerVal :" << centerVal << endl;
-	setValue(centerVal+10);
-	setValue(centerVal-10);
+	if (print) cout << " @pin :" << pin << " centerVal :" << centerVal << endl;
+	setValue(centerVal + 10);
+	setValue(centerVal - 10);
 	setValue(centerVal);
 }
 void Servo::operator++(int)

@@ -24,7 +24,7 @@ class Servo
 {
 public:
 	Servo();
-	Servo(PCA9685 pca_, int motorPin, int timeTerm = 2000);		//초기 설정은 만질 일 없음.
+	Servo(PCA9685 pca_, int motorPin, int timeTerm = 2000, bool printFlag = true);		//초기 설정은 만질 일 없음.
 	void setValue(uint16_t set_val);	//서보의 각도를 설정하는 함수.인자로 넘겨주는 값 190~530 가용범위이고, 360이 중심이다. 
 						//서보가동 pulse width : 0.75 ~1.5~ 2.25ms
 						//set_val 인자로 환산시 : 185 ~(370)~ 550
@@ -43,6 +43,7 @@ private:
 	PCA9685 board;
 	int pin;
 	int term;
+	bool print;
 	uint16_t value;
 	uint16_t centerVal;
 	uint16_t maxVal;
