@@ -171,7 +171,7 @@ int main()
 	}
 	while (1) {
 		videocap >> frame;
-		imshow(frame);
+		imshow("Live",frame);
 		char key = linux_kbhit();
 		if (key == 'k') {
 			continue;
