@@ -1,5 +1,6 @@
 #include <iostream>
 #include "opencv2/opencv.hpp"
+#include <opencv2/highgui.hpp>
 #include "kbhit.h"
 #include "CustomPicar.h"
 #include "CV_calibration.h"
@@ -173,6 +174,7 @@ int main()
 	Mat undistortImg;
 
 	vector<Vec4i> exLines;
+
 	double stiring;
 	while (1) {
 		videocap >> frame;
