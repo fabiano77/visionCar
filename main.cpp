@@ -178,6 +178,10 @@ int main()
 		}
 	}
 }
+	else if (mode == 4)
+	{
+	cout << "test github.com" << endl;
+ }
 	else cout << "invalid mode selection" << endl;
 
 	cout << "program finished" << endl;
