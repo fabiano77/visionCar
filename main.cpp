@@ -171,11 +171,70 @@ int main()
 		cout << "Calibration Failed!" << endl;
 	}
 	Mat undistortImg;
+
+
 	while (1) {
-		videocap >> frame;
-		undistort(frame, undistortImg, intrinsic, disCoeff);
-		imshow("Live", undistortImg);
-		waitKey(33);
+
+
+
+		cout << "---------------------[key setting]------------------" << endl;
+		cout << "    w      : go & speed up  |   i      : up" << endl;
+		cout << "  a   d    : left, right    | j   l    : left, right" << endl;
+		cout << "    s      : stop           |   k      : down" << endl;
+		cout << "  (move)                    | (cam)" << endl;
+		cout << "   '0' is exit.             |" << endl;
+		cout << "----------------------------------------------------" << endl;
+		char c;
+		double speed = 40;
+		while (c != '0')
+		{
+			if (cam_mode)
+			{
+				videocap >> frame;
+				undistort(frame, undistortImg, intrinsic, disCoeff);
+				imshow("Live", undistortImg);
+				waitKey(1);
+			}
+			if (linux_kbhit())
+			{
+				c = linux_kbhit();
+				switch (c)
+				{
+				case 'a':	//steering left
+					steering--;
+					break;
+				case 'd':	//steering right
+					steering++;
+					break;
+				case 's':	//stop
+					DCmotor.stop();
+					speed = 40;
+					cout << "@stop!" << endl;
+					break;
+				case 'w':	//go and speed up
+					DCmotor.go(speed);
+					cout << "@current speed : " << speed << endl;
+					if (speed < 100)speed += 4;
+					break;
+				case 'j':	//cam left
+					cam_pan++;
+					break;
+				case 'l':	//cam right
+					cam_pan--;
+					break;
+				case 'i':	//cam up
+					cam_tilt++;
+					break;
+				case 'k':	//cam down
+					cam_tilt--;
+					break;
+				default:
+					cout << "cam output" << endl;
+					break;
+				}
+				usleep(2000);
+			}
+		}
 	}
 }
 	else if (mode == 4)
