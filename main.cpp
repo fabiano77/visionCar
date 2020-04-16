@@ -2,6 +2,9 @@
 #include "opencv2/opencv.hpp"
 #include "kbhit.h"
 #include "CustomPicar.h"
+#include "CV_calibration.h"
+#include "CV_drivingAngle.h"
+
 using namespace std;
 using namespace auto_car;
 using namespace cv;
