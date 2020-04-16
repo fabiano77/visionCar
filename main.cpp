@@ -49,7 +49,8 @@ int main()
 	//main start
 	cout << "program start" << endl << endl;
 	cout << "mode 1 : show mode" << endl;
-	cout << "mode 2 : manual mode" << endl << endl;
+	cout << "mode 2 : manual mode" << endl;
+	cout << "mode 3 : calb mode" << endl << endl;
 	cout << "select mode : ";
 
 	int mode;
@@ -169,16 +170,12 @@ int main()
 	else {
 		cout << "Calibration Failed!" << endl;
 	}
+	Mat undistortImg;
 	while (1) {
 		videocap >> frame;
-		imshow("Live",frame);
-		char key = linux_kbhit();
-		if (key == 'k') {
-			continue;
-		}
-		else if (key == 'c') {
-			break;
-		}
+		undistort(frame, undistortImg, intrinsic, disCoeff);
+		imshow("Live", undistortImg);
+		waitKey(33);
 	}
 }
 	else if (mode == 4)
