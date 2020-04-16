@@ -6,9 +6,6 @@ using namespace std;
 using namespace auto_car;
 using namespace cv;
 
-//void usleep(int); 
-// 왔다 갑니다 - SM
-
 int main()
 {
 	//board, servoMotor configuration
@@ -17,7 +14,7 @@ int main()
 	Servo steering(pca, Steering);			//set 0 :left,	100:right
 	Servo cam_tilt(pca, Tilt);				//set 0 :left,	100:right
 	Servo cam_pan(pca, Pan);				//set 0 :up,	100:down
-	Wheel DCmotor(pca, LeftWheel, RightWheel);		//여기까진 안봐도됩니다.
+	Wheel DCmotor(pca, LeftWheel, RightWheel);		//여기까진 안봐도됩니다.2
 	steering.resetCenter();					//중앙 정렬
 	cam_tilt.resetCenter();
 	cam_pan.resetCenter();
