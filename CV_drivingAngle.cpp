@@ -164,7 +164,8 @@ void drivingAngle(Mat& dst, vector<Vec4i> lines, double& stiring) {
 	if (abs(dydxLeft + dydxRight) <= tan(5 * 360 / (2 * CV_PI))) {
 		stiring = 0;
 	}
-	else { atan((dydxLeft + dydxRight)); }
+	else { atan((dydxLeft + dydxRight)/2); }
+	cout << "stiring: " << stiring << endl;
 	slopeDegrees.clear();
 	leftLines.clear();
 	rightLines.clear();
