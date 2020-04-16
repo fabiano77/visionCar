@@ -1,9 +1,11 @@
 #include <iostream>
 #include "opencv2/opencv.hpp"
+#include <opencv2/highgui.hpp>
 #include "kbhit.h"
 #include "CustomPicar.h"
 #include "CV_calibration.h"
 #include "CV_drivingAngle.h"
+#include <opencv2/core/matx.hpp>
 
 using namespace std;
 using namespace auto_car;
@@ -49,7 +51,8 @@ int main()
 	//main start
 	cout << "program start" << endl << endl;
 	cout << "mode 1 : show mode" << endl;
-	cout << "mode 2 : manual mode" << endl << endl;
+	cout << "mode 2 : manual mode" << endl;
+	cout << "mode 3 : calb mode" << endl << endl;
 	cout << "select mode : ";
 
 	int mode;
@@ -169,16 +172,19 @@ int main()
 	else {
 		cout << "Calibration Failed!" << endl;
 	}
+	Mat undistortImg;
+
+	vector<Vec4i> exLines;
+
+	double stiring;
 	while (1) {
 		videocap >> frame;
-		imshow(frame);
-		char key = linux_kbhit();
-		if (key == 'k') {
-			continue;
-		}
-		else if (key == 'c') {
-			break;
-		}
+		undistort(frame, undistortImg, intrinsic, disCoeff);
+		imshow("Live", undistortImg);
+
+		bool Check = extractLines(undistortImg, exLines);
+		drivingAngle(undistortImg, exLines, stiring);
+		waitKey(33);
 	}
 }
 	else if (mode == 4)
