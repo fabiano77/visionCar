@@ -6,10 +6,25 @@
 #include <unistd.h>
 #include "PCA9685.h"
 
+namespace auto_car
+{
+	//PCA9685 board PWM control number
+#define Steering	0   //조향
+#define Pan         1   //좌우
+#define Tilt        2   //상하
+#define LeftWheel   4   //좌측바퀴
+#define RightWheel  5   //우측바퀴
+
+	//servo motor action speed control time term ex) 2,000us
+#define TERM        2000
+}
+using namespace auto_car;
+
 class Servo
 {
 public:
-	Servo(PCA9685 pca_, int motorPin, int timeTerm = 2000);		//초기 설정은 만질 일 없음.
+	Servo();
+	Servo(PCA9685 pca_, int motorPin, int timeTerm = 2000, bool printFlag = true);		//초기 설정은 만질 일 없음.
 	void setValue(uint16_t set_val);	//서보의 각도를 설정하는 함수.인자로 넘겨주는 값 190~530 가용범위이고, 360이 중심이다. 
 						//서보가동 pulse width : 0.75 ~1.5~ 2.25ms
 						//set_val 인자로 환산시 : 185 ~(370)~ 550
@@ -28,6 +43,7 @@ private:
 	PCA9685 board;
 	int pin;
 	int term;
+	bool print;
 	uint16_t value;
 	uint16_t centerVal;
 	uint16_t maxVal;
@@ -39,6 +55,7 @@ private:
 class Wheel
 {
 public:
+	Wheel();
 	Wheel(PCA9685 pca_, int leftPin, int rightPin);		//초기 설정은 만질 일 없음.
 	void go(double speed = 40);		//양쪽 뒷 바퀴 속도를 %로 설정하는 함수. 기본인자로 40%.
 	void stop();				//말그대로 스톱.
@@ -52,17 +69,22 @@ private:
 	double rate;
 };
 
-namespace auto_car
+class ManualMode
 {
-	//PCA9685 board PWM control number
-#define Steering	0   //조향
-#define Pan         1   //좌우
-#define Tilt        2   //상하
-#define LeftWheel   4   //좌측바퀴
-#define RightWheel  5   //우측바퀴
+public:
+	ManualMode(PCA9685 pca_, double spd = 40.0);
+	void input(int key_);
+	void guide();
 
-	//servo motor action speed control time term ex) 2,000us
-#define TERM        2000
-}
+private:
+	int key;
+	double speed;
+	Servo M_steering;
+	Servo M_cam_tilt;
+	Servo M_cam_pan;
+	Servo M_DCmotor;
+};
+
+void allServoReset(PCA9685 pca_);
 
 #endif //CUSTUMPICAR_H
