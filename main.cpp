@@ -4,12 +4,20 @@
 #include "kbhit.h"
 #include "CustomPicar.h"
 #include "CV_calibration.h"
-#include "CV_drivingAngle.h"
 #include <opencv2/core/matx.hpp>
+
 
 using namespace std;
 using namespace auto_car;
 using namespace cv;
+
+void drivingAngle(Mat& dst, vector<Vec4i> lines, double& stiring);
+Mat regionOfInterest(Mat& src, Point* points);//roi 지정
+
+bool extractLines(Mat& src, vector<Vec4i>& lines);//추출되면 1 안되면 0
+//src는 컬러상태여야함
+// lines는 call by ref로 반환됨
+void filter_colors(Mat& src, Mat& img_filtered);//color filtering
 
 int main()
 {

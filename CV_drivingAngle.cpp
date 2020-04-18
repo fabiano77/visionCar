@@ -157,15 +157,16 @@ void drivingAngle(Mat& dst, vector<Vec4i> lines, double& stiring) {
 		rp1.y = cvRound(fitRight[1] * s + fitRight[3]);//[1]은 방향벡터 dy
 		rp0.x = cvRound(fitRight[0] * (-s) + fitRight[2]);
 		rp0.y = cvRound(fitRight[1] * (-s) + fitRight[3]);
-		dydxRight = double(fitRight[1]) / double(fitRight[1]);
+		dydxRight = double(fitRight[1]) / double(fitRight[0]);
 	}
 	else { dydxRight = 0; }
 
 	//값저장
-	if (abs(dydxLeft + dydxRight) <= tan(5 * 360 / (2 * CV_PI))) {
-		stiring = 0;
-	}
-	else { atan((dydxLeft + dydxRight)/2); }
+	//if (abs(dydxLeft + dydxRight) <= tan(5 * 360 / (2 * CV_PI))) {
+	//	stiring = 0;
+	//}
+	//else { stiring=atan((dydxLeft + dydxRight)/2); }
+	stiring= atan((dydxLeft + dydxRight) / 2);
 	cout << "stiring: " << stiring << endl;
 	slopeDegrees.clear();
 	leftLines.clear();
