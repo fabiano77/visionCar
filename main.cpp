@@ -129,4 +129,5 @@ int main()
 	cout << "program finished" << endl;
 	allServoReset(pca);	// 3 Servo motor center reset
 	return 0;
+	//끝
 }
