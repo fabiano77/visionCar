@@ -112,7 +112,7 @@ int main()
 
 			bool Check = extractLines(undistortImg, exLines);
 			drivingAngle(undistortImg, exLines, stiring);
-			waitKey(33);
+			waitKey(15);
 		}
 	}
 

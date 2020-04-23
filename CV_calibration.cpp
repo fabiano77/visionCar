@@ -89,7 +89,7 @@ bool calibImage(VideoCapture& inVideo, Mat& intrinsicMat, Mat& distCoefMat) { //
 				objPoints.push_back(obj);
 				success++;
 				cout << "numBoards:" << numBoards << " success: " << success << endl;
-				waitKey(1000);//1초 정도 완료되면 자리 재정비 시간을 가짐
+				waitKey(5000);//1초 정도 완료되면 자리 재정비 시간을 가짐
 				keyForSnap = 0;
 			}
 		}
