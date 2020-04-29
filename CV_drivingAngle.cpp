@@ -5,8 +5,9 @@
 #include <iostream>
 using namespace cv;
 using namespace std;
-void drivingAngle(Mat& dst, vector<Vec4i> lines, double& stiring) {
-	//lines는 추출된 선들임 //dst는 입력되는 사진
+
+void drivingAngle(Mat& inputImg, vector<Vec4i>& lines, double& steering) {
+	//lines는 추출된 선들임 //inputImg는 입력되는 사진
 	Vec4f params;
 	Point pt1, pt2;
 	int x1, y1, x2, y2;
@@ -14,8 +15,8 @@ void drivingAngle(Mat& dst, vector<Vec4i> lines, double& stiring) {
 	vector<float> slopeDegrees;
 	float slopeDegree;
 	float slopeThreshold = 0.5;
-	int width = dst.size().width;
-	int height = dst.size().height;
+	int width = inputImg.size().width;
+	int height = inputImg.size().height;
 
 	//vector point로 선언해보자
 	vector<Point> newPoint;
@@ -47,7 +48,7 @@ void drivingAngle(Mat& dst, vector<Vec4i> lines, double& stiring) {
 			//x2,y2의 점
 			pt1 = Point(x1, y1);
 			pt2 = Point(x2, y2);
-			line(dst, pt1, pt2, Scalar(0, 0, 255), 1);//라인 그리기
+			line(inputImg, pt1, pt2, Scalar(0, 0, 255), 1);//라인 그리기
 		}
 	}
 	//쉬운 드라이빙 각도 계산///////
@@ -150,7 +151,7 @@ void drivingAngle(Mat& dst, vector<Vec4i> lines, double& stiring) {
 		lp0.y = cvRound(fitLeft[1] * (-s) + fitLeft[3]);
 		dydxLeft = double(fitLeft[1]) / double(fitLeft[0]);
 	}
-	else { dydxLeft = 0; }
+	else { dydxLeft = 0; }//한쪽라인 인식 안되는 예외 처리 부분
 	if (right_index > 0) {
 		fitLine(rightLines, fitRight, DIST_L2, 0, 0.01, 0.01);
 		rp1.x = cvRound(fitRight[0] * s + fitRight[2]);//[0]은 방향 벡터 dx
@@ -159,14 +160,15 @@ void drivingAngle(Mat& dst, vector<Vec4i> lines, double& stiring) {
 		rp0.y = cvRound(fitRight[1] * (-s) + fitRight[3]);
 		dydxRight = double(fitRight[1]) / double(fitRight[1]);
 	}
-	else { dydxRight = 0; }
+	else { dydxRight = 0; } // 한쪽라인 인식 안되는 예외 처리 부분
 
 	//값저장
-	if (abs(dydxLeft + dydxRight) <= tan(5 * 360 / (2 * CV_PI))) {
-		stiring = 0;
+	int angleThreshold = 5;// 5도 이하는 0으로만들기
+	if (abs(dydxLeft + dydxRight) <= tan(angleThreshold * 360 / (2 * CV_PI))) {
+		steering = 0;
 	}
-	else { atan((dydxLeft + dydxRight)/2); }
-	cout << "stiring: " << stiring << endl;
+	else { steering = (360 / 2 / CV_PI * atan((dydxLeft + dydxRight) / 2)); }
+	cout << "stiring: " << steering << endl;
 	slopeDegrees.clear();
 	leftLines.clear();
 	rightLines.clear();
@@ -177,19 +179,18 @@ void drivingAngle(Mat& dst, vector<Vec4i> lines, double& stiring) {
 
 }
 
-void regionOfInterest(Mat& src,Mat&dst, Point* points) {// points의 포인터인 이유-> 여러개의 꼭짓점 경우
+void regionOfInterest(Mat& src, Mat& dst, Point* points) {// points의 포인터인 이유-> 여러개의 꼭짓점 경우
 
 	Mat maskImg = Mat::zeros(src.size(), CV_8UC1);
 
 	Scalar ignore_mask_color = Scalar(255, 255, 255);
-	Scalar red = Scalar(0, 0, 255);
 	const Point* ppt[1] = { points };//개의 꼭짓점 :n vertices
 	int npt[] = { 4 };
 
 	fillPoly(maskImg, ppt, npt, 1, Scalar(255, 255, 255), LINE_8);
 	Mat maskedImg;
 	bitwise_and(src, maskImg, maskedImg);
-	dst= maskedImg;
+	dst = maskedImg;
 }
 
 void imgBlur(Mat& src, Mat& dst, int processingCode) {
@@ -210,17 +211,18 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 	cvtColor(filterImg, grayImg, COLOR_BGR2GRAY);
 	imgBlur(grayImg, blurImg, 1);
 	imgBlur(blurImg, edgeImg, 2);
-	Point pt[4]= { Point(0,height * 2 / 5),Point(width,height * 2 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
+	Point pt[4] = { Point(0,height * 2 / 5),Point(width,height * 2 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
 	//roi point 설정
 	regionOfInterest(edgeImg, roiImg, pt);
 	vector<Vec4i> extractLines;
 	HoughLinesP(roiImg, extractLines, 1, CV_PI / 180.0, 30, 10, 20);
 	lines = extractLines;
 	return true;
-	
+
 }
 
 void filter_colors(Mat& src, Mat& img_filtered) {
+	//
 	UMat bgrImg;
 	UMat hsvImg;
 	UMat maskWhite, whiteImg;

@@ -6,8 +6,17 @@
 #include <iostream>
 using namespace cv;
 using namespace std;
-void drivingAngle(Mat& dst, vector<Vec4i> lines, double& stiring);
-Mat regionOfInterest(Mat& src, Point* points);//roi 지정
+//for drivingAngle
+// 라인 검출기능과 각도 반환을 통해서 조작 가능하다
+void drivingAngle(Mat& inputImg, vector<Vec4i>& lines, double& steering);
+//precondition: at least one lines for calculate drivingAngle
+// lines for already detected by extracLines function
+// postcondition : none
+// return :steering Angle for driving
+Mat regionOfInterest(Mat& src, Mat& dst, Point* points);//roi 지정
+//precondition : point that you want to roi(3 or 4 points recommended
+//postcondition : fill white without roi sector
+// return : masked img dst 
 
 bool extractLines(Mat& src, vector<Vec4i>& lines);//추출되면 1 안되면 0
 //src는 컬러상태여야함
