@@ -134,7 +134,7 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 		line(inputImg, lp1, lp0, Scalar(0, 0, 255), 1);
 		dydxLeft = double(fitLeft[1]) / double(fitLeft[0]);
 	}
-	else { dydxLeft = 0; }//한쪽라인 인식 안되는 예외 처리 부분
+	else { dydxLeft = -999; }//한쪽라인 인식 안되는 예외 처리 부분
 
 	if (right_index > 0) {
 		fitLine(rightLines, fitRight, DIST_L2, 0, 0.01, 0.01);
@@ -146,15 +146,15 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 		line(inputImg, rp1, rp0, Scalar(0, 0, 255), 1);
 		dydxRight = double(fitRight[1]) / double(fitRight[1]);
 	}
-	else { dydxRight = 0; } // 한쪽라인 인식 안되는 예외 처리 부분
+	else { dydxRight = 999; } // 한쪽라인 인식 안되는 예외 처리 부분
 
 	//값저장
 	double angleThreshold = 10;// 10도 이하는 0으로만들기
-	if (atan(abs(dydxLeft + dydxRight)) <= (angleThreshold * CV_PI / 180)) {
+	if (atan(dydxLeft) + atan(dydxRight) <= (angleThreshold * CV_PI / 180)) {
 		steering = 0;
 	}
 	else {
-		steering = 180 / CV_PI * atan((dydxLeft + dydxRight));
+		steering = 180 / CV_PI * (atan((dydxLeft)) + atan((dydxRight)));
 	}
 	//steering값은 각도로 나오며 정면기준 0도임
 
