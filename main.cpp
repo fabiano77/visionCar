@@ -72,7 +72,8 @@ int main()
 		DCmotor.go();					//dc모터 시작
 		waitKey(1500);					//wait 1.5sec
 		DCmotor.stop();					//dc모터 멈춤
-	}//end test mode
+	}
+	//end test mode
 
 
 	else if (mode == 2)//manual mode
@@ -87,7 +88,8 @@ int main()
 			int key = waitKey(delay);	//if you not press, return -1
 			Manual.input(key);		//movement by keyboard
 		}
-	}//end manual mode
+	}
+	//end manual mode
 
 
 	else if (mode == 3) {
@@ -112,6 +114,7 @@ int main()
 			waitKey(15);
 		}
 	}
+	//end calb mode
 
 
 	else if (mode == 4)	//daehee's code
@@ -154,6 +157,7 @@ int main()
 			}
 		}
 	}
+	//end daehee's code
 
 
 	else if (mode == 5)
