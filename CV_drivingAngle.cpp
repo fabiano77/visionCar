@@ -256,20 +256,16 @@ void filter_colors(Mat& src, Mat& img_filtered) {
 	UMat maskYellow, yellowImg;
 	UMat imgCombined;
 	src.copyTo(bgrImg);
-	Scalar lower_white = Scalar(120, 120, 120); //흰색 차선 (RGB)
-	Scalar upper_white = Scalar(255, 255, 255);
-	Scalar lower_yellow = Scalar(10, 100, 100); //노란색 차선 (HSV)
-	Scalar upper_yellow = Scalar(40, 255, 255);
 
 	//white 변경
-	inRange(bgrImg, lower_white, upper_white, maskWhite);
+	//inRange(bgrImg, lower_white, upper_white, maskWhite);
 	//lower와 upper사이의 값을 1로 나머지는 0으로 저장
-	bitwise_and(bgrImg, bgrImg, whiteImg, maskWhite);
+	//bitwise_and(bgrImg, bgrImg, whiteImg, maskWhite);
 
 	cvtColor(bgrImg, hsvImg, COLOR_BGR2HSV);
 	inRange(hsvImg, lower_yellow, upper_yellow, maskYellow);
 	bitwise_and(bgrImg, bgrImg, yellowImg, maskYellow);
-	addWeighted(whiteImg, 1.0, yellowImg, 1.0, 0.0, imgCombined);//두 이미지 합치기
-
+	//addWeighted(whiteImg, 1.0, yellowImg, 1.0, 0.0, imgCombined);//두 이미지 합치기
+	yellowImg.copyTo(imgCombined);;//노란색만 검출할때까지 사용
 	imgCombined.copyTo(img_filtered);
 }
