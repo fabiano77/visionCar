@@ -238,8 +238,10 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 	imgBlur(blurImg, edgeImg, 2);
 	Point pt[4] = { Point(0,height * 2 / 5),Point(width,height * 2 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
 	//roi point ¼³Á¤
+
 	regionOfInterest(edgeImg, roiImg, pt);
 	vector<Vec4i> extractLines;
+
 	HoughLinesP(roiImg, extractLines, 1, CV_PI / 180.0, 30, 10, 20);
 	lines = extractLines;
 	return true;
