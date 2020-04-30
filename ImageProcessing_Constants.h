@@ -13,5 +13,6 @@ const int numCornersV = 9;//수직 코너수
 const int numBoards = 5;//찍을 보드 갯수
 int numSquares = numCornersH * numCornersV;
 const int numPoint = 4;//roi점 갯수
-
+int steeringFlag=0;//회전상황 판단용 flag
+int cancelFlag=0;//회전상황 해제용 flag
 #endif

@@ -1,4 +1,5 @@
 #include "CV_drivingAngle.h"
+#include "ImageProcessing_Constants.h"
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/core/matx.hpp>
@@ -6,17 +7,18 @@
 using namespace cv;
 using namespace std;
 
-void drivingAngle(Mat& inputImg, vector<Vec4i>& lines, double& steering) {
-	//lines는 추출된 선들임 //inputImg는 입력되는 사진
+void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering, int& steeringFlag) {
 	Vec4f params;
 	Point pt1, pt2;
 	int x1, y1, x2, y2;
 	vector<Vec4i> newLines;//후에 왼쪽오른쪽 하나만 남기기
+	const int width = inputImg.size().width;
+	const int height = inputImg.size().height;
 	vector<float> slopeDegrees;
-	float slopeDegree;
-	float slopeThreshold = 0.5;
-	int width = inputImg.size().width;
-	int height = inputImg.size().height;
+	float slopeDegree;//항상 라디안으로 만들것
+	double preSteering = steering;//이전 값불러오기 최종 조향각도 조절용
+	float slopeThreshold = 0.3;//항상 라디안으로 만들 것
+	//임시로 1rad(56.6도 정도) 으로해서 모든 라인 다 검출
 
 	//vector point로 선언해보자
 	vector<Point> newPoint;
@@ -29,36 +31,19 @@ void drivingAngle(Mat& inputImg, vector<Vec4i>& lines, double& steering) {
 		y2 = params[3];
 		//x2,y2의 점
 
-
 		pt1 = Point(x1, y1);
 		pt2 = Point(x2, y2);
+
 		if (x2 - x1 == 0)
-			slopeDegree = 0.999;
+			slopeDegree = 999;//x의 변화량이 없는 경우 각도 90도로 만들기
 		else slopeDegree = (y2 - y1) / (float)(x2 - x1);
 		//slope degree 에 따라 넣을지말지 결정
 		if (abs(slopeDegree) > slopeThreshold) {
-			//cout << "lines[" << k << "], p1=" << x1 << "," << y1 << endl;
-			//cout << "========= p2=" << x2 << "," << y2 << endl;
-			//cout << "slopeDegree = " << slopeDegree << endl;
-
-			newLines.push_back(params);//나중에 쓸 parameter
-
+			newLines.push_back(params);
 			slopeDegree = atan(slopeDegree);
 			slopeDegrees.push_back(slopeDegree);
-			//x2,y2의 점
-			pt1 = Point(x1, y1);
-			pt2 = Point(x2, y2);
-			line(inputImg, pt1, pt2, Scalar(0, 0, 255), 1);//라인 그리기
 		}
 	}
-	//쉬운 드라이빙 각도 계산///////
-	float sumSlopeDegree = 0;
-	for (int i = 0; i < newLines.size(); i++) {
-		sumSlopeDegree += slopeDegrees[i];
-	}
-	float drivingAngle = sumSlopeDegree / newLines.size() * 2 * CV_PI;
-	cout << "----------drivingAngle : " << drivingAngle << endl;
-
 	// Split lines into right_lines and left_lines, representing the right and left lane lines
 	// Right / left lane lines must have positive / negative slope, and be on the right / left half of the image
 	vector<Vec4i> right_lines;
@@ -66,24 +51,21 @@ void drivingAngle(Mat& inputImg, vector<Vec4i>& lines, double& steering) {
 
 	for (int i = 0; i < newLines.size(); i++)
 	{
-
 		Vec4i line = newLines[i];
 		float slope = slopeDegrees[i];
-
 		x1 = line[0];
 		y1 = line[1];
 		x2 = line[2];
 		y2 = line[3];
 
-
 		float cx = width * 0.5; //x coordinate of center of image
-
 		if (slope > 0 && x1 > cx&& x2 > cx)
 			right_lines.push_back(line);
+		//slope가 0보다 크면 pi/2+a rad에서 온 것이므로 오른쪽일 것
 		else if (slope < 0 && x1 < cx && x2 < cx)
 			left_lines.push_back(line);
+		//slope가 0보다 작으면 pit/2-a rad에서 온 것이므로 왼쪽일 것임
 	}
-
 
 	//Run linear regression to find best fit line for right and left lane lines
 	//Right lane lines
@@ -111,7 +93,6 @@ void drivingAngle(Mat& inputImg, vector<Vec4i>& lines, double& steering) {
 		rightLines.push_back(Point(x2, y2));//
 		right_index++;
 	}
-
 
 	double left_lines_x[1000];
 	double left_lines_y[1000];
@@ -149,26 +130,63 @@ void drivingAngle(Mat& inputImg, vector<Vec4i>& lines, double& steering) {
 		lp1.y = cvRound(fitLeft[1] * (+s) + fitLeft[3]);
 		lp0.x = cvRound(fitLeft[0] * (-s) + fitLeft[2]);
 		lp0.y = cvRound(fitLeft[1] * (-s) + fitLeft[3]);
+
 		dydxLeft = double(fitLeft[1]) / double(fitLeft[0]);
 	}
 	else { dydxLeft = 0; }//한쪽라인 인식 안되는 예외 처리 부분
+
 	if (right_index > 0) {
 		fitLine(rightLines, fitRight, DIST_L2, 0, 0.01, 0.01);
 		rp1.x = cvRound(fitRight[0] * s + fitRight[2]);//[0]은 방향 벡터 dx
 		rp1.y = cvRound(fitRight[1] * s + fitRight[3]);//[1]은 방향벡터 dy
 		rp0.x = cvRound(fitRight[0] * (-s) + fitRight[2]);
 		rp0.y = cvRound(fitRight[1] * (-s) + fitRight[3]);
+
 		dydxRight = double(fitRight[1]) / double(fitRight[1]);
 	}
 	else { dydxRight = 0; } // 한쪽라인 인식 안되는 예외 처리 부분
 
 	//값저장
-	int angleThreshold = 5;// 5도 이하는 0으로만들기
-	if (abs(dydxLeft + dydxRight) <= tan(angleThreshold * 360 / (2 * CV_PI))) {
-		steering = 0;
+	double angleThreshold = 10;// 10도 이하는 0으로만들기
+	if (atan(abs(dydxLeft + dydxRight)) <= (angleThreshold * CV_PI / 180)) {
+		steering = 0.0;
 	}
-	else { steering = (360 / 2 / CV_PI * atan((dydxLeft + dydxRight) / 2)); }
-	cout << "stiring: " << steering << endl;
+	else {
+		steering = 180 / CV_PI * atan((dydxLeft + dydxRight));
+	}
+	//steering값은 각도로 나오며 정면기준 0도임
+
+	// 좌우 인식 안되는 경우 알고리즘 인식 부분(회전의 경우) -> 수정 자유롭게 하세요
+	if (right_index == 0 && left_index != 0) {//우회전의 경우 인지 판단
+		steeringFlag++;
+
+		if (steeringFlag >= steeringThresholdFlag)//일정 프레임동안 발견되지 않는 경우 좌회전으로 인식
+		{
+			steering = (steering - preSteering) / 2.0 + (-1.0) * preSteering;//변화값 가중치/2
+			//기존 직진상태에서는 반대방향으로 조향하게 했으므로 preSteering이 음수로 변환된 후 곱해야함
+			cout << "우회전" << endl;
+		}
+		else {//flag전에는 이전 steering각도 유지
+			steering = preSteering;
+		}
+	}
+	else if (right_index != 0 && left_index == 0) {//좌회전의 경우인지 판단
+		steeringFlag++;
+		if (steeringFlag >= steeringThresholdFlag)//일정 프레임동안 발견되지 않는 경우 좌회전으로 인식
+		{
+			steering = (steering - preSteering) / 2.0 + (-1.0) * preSteering;//변화값 가중치/2
+			//기존 직진상태에서는 반대방향으로 조향하게 했으므로 preSteering이 음수로 변환된 후 곱해야함
+			cout << "좌회전" << endl;
+		}
+		else {//flag전에는 이전 steering각도 유지
+			steering = preSteering;
+		}
+	}
+	else if (left_index != 0 && right_index != 0) {//평상시 직진의 경우 변화값의 반대 1/2로 가중치를 줌
+		steeringFlag = 0;//다른 경우에서 flag증가시킨 것 초기화
+		steering = (-1.0) / 2.0 * (steering);
+	}
+	cout << "steering: " << steering << endl;
 	slopeDegrees.clear();
 	leftLines.clear();
 	rightLines.clear();
@@ -176,7 +194,6 @@ void drivingAngle(Mat& inputImg, vector<Vec4i>& lines, double& steering) {
 	left_lines.clear();
 	newPoint.clear();
 	newLines.clear();
-
 }
 
 void regionOfInterest(Mat& src, Mat& dst, Point* points) {// points의 포인터인 이유-> 여러개의 꼭짓점 경우

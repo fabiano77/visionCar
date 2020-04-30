@@ -1,22 +1,42 @@
-#ifndef CV_CALIBRATIOM_H
-#define CV_CALIBRATIOM_H
+#ifndef CALIBRATION_H
+#define CALIBRATION_H
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
-using namespace cv;
+#include<iostream>
+#include<assert.h>
+#include"ImageProcessing_Constants.h"
 using namespace std;
+using namespace cv;
 
+class Calibration {
+public:
+	Calibration();
+	//생성 후 삽입 예정 함수
+	//postcondition: insertImage를 이미지 수 만큼 입력해주어야 returnCalibInfo사용 가능
+	//이미지수는 ImageProcessing_constant에 입력되어있음
+	Calibration(Mat& inputIchessImage, int numImage);
+	//내가 원하는 수만큼 chessImage를 입력하여 저장가능
+	//precondition : 이미지 숫자도 같이 넣어주어야함
+	//postcondition : 바로 insertImage사용가능
+	void insertImage(Mat& inputChessImage);
+	//procondition:none
+	//postcondition: 입력이 완료되었다고 뜬 경우 returncalibration진행가능
+	bool returnCalibInfo(Mat& intrinsicMat, Mat& distanceCoeffsMat);
+	//precondition : Mat&,int를 파라미터로 갖는 생성자 사용하거나 insertImage함수를 최대만큼 부르고 사용가능
+	//postcondition : nothing
+	//return : intrinsic, distancecoefficient 값 반환 calibration성공시 true,실패시 false 리턴
 
-static int success = 0;//Calibration 성공 횟수
-static int keyForSnap = 0;//적절하게 Frame이 잡혔는지 저장
-bool calibImage(Mat& chessImg, Mat& intrinsicMat, Mat& distCoefMat);
-bool calibImage(VideoCapture&, Mat& intrinsicMat, Mat& distCoefMat);
-//undistort함수에 사용할 intrinsicMat,distance CoefficientMat 추출 함수
-//true면 성공
-//false면 실패 이후 undistort함수 사용
-#ifndef CV_DRIVINGANGLE_H
-#define CV_DRIVINGANGLE_H
-void regionOfInterest(Mat& src,Mat& dst, Point* points);//roi 지정
-
-#endif
+private:
+	int flag = 0;
+	int numImage;
+	int idx = 0;//삽입시 index, numImage보다 최대 1작아야 한다.
+	bool calibImage();
+	Mat* primaryImage = nullptr;
+	Mat* intrinsic=nullptr;
+	Mat* distcoeffs=nullptr;
+	int width = 0;
+	int height = 0;
+	Size imgSize;
+};
 
 #endif
