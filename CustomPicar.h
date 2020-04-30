@@ -82,7 +82,7 @@ private:
 	Servo M_steering;
 	Servo M_cam_tilt;
 	Servo M_cam_pan;
-	Servo M_DCmotor;
+	Wheel M_DCmotor;
 };
 
 void allServoReset(PCA9685 pca_);
