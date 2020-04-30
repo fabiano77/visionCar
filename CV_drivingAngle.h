@@ -9,7 +9,7 @@ using namespace cv;
 using namespace std;
 //for drivingAngle
 // 라인 검출기능과 각도 반환을 통해서 조작 가능하다
-void drivingAngle(Mat& inputImg, vector<Vec4i>& lines, double& steering);
+void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering);
 //precondition: at least one lines for calculate drivingAngle
 // lines for already detected by extracLines function
 // postcondition : none
