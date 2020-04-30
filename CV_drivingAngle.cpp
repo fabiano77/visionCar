@@ -18,6 +18,7 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 	float slopeDegree;//항상 라디안으로 만들것
 	double preSteering = steering;//이전 값불러오기 최종 조향각도 조절용
 	float slopeThreshold = 0.3;//항상 라디안으로 만들 것
+	float headingAngle;
 	//임시로 1rad(56.6도 정도) 으로해서 모든 라인 다 검출
 
 	//vector point로 선언해보자
@@ -132,7 +133,7 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 		lp0.y = cvRound(fitLeft[1] * (-s) + fitLeft[3]);
 
 		line(inputImg, lp1, lp0, Scalar(0, 0, 255), 1);
-		dydxLeft = double(fitLeft[1]) / double(fitLeft[0]);
+		dydxLeft = double(-fitLeft[1]) / double(fitLeft[0]);
 	}
 	else { dydxLeft = -999; }//한쪽라인 인식 안되는 예외 처리 부분
 
@@ -144,17 +145,17 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 		rp0.y = cvRound(fitRight[1] * (-s) + fitRight[3]);
 
 		line(inputImg, rp1, rp0, Scalar(0, 0, 255), 1);
-		dydxRight = double(fitRight[1]) / double(fitRight[1]);
+		dydxRight = double(-fitRight[1]) / double(fitRight[0]);
 	}
 	else { dydxRight = 999; } // 한쪽라인 인식 안되는 예외 처리 부분
 
 	//값저장
 	double angleThreshold = 10;// 10도 이하는 0으로만들기
 	if (atan(dydxLeft) + atan(dydxRight) <= (angleThreshold * CV_PI / 180)) {
-		steering = 0;
+		headingAngle = 0;
 	}
 	else {
-		steering = 180 / CV_PI * (atan((dydxLeft)) + atan((dydxRight)));
+		headingAngle = -180 / CV_PI * (atan((dydxLeft)) + atan((dydxRight)));
 	}
 	//steering값은 각도로 나오며 정면기준 0도임
 
@@ -194,7 +195,7 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 			steeringFlag--;
 		}
 	}
-
+	steering = -headingAngle;
 	cout << "steering: " << steering << endl;
 	slopeDegrees.clear();
 	leftLines.clear();
