@@ -131,6 +131,7 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 		lp0.x = cvRound(fitLeft[0] * (-s) + fitLeft[2]);
 		lp0.y = cvRound(fitLeft[1] * (-s) + fitLeft[3]);
 
+		line(inputImg, lp1, lp0, Scalar(0, 0, 255), 1);
 		dydxLeft = double(fitLeft[1]) / double(fitLeft[0]);
 	}
 	else { dydxLeft = 0; }//한쪽라인 인식 안되는 예외 처리 부분
@@ -142,6 +143,7 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 		rp0.x = cvRound(fitRight[0] * (-s) + fitRight[2]);
 		rp0.y = cvRound(fitRight[1] * (-s) + fitRight[3]);
 
+		line(inputImg, rp1, rp0, Scalar(0, 0, 255), 1);
 		dydxRight = double(fitRight[1]) / double(fitRight[1]);
 	}
 	else { dydxRight = 0; } // 한쪽라인 인식 안되는 예외 처리 부분
@@ -149,7 +151,7 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 	//값저장
 	double angleThreshold = 10;// 10도 이하는 0으로만들기
 	if (atan(abs(dydxLeft + dydxRight)) <= (angleThreshold * CV_PI / 180)) {
-		steering = 0.0;
+		steering = 0;
 	}
 	else {
 		steering = 180 / CV_PI * atan((dydxLeft + dydxRight));
@@ -183,9 +185,16 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 		}
 	}
 	else if (left_index != 0 && right_index != 0) {//평상시 직진의 경우 변화값의 반대 1/2로 가중치를 줌
-		steeringFlag = 0;//다른 경우에서 flag증가시킨 것 초기화
-		steering = (-1.0) / 2.0 * (steering);
+		//다른 경우에서 flag증가시킨 것 초기화
+		if (steeringFlag <= 0) {
+			steering = (-1.0) / 2.0 * (steering);
+		}
+		else if (steeringFlag > 0) {
+			steering = steering * 0.75 + preSteering * 0.25;
+			steeringFlag--;
+		}
 	}
+
 	cout << "steering: " << steering << endl;
 	slopeDegrees.clear();
 	leftLines.clear();
@@ -195,7 +204,6 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 	newPoint.clear();
 	newLines.clear();
 }
-
 void regionOfInterest(Mat& src, Mat& dst, Point* points) {// points의 포인터인 이유-> 여러개의 꼭짓점 경우
 
 	Mat maskImg = Mat::zeros(src.size(), CV_8UC1);
