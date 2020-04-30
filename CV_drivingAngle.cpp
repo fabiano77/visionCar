@@ -7,7 +7,7 @@
 using namespace cv;
 using namespace std;
 
-void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering, int& steeringFlag) {
+void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 	Vec4f params;
 	Point pt1, pt2;
 	int x1, y1, x2, y2;
