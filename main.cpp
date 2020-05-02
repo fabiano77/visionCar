@@ -6,6 +6,7 @@
 #include "CV_Calibration.h"
 #include "CV_drivingAngle.h"
 #include "Driving_DH.h"
+#include "DetectColorSign.h"
 
 //cpp를 추가해보는 것은 어떠한가
 
@@ -31,16 +32,6 @@ int main()
 		cerr << "video capture fail!" << endl;
 		return -1;
 	}
-	double fps = videocap.get(CAP_PROP_FPS);
-	cout << "video width :" << videocap.get(CAP_PROP_FRAME_WIDTH) << endl;
-	cout << "video height :" << videocap.get(CAP_PROP_FRAME_HEIGHT) << endl;
-	cout << "video FPS :" << fps << endl << endl;;
-	int delay = cvRound(1000 / fps);
-	for (int i = 0; i < 5; i++) {
-		videocap.read(frame);
-		imshow("Test Cam out", frame);
-		waitKey(33);
-	}
 	cout << "Camera test is complete" << endl << endl;
 
 	//mode selection---------------------------------------------
@@ -55,7 +46,6 @@ int main()
 	cout << "select mode : ";
 	int mode;
 	cin >> mode;
-
 
 	//start mode------------------------------------------------
 	if (mode == 1)//test mode
@@ -129,6 +119,9 @@ int main()
 		DH.mappingSetSection(0, 0.10, 0.40, 0.70, 0.77, 1.00);
 		DH.mappingSetValue(0.0, 0.00, 10.0, 25.0, 50.0, 50.0);
 		//DH.mappingSetValue(10, 10.0, 15.0, 25.0, 50.0, 50.0);
+		//코너구간 조향수준 맵핑값 세팅
+
+		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
 
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
@@ -138,14 +131,20 @@ int main()
 			videocap >> frame;
 			//undistort(frame, undistortFrame, intrinsic, disCoeff);
 
-			if (false) //신호등체크
+			if (false) //event 체크
 			{
+
 			}
-			else if (false) //주차 등등 event
+			else if (detectColorSign.isRedStop(frame, 10)) //빨간색 표지판 감지
 			{
+				while (detectColorSign.isRedStop(frame, 10))
+				{
+					DCmotor.stop();	//멈춘다.
+				}
 			}
-			else if (false)	//기타 등등 event
+			else if (false)	//기타 event 체크
 			{
+
 			}
 			else //정상주행
 			{
