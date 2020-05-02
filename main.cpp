@@ -124,19 +124,24 @@ int main()
 		*/
 		//Mat undistortFrame;
 
-		Driving_DH DH(true, 0.80, 1.00);//printFlag, cLevel, sLevel
-										//cLevel : 코너구간 민감도(높을수록 많이 꺾임)
-										//sLevel : 직선구간 민감도
+		Driving_DH DH(true, 1.00);	//printFlag, sLevel
+									//sLevel : 직선구간 민감도(높을수록 많이 꺾임)
+		DH.mappingSetSection(0, 0.10, 0.40, 0.70, 0.77, 1.00);
+		DH.mappingSetValue(0.0, 0.00, 10.0, 25.0, 50.0, 50.0);
+		//DH.mappingSetValue(10, 10.0, 15.0, 25.0, 50.0, 50.0);
+
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 
 		while (true)
 		{
 			videocap >> frame;
+			//undistort(frame, undistortFrame, intrinsic, disCoeff);
+
 			if (false) //신호등체크
 			{
 			}
-			else if (false) //추월 등등 event 삽입부
+			else if (false) //주차 등등 event
 			{
 			}
 			else if (false)	//기타 등등 event
@@ -144,11 +149,12 @@ int main()
 			}
 			else //정상주행
 			{
-				//undistort(frame, undistortFrame, intrinsic, disCoeff);
 				//DH.driving(undistortFrame, steerVal, speedVal, 40.0, 2.0);
-				DH.driving(frame, steerVal, speedVal, 40.0, 2.0);
+				DH.driving(frame, steerVal, speedVal, 30.0, 0.0);
+
 				steering.setRatio(steerVal);			//바퀴 조향
 				DCmotor.go(speedVal);
+
 				cout << "steer : " << steerVal << ", speed : " << speedVal << endl;
 
 				//imshow("frame", undistortFrame);
@@ -178,6 +184,7 @@ int main()
 	}
 
 	else cout << "invalid mode selection" << endl;
+
 	cout << "program finished" << endl;
 	allServoReset(pca);	// 3 Servo motor center reset
 	return 0;
