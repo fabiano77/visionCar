@@ -22,7 +22,7 @@ Mat regionOfInterest(Mat& src, Mat& dst, Point* points);//roi 지정
 bool extractLines(Mat& src, vector<Vec4i>& lines);//추출되면 1 안되면 0
 //precondition: src must be color image
 // return : lines는 call by ref로 반환됨
-void filter_colors(Mat& src, Mat& img_filtered);
+void filter_colors(Mat& src, Mat& img_filtered,Scalar& lower,Scalar& upper);
 //color filtering
 //precondition src: must be color image
 //postcondition : 노란색과 흰색으로 구분되고 나머지는 검정으로 채워 반환된다.

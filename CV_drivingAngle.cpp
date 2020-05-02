@@ -158,42 +158,11 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 	//steering값은 각도로 나오며 정면기준 0도임
 
 	// 좌우 인식 안되는 경우 알고리즘 인식 부분(회전의 경우) -> 수정 자유롭게 하세요
-	if (right_index == 0 && left_index != 0) {//우회전의 경우 인지 판단
-		steeringFlag++;
-
-		if (steeringFlag >= steeringThresholdFlag)//일정 프레임동안 발견되지 않는 경우 좌회전으로 인식
-		{
-			steering = (steering - preSteering) / 2.0 + (-1.0) * preSteering;//변화값 가중치/2
-			//기존 직진상태에서는 반대방향으로 조향하게 했으므로 preSteering이 음수로 변환된 후 곱해야함
-			cout << "우회전" << endl;
-		}
-		else {//flag전에는 이전 steering각도 유지
-			steering = preSteering;
-		}
-	}
-	else if (right_index != 0 && left_index == 0) {//좌회전의 경우인지 판단
-		steeringFlag++;
-		if (steeringFlag >= steeringThresholdFlag)//일정 프레임동안 발견되지 않는 경우 좌회전으로 인식
-		{
-			steering = (steering - preSteering) / 2.0 + (-1.0) * preSteering;//변화값 가중치/2
-			//기존 직진상태에서는 반대방향으로 조향하게 했으므로 preSteering이 음수로 변환된 후 곱해야함
-			cout << "좌회전" << endl;
-		}
-		else {//flag전에는 이전 steering각도 유지
-			steering = preSteering;
-		}
-	}
-	else if (left_index != 0 && right_index != 0) {//평상시 직진의 경우 변화값의 반대 1/2로 가중치를 줌
-		//다른 경우에서 flag증가시킨 것 초기화
-		if (steeringFlag <= 0) {
-			steering = (-1.0) / 2.0 * (steering);
-		}
-		else if (steeringFlag > 0) {
-			steering = steering * 0.75 + preSteering * 0.25;
-			steeringFlag--;
-		}
-	}
-	steering = -headingAngle;
+	
+	// 아주 기본적인 알고리즘 상steering = -headingAngle;
+	//right_index=0일때 오른선 검출X
+	//left_index=0일때 왼선 검출
+	//heading Angle은 차량이 바라보는 방향
 	cout << "steering: " << steering << endl;
 	slopeDegrees.clear();
 	leftLines.clear();
@@ -231,7 +200,7 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 	Mat grayImg, blurImg, edgeImg, roiImg, dstImg;
 	int width = src.size().width;
 	int height = src.size().height;
-	filter_colors(src, filterImg);
+	filter_colors(src, filterImg,lower_yellow,higher_white);
 	cvtColor(filterImg, grayImg, COLOR_BGR2GRAY);
 	imgBlur(grayImg, blurImg, 1);
 	imgBlur(blurImg, edgeImg, 2);
@@ -247,11 +216,11 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 
 }
 
-void filter_colors(Mat& src, Mat& img_filtered) {
+void filter_colors(Mat& src, Mat& img_filtered,Scalar& lower,Scalar& upper) {
 	//
 	UMat bgrImg;
 	UMat hsvImg;
-	UMat maskWhite, whiteImg;
+	//UMat maskWhite, whiteImg;
 	UMat maskYellow, yellowImg;
 	UMat imgCombined;
 	src.copyTo(bgrImg);
@@ -262,7 +231,7 @@ void filter_colors(Mat& src, Mat& img_filtered) {
 	//bitwise_and(bgrImg, bgrImg, whiteImg, maskWhite);
 
 	cvtColor(bgrImg, hsvImg, COLOR_BGR2HSV);
-	inRange(hsvImg, lower_yellow, upper_yellow, maskYellow);
+	inRange(hsvImg, lower, upper, maskYellow);
 	bitwise_and(bgrImg, bgrImg, yellowImg, maskYellow);
 	//addWeighted(whiteImg, 1.0, yellowImg, 1.0, 0.0, imgCombined);//두 이미지 합치기
 	yellowImg.copyTo(imgCombined);;//노란색만 검출할때까지 사용
