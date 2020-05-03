@@ -10,11 +10,8 @@ DetectColorSign::DetectColorSign()
 }
 DetectColorSign::DetectColorSign(bool onPrint)
 {
+	*(this) = DetectColorSign();
 	print = onPrint;
-	lower_red1 = Scalar(0, 100, 100);
-	upper_red1 = Scalar(15, 255, 255);
-	lower_red2 = Scalar(165, 100, 100);
-	upper_red2 = Scalar(180, 255, 255);
 }
 
 bool DetectColorSign::isRedStop(Mat& frame, int percent)
