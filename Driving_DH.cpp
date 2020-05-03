@@ -2,6 +2,9 @@
 
 bool PRINT(true);				// 영상에 출력 표시 on&off
 double STRAIGHT_LEVEL(1.00);	// 직선 구간에서의 가중치 커지면 각도 쎄게틈
+int straightSteer = 15;		// 35~65
+int straightLower = 50 - straightSteer;
+int straightUpper = 50 + straightSteer;
 
 int threshold_1 = 118;		//215 //340
 int threshold_2 = 242;		//330 //500
@@ -9,8 +12,8 @@ int HLP_threshold = 100;	//105
 int HLP_minLineLength = 120;//115
 int HLP_maxLineGap = 500;	//260
 
-Scalar lower_yellow = Scalar(14, 30, 35);
-Scalar upper_yellow = Scalar(46, 255, 255);
+Scalar lower_yellow(14, 30, 35);
+Scalar upper_yellow(46, 255, 255);
 Scalar color[7]{
 	Scalar(255,0,0),
 	Scalar(0, 0, 255),
@@ -65,73 +68,72 @@ Driving_DH::Driving_DH()
 }
 Driving_DH::Driving_DH(bool printFlag, double sLevel)
 {
+	*(this) = Driving_DH();
 	print = printFlag;
 	straightLevel = sLevel;	// 직선 구간에서의 가중치
-
-	VideoCapture videocap(0);
-	if (!videocap.isOpened())
-	{
-		cerr << "video load fail !" << endl;
-	}
-
-	frame_size = Size(
-		cvRound(videocap.get(CAP_PROP_FRAME_WIDTH)),
-		cvRound(videocap.get(CAP_PROP_FRAME_HEIGHT))
-	);
-	//비디오 사이즈등 불러오기
-	basicSetting();
 }
 Driving_DH::Driving_DH(string& filename)
 {
 	print = PRINT;
 	straightLevel = STRAIGHT_LEVEL;	// 직선 구간에서의 가중치
-	Mat temp;
-	temp = imread(filename, IMREAD_COLOR);
-	frame_size = Size(
-		temp.size().width,
-		temp.size().height
-	);
+	if (filename.find(".mp4") != -1 || filename.find(".avi") != -1)	//동영상일경우
+	{
+		VideoCapture videocap(filename);
+		if (!videocap.isOpened())
+		{
+			cerr << "video load fail !" << endl;
+		}
+
+		frame_size = Size(
+			cvRound(videocap.get(CAP_PROP_FRAME_WIDTH)),
+			cvRound(videocap.get(CAP_PROP_FRAME_HEIGHT))
+		);
+	}
+	else	//이미지일 경우
+	{
+		Mat temp;
+		temp = imread(filename, IMREAD_COLOR);
+		frame_size = Size(
+			temp.size().width,
+			temp.size().height
+		);
+	}
 	//이미지 사이즈 불러오기
 	basicSetting();
 }
 Driving_DH::Driving_DH(const char* filename)
 {
-	print = PRINT;
-	straightLevel = STRAIGHT_LEVEL;	// 직선 구간에서의 가중치
-	Mat temp;
-	temp = imread(filename, IMREAD_COLOR);
-	frame_size = Size(
-		temp.size().width,
-		temp.size().height
-	);
-	//이미지 사이즈 불러오기
-	basicSetting();
+	string name(filename);
+	*(this) = Driving_DH(name);
 }
 
 void Driving_DH::driving(Mat& frame, double& steerVal, double& speedVal, double basicSpd, double level)
 {
 	speedVal = basicSpd;			//기본 속도
-	double threshold_s(3.0);		//47~53			직선(가속) 판정 임계값
-	double threshold_c(20.0);		//0~30, 70~100	코너(감속) 판정 임계값
-	double upperLimit(50.0);		//최고속도 제한
-	double lowerLimit(20.0);		//최저속도 제한
 
 	imgProcess(frame, steerVal);	//steerVal값을 구한다.
 
-	if (steerVal < 50.0 - threshold_c || steerVal > 50.0 + threshold_c)	//코너구간
+	if (level != 0.0)
 	{
-		if (steering < 50.0 - threshold_c || steering > 50.0 + threshold_c)	//이전 frame도 코너라면
+		double threshold_s(3.0);		//47~53			직선(가속) 판정 임계값
+		double threshold_c(20.0);		//0~30, 70~100	코너(감속) 판정 임계값
+		double upperLimit(50.0);		//최고속도 제한
+		double lowerLimit(20.0);		//최저속도 제한
+		if (steerVal < 50.0 - threshold_c || steerVal > 50.0 + threshold_c)	//코너구간
 		{
-			speedVal = speed - level;			//감속 38, 36, 34
-			if (speedVal < lowerLimit) speedVal = lowerLimit;	//최저속도 제한
+			if (steering < 50.0 - threshold_c || steering > 50.0 + threshold_c)	//이전 frame도 코너라면
+			{
+				speedVal = speed - level;			//감속 38, 36, 34
+				if (speedVal < lowerLimit) speedVal = lowerLimit;	//최저속도 제한
+			}
 		}
-	}
-	else if (steerVal > 50.0 - threshold_s && steerVal < 50.0 + threshold_s)	//직선구간
-	{
-		if (steering > 50.0 - threshold_s && steering < 50.0 + threshold_s)	//이전 frame도 직선이라면
+		else if (steerVal > 50.0 - threshold_s && steerVal < 50.0 + threshold_s)	//직선구간
 		{
-			speedVal = speed + level;			//가속 42, 44, 46
-			if (speedVal > upperLimit) speedVal = upperLimit;	//최고속도 제한
+			if (steering > 50.0 - threshold_s && steering < 50.0 + threshold_s)	//이전 frame도 직선이라면
+			{
+				speedVal = speed + level;			//가속 42, 44, 46
+				if (speedVal > upperLimit) speedVal = upperLimit;	//최고속도 제한
+			}
 		}
 	}
 
@@ -202,7 +204,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 			if (printResult)
 			{
 				line(frame, Point(resultLine[0], resultLine[1]), Point(resultLine[2], resultLine[3]), pink, 5);
-				putText(frame, "RIGHT(" + to_string(steerVal) + "%)", RoiCenter, FONT_HERSHEY_COMPLEX, 1, mint, 2);
+				putText(frame, "RIGHT(" + to_string((int)steerVal) + "%)", RoiCenter, FONT_HERSHEY_COMPLEX, 1, mint, 2);
 			}
 
 		}
@@ -216,18 +218,20 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 			lineExtend(leftLine, 2);
 			lineExtend(rightLine, 2);
 
-			Point lineCenter((leftLine[2] + rightLine[0]) / 2, 0);
+			Point lineCenter((leftLine[2] + rightLine[0]) / 2, 20);
 
-			double slope = ((double)lineCenter.x - frame_size.width * 0.5) / frame_size.width;
+			double slope = ((double)lineCenter.x - frame_size.width * 0.5) / (frame_size.width * 0.5);
 			steerVal = 50 + ((slope * 50) * straightLevel);
 			//주행각을 반환한다
+			if (steerVal < straightLower) steerVal = straightLower;
+			else if (steerVal > straightUpper) steerVal = straightUpper;
 
 			if (printResult)
 			{
-				circle(frame, lineCenter, 5, mint, -1, LINE_AA);
+				circle(frame, lineCenter, 5, pink, 2, LINE_AA);
 				line(frame, Point(leftLine[0], leftLine[1]), Point(leftLine[2], leftLine[3]), pink, 5);
 				line(frame, Point(rightLine[0], rightLine[1]), Point(rightLine[2], rightLine[3]), pink, 5);
-				putText(frame, "straight(" + to_string(steerVal) + "%)", RoiCenter, FONT_HERSHEY_COMPLEX, 1, mint, 2);
+				putText(frame, "straight(" + to_string((int)steerVal) + "%)", RoiCenter, FONT_HERSHEY_COMPLEX, 1, mint, 2);
 			}
 		}
 	}
@@ -250,7 +254,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 			if (printResult)
 			{
 				line(frame, Point(resultLine[0], resultLine[1]), Point(resultLine[2], resultLine[3]), pink, 5);
-				putText(frame, "LEFT(" + to_string(steerVal) + "%)", RoiCenter, FONT_HERSHEY_COMPLEX, 1, mint, 2);
+				putText(frame, "LEFT(" + to_string((int)steerVal) + "%)", RoiCenter, FONT_HERSHEY_COMPLEX, 1, mint, 2);
 			}
 		}
 		else	//직선 2개 - 직진
@@ -263,18 +267,20 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 			lineExtend(leftLine, 2);
 			lineExtend(rightLine, 2);
 
-			Point lineCenter((leftLine[2] + rightLine[0]) / 2, 0);
+			Point lineCenter((leftLine[2] + rightLine[0]) / 2, 20);
 
-			double slope = ((double)lineCenter.x - frame_size.width * 0.5) / frame_size.width;
+			double slope = ((double)lineCenter.x - frame_size.width * 0.5) / (frame_size.width * 0.5);
 			steerVal = 50 + ((slope * 50) * straightLevel);
 			//주행각을 반환한다
+			if (steerVal < straightLower) steerVal = straightLower;
+			else if (steerVal > straightUpper) steerVal = straightUpper;
 
 			if (printResult)
 			{
-				circle(frame, lineCenter, 5, mint, -1, LINE_AA);
+				circle(frame, lineCenter, 5, pink, 2, LINE_AA);
 				line(frame, Point(leftLine[0], leftLine[1]), Point(leftLine[2], leftLine[3]), pink, 5);
 				line(frame, Point(rightLine[0], rightLine[1]), Point(rightLine[2], rightLine[3]), pink, 5);
-				putText(frame, "straight(" + to_string(steerVal) + "%)", RoiCenter, FONT_HERSHEY_COMPLEX, 1, mint, 2);
+				putText(frame, "straight(" + to_string((int)steerVal) + "%)", RoiCenter, FONT_HERSHEY_COMPLEX, 1, mint, 2);
 			}
 		}
 	}
@@ -298,7 +304,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 			text.append(", ");
 			text.append(to_string(lines[j].operator[](3)));
 			text.append(")");
-			putText(frame, text, Point(30, 30 + 30 * (j + 1)), FONT_HERSHEY_COMPLEX, 1, color[j], 2);
+			putText(frame, text, Point(30, 30 * (j + 2)), FONT_HERSHEY_COMPLEX, 1, color[j], 2);
 			line(frame, Point(lines[j][0], lines[j][1]), Point(lines[j][2], lines[j][3]), color[j], 2);
 			circle(frame, Point2i(lines[j].operator[](0), lines[j].operator[](1)), 5, color[j], -1, LINE_AA);
 			circle(frame, Point2i(lines[j].operator[](2), lines[j].operator[](3)), 5, color[j], -1, LINE_AA);
