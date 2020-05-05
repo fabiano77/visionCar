@@ -165,11 +165,41 @@ int main()
 	//end daehee's code
 
 
-	else if (mode == 5)
+	else if (mode == 5) // SangMin's code
 	{
-		//write your code
-	}
+		Mat intrinsic;
+		Mat disCoeff;
+		if (calibImage(videocap, intrinsic, disCoeff)) {
+			cout << "Calibration Success!" << endl;
+		}
+		else {
+			cout << "Calibration Failed!" << endl;
+		}
+		Mat undistortImg;
+		vector<Vec4i> exLines;
 
+		double speedVal(40.0);	//초기 속도(0~100)
+		double steering_After, steering_Before = 0;
+		
+		int Mode;
+		cout << "select Mode : ";
+		cin >> Mode;
+		cout << "Mode : " << Mode << endl;
+		while (1) {
+			videocap >> frame;
+			undistort(frame, undistortImg, intrinsic, disCoeff);
+			imshow("Live", undistortImg);
+
+			bool Check = extractLines(undistortImg, exLines);
+			drivingAngle_SM(undistortImg, exLines, steering_After, steering_Before, Mode);
+			steering.setRatio(50 + steering_After); //바퀴 조향
+			cout << "조향각 : " << 50 + steering_After << endl;			
+			DCmotor.go(speedVal);
+			waitKey(15);
+			
+		}
+	}
+	//end SangMin's code
 
 	else if (mode == 6)
 	{
