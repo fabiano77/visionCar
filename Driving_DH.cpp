@@ -169,8 +169,16 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 
 	for (Vec4i l : lines)
 	{
-		if (lowest.y < l[1]) lowest = Point(l[0], l[1]);
-		if (lowest.y < l[3]) lowest = Point(l[2], l[3]);
+		int height = l[1] - l[3];	//직선의 위아래 높이차이
+		if (height < 20 && height > -20)
+		{
+			l[0] = 0;
+		}
+		else
+		{
+			if (lowest.y < l[1]) lowest = Point(l[0], l[1]);
+			if (lowest.y < l[3]) lowest = Point(l[2], l[3]);
+		}
 	}
 	//for문이 끝나고 나면 lowest에 최하단 좌표 저장.
 
@@ -183,8 +191,15 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	{
 		for (Vec4i l : lines) 				//rightSide에 최우측 좌표 저장(x좌표 최대값)
 		{
-			if (rightSide.x < l[0]) rightSide = Point(l[0], l[1]);
-			if (rightSide.x < l[2]) rightSide = Point(l[2], l[3]);
+			if (l[0] == 0)
+			{
+
+			}
+			else
+			{
+				if (rightSide.x < l[0]) rightSide = Point(l[0], l[1]);
+				if (rightSide.x < l[2]) rightSide = Point(l[2], l[3]);
+			}
 		}
 
 		if (rightSide.y < RoiCenter.y)	//rightSide가 상단일 경우 = 직선1개( / ) - 우회전
@@ -206,8 +221,15 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 		{
 			for (Vec4i l : lines)
 			{
-				if (leftLine[0] > l[0]) leftLine = l;
-				if (rightLine[2] < l[2]) rightLine = l;
+				if (l[0] == 0)
+				{
+
+				}
+				else
+				{
+					if (leftLine[0] > l[0]) leftLine = l;
+					if (rightLine[2] < l[2]) rightLine = l;
+				}
 			}
 			lineExtend(leftLine, 2);
 			lineExtend(rightLine, 2);
@@ -233,8 +255,15 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	{
 		for (Vec4i l : lines)	//rightSide에 최좌측 좌표 저장(x좌표 최소값)
 		{
-			if (leftSide.x > l[0]) leftSide = Point(l[0], l[1]);
-			if (leftSide.x > l[2]) leftSide = Point(l[2], l[3]);
+			if (l[0] == 0)
+			{
+
+			}
+			else
+			{
+				if (leftSide.x > l[0]) leftSide = Point(l[0], l[1]);
+				if (leftSide.x > l[2]) leftSide = Point(l[2], l[3]);
+			}
 		}
 
 		if (leftSide.y < RoiCenter.y)	//leftSide가 상단일 경우 = 직선1개(ㄱ) - 좌회전
@@ -255,8 +284,15 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 		{
 			for (Vec4i l : lines)
 			{
-				if (leftLine[0] > l[0]) leftLine = l;
-				if (rightLine[2] < l[2]) rightLine = l;
+				if (l[0] == 0)
+				{
+
+				}
+				else
+				{
+					if (leftLine[0] > l[0]) leftLine = l;
+					if (rightLine[2] < l[2]) rightLine = l;
+				}
 			}
 			lineExtend(leftLine, 2);
 			lineExtend(rightLine, 2);
