@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
@@ -118,7 +119,7 @@ int main()
 		DoCalib(disCoeffs, intrinsic, numBoards);
 
 		Mat distortFrame;
-		
+
 
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
 									//sLevel : 직선구간 민감도(높을수록 많이 꺾임)
@@ -161,7 +162,7 @@ int main()
 				DCmotor.go(speedVal);
 
 				cout << "steer : " << steerVal << ", speed : " << speedVal << endl;
-			
+
 				waitKey(10);//33
 			}
 			imshow("frame", frame);
@@ -208,33 +209,53 @@ int main()
 
 	else if (mode == 6)
 	{
-	while (videocap.isOpened()) {
-		videocap >> srcImg;
-		filter_colors(srcImg, filteredImg);
-		//cvtColor(srcImg, grayImg, COLOR_BGR2GRAY);
-		//이미지 처리 blur 및 edge 검출
+		Mat intrinsic = Mat(3, 3, CV_32FC1);
+		Mat disCoeffs;
+		int numBoards = 20;
+		DoCalib(disCoeffs, intrinsic, numBoards);
+		Mat distortFrame;
+		Mat srcImg;
+		videoR >> srcImg;
+		int width = srcImg.size().width;
+		int height = srcImg.size().height;
+		Mat grayImg;
+		Mat blurImg, edgeImg;
+		Mat dstImg(srcImg.size(), CV_8UC3);
+		Mat filteredImg;
+		Steer steer1;
+		double steeringValue;	//초기 각도(50이 중심)
+		double speedVal(40.0);	//초기 속도(0~100)
 
-		imgProcessing(filteredImg, blurImg, 1);
-		imgProcessing(blurImg, edgeImg, 2);
+		while (videocap.isOpened()) {
+			videocap >> distortFrame;
+			undistort(distortFrame, frame, intrinsic, disCoeffs);
+			filter_colors(frame, filteredImg);
+			//cvtColor(srcImg, grayImg, COLOR_BGR2GRAY);
+			//이미지 처리 blur 및 edge 검출
 
-		//roi 설정
-		//Point pt[4] = { Point(0,height * 1/2),Point(width,height * 1/2),Point(width,height),Point(0,height) };
-		Point pt[4] = { Point(width * 3 / 7,height * 3 / 5),Point(width * 4 / 7,height * 3 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
-		Mat roiImg;
-		Scalar WHITE_BGR(255, 255, 255);
-		roiImg = regionOfInterest(edgeImg, pt, WHITE_BGR);
+			imgProcessing(filteredImg, blurImg, 1);
+			imgProcessing(blurImg, edgeImg, 2);
 
-		vector<Vec4i> lines;
-		imshow("roiImg", roiImg);
-		HoughLinesP(roiImg, lines, 1, CV_PI / 180.0, 30, 10, 20);
-		srcImg.copyTo(dstImg);
-		double steering;
+			//roi 설정
+			//Point pt[4] = { Point(0,height * 1/2),Point(width,height * 1/2),Point(width,height),Point(0,height) };
+			Point pt[4] = { Point(width * 3 / 7,height * 3 / 5),Point(width * 4 / 7,height * 3 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
+			Mat roiImg;
+			Scalar WHITE_BGR(255, 255, 255);
+			roiImg = regionOfInterest(edgeImg, pt, WHITE_BGR);
 
-		drivingAngle_MS(dstImg, lines, steering, steer1);
+			vector<Vec4i> lines;
+			imshow("roiImg", roiImg);
+			HoughLinesP(roiImg, lines, 1, CV_PI / 180.0, 30, 10, 20);
+			srcImg.copyTo(dstImg);
 
-		//imshow("roiImg", roiImg);
 
-	}
+			drivingAngle_MS(dstImg, lines, steeringValue, steer1);
+
+			//imshow("roiImg", roiImg);
+			steering.setRatio(steeringValue);			//바퀴 조향
+			DCmotor.go(speedVal);
+		}
+
 	}
 
 
