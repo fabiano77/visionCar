@@ -94,7 +94,7 @@ int main()
 		Mat undistortImg;
 		vector<Vec4i> exLines;
 
-		double speedVal(20.0);	//초기 속도(0~100)
+		double speedVal(35.0);	//초기 속도(0~100)
 		double steering_After, steering_Before = 0;
 
 		int Mode;
