@@ -114,9 +114,10 @@ int main()
 
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
-		int numBoards = 20;
+		int numBoards = 5;	// 5개의 사진을 사용
 		DoCalib(disCoeffs, intrinsic, numBoards);
 		cout << "complete 'DoCalib()' function" << endl;
+
 		Mat distortFrame;
 
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
@@ -154,7 +155,7 @@ int main()
 			}
 			else //정상주행
 			{
-				DH.driving(frame, steerVal, speedVal, 40.0, 0.0);
+				DH.driving(frame, steerVal, speedVal, 35.0, 0.0);
 
 				steering.setRatio(steerVal);			//바퀴 조향
 				DCmotor.go(speedVal);

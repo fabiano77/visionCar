@@ -43,7 +43,8 @@ void Servo::setValue(uint16_t set_val)
 	if (set_val > maxVal) set_val = maxVal;
 	if (set_val < minVal) set_val = minVal;
 	//cout << " @pin :" << pin << ", value " << value << ", set_val :" << set_val << endl;
-	if (print) cout << " @servo pin :" << pin << ", ratio : " << (((double)(set_val - minVal) / (double)length) * 100.0) << endl;
+	//서보각 출력.
+	//if (print) cout << " @servo pin :" << pin << ", ratio : " << (((double)(set_val - minVal) / (double)length) * 100.0) << endl;
 	while (value < set_val)
 	{
 		value += 1;
