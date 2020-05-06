@@ -20,11 +20,6 @@ void filter_image(Mat image_color, Mat& image_filtered);
 int main()
 {
 
-	Scalar lower_w = Scalar(120, 120, 120); //흰색 차선 (RGB)
-	Scalar upper_w = Scalar(255, 255, 255);
-	Scalar lower_y = Scalar(10, 100, 100); //노란색 차선 (HSV)
-	Scalar upper_y = Scalar(40, 255, 255);
-
 	//board, servoMotor configuration-----------------------------
 	PCA9685 pca{};
 	pca.set_pwm_freq(60.0);
@@ -254,6 +249,11 @@ int main()
 }
 
 void filter_image(Mat image_color, Mat& image_filtered) {
+
+	Scalar lower_w = Scalar(120, 120, 120); //흰색 차선 (RGB)
+	Scalar upper_w = Scalar(255, 255, 255);
+	Scalar lower_y = Scalar(10, 100, 100); //노란색 차선 (HSV)
+	Scalar upper_y = Scalar(40, 255, 255);
 
 	Mat image_HSV; // 노란색을 검출할 때 InputArray로 사용 할 객채
 	Mat image_yellow; // 노란색을 검출하고 OutputArray로 사용
