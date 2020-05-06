@@ -39,5 +39,5 @@ private:
 	int height = 0;
 	Size imgSize;
 };
-
+bool calibImage(VideoCapture& inVideo, Mat& intrinsicMat, Mat& distCoefMat);
 #endif

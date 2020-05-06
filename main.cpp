@@ -93,14 +93,14 @@ int main()
 		}
 		Mat undistortImg;
 		vector<Vec4i> exLines;
-		double stiring;
+		double steeringAngle;
 		while (1) {
 			videocap >> frame;
 			undistort(frame, undistortImg, intrinsic, disCoeff);
 			imshow("Live", undistortImg);
 
 			bool Check = extractLines(undistortImg, exLines);
-			drivingAngle(undistortImg, exLines, stiring);
+			drivingAngle(undistortImg, exLines, steeringAngle);
 			waitKey(15);
 		}
 	}
