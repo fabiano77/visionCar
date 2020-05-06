@@ -16,13 +16,15 @@ using namespace cv;
 
 void filter_image(Mat image_color, Mat& image_filtered);
 
-Scalar lower_w = Scalar(120, 120, 120); //흰색 차선 (RGB)
-Scalar upper_w = Scalar(255, 255, 255);
-Scalar lower_y = Scalar(10, 100, 100); //노란색 차선 (HSV)
-Scalar upper_y = Scalar(40, 255, 255);
 
 int main()
 {
+
+	Scalar lower_w = Scalar(120, 120, 120); //흰색 차선 (RGB)
+	Scalar upper_w = Scalar(255, 255, 255);
+	Scalar lower_y = Scalar(10, 100, 100); //노란색 차선 (HSV)
+	Scalar upper_y = Scalar(40, 255, 255);
+
 	//board, servoMotor configuration-----------------------------
 	PCA9685 pca{};
 	pca.set_pwm_freq(60.0);
