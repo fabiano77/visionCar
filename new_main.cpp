@@ -158,11 +158,11 @@ int main()
 
 				steering.setRatio(steerVal);			//바퀴 조향
 				DCmotor.go(speedVal);
-			
-				waitKey(1);//33
+
 			}
 
 			imshow("frame", frame);
+			waitKey(5);//33
 
 			tm.stop();		//시간측정 끝
 			cout << tm.getTimeMilli() << "[ms]" << '\n';
