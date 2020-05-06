@@ -165,7 +165,7 @@ int main()
 			imshow("frame", frame);
 
 			tm.stop();		//시간측정 끝
-			cout << tm.getTimeMilli << [ms] << '\n';
+			cout << tm.getTimeMilli() << "[ms]" << '\n';
 		}
 	}
 	//end daehee's code
