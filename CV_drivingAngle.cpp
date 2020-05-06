@@ -435,7 +435,7 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 	Mat grayImg, blurImg, edgeImg, roiImg, dstImg;
 	int width = src.size().width;
 	int height = src.size().height;
-	filter_colors(src, filterImg, lower_yellow, upper_yellow);
+	filter_colors(src, filterImg);
 	cvtColor(filterImg, grayImg, COLOR_BGR2GRAY);
 	imgBlur(grayImg, blurImg, 1);
 	imgBlur(blurImg, edgeImg, 2);
@@ -451,7 +451,7 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 
 }
 
-void filter_colors(Mat& src, Mat& img_filtered, Scalar& lower, Scalar& upper) {
+void filter_colors(Mat& src, Mat& img_filtered) {
 	//
 	UMat bgrImg;
 	UMat hsvImg;
@@ -464,9 +464,13 @@ void filter_colors(Mat& src, Mat& img_filtered, Scalar& lower, Scalar& upper) {
 	//inRange(bgrImg, lower_white, upper_white, maskWhite);
 	//lower와 upper사이의 값을 1로 나머지는 0으로 저장
 	//bitwise_and(bgrImg, bgrImg, whiteImg, maskWhite);
+	Scalar lower_w = Scalar(120, 120, 120); //흰색 차선 (RGB)
+	Scalar upper_w = Scalar(255, 255, 255);
+	Scalar lower_y = Scalar(10, 100, 100); //노란색 차선 (HSV)
+	Scalar upper_y = Scalar(40, 255, 255);
 
 	cvtColor(bgrImg, hsvImg, COLOR_BGR2HSV);
-	inRange(hsvImg, lower, upper, maskYellow);
+	inRange(hsvImg, lower_y, upper_y, maskYellow);
 	bitwise_and(bgrImg, bgrImg, yellowImg, maskYellow);
 	//addWeighted(whiteImg, 1.0, yellowImg, 1.0, 0.0, imgCombined);//두 이미지 합치기
 	yellowImg.copyTo(imgCombined);;//노란색만 검출할때까지 사용

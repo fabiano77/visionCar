@@ -116,14 +116,14 @@ int main()
 		Mat disCoeffs;
 		int numBoards = 20;
 		DoCalib(disCoeffs, intrinsic, numBoards);
-
+		cout << "complete 'DoCalib()' function" << endl;
 		Mat distortFrame;
 
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
 									//sLevel : 직선구간 민감도(높을수록 많이 꺾임)
 		DH.mappingSetSection(0, 0.10, 0.40, 0.70, 0.77, 1.00);
-		DH.mappingSetValue(0.0, 0.00, 10.0, 25.0, 50.0, 50.0);
-		//DH.mappingSetValue(10, 10.0, 15.0, 25.0, 50.0, 50.0);
+		//DH.mappingSetValue(0.0, 0.00, 10.0, 25.0, 50.0, 50.0);
+		DH.mappingSetValue(10, 10.0, 15.0, 25.0, 50.0, 50.0);
 		//코너구간 조향수준 맵핑값 세팅
 
 		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
@@ -140,28 +140,26 @@ int main()
 			{
 
 			}
-			else if (detectColorSign.isRedStop(frame, 10)) //빨간색 표지판 감지
-			{
-				while (detectColorSign.isRedStop(frame, 10))
-				{
-					DCmotor.stop();	//멈춘다.
-				}
-			}
+			//else if (detectColorSign.isRedStop(frame, 10)) //빨간색 표지판 감지
+			//{
+			//	while (detectColorSign.isRedStop(frame, 10))
+			//	{
+			//		DCmotor.stop();	//멈춘다.
+			//		imshow("frame", frame);
+			//	}
+			//}
 			else if (false)	//기타 event 체크
 			{
 
 			}
 			else //정상주행
 			{
-				//DH.driving(undistortFrame, steerVal, speedVal, 40.0, 2.0);
-				DH.driving(frame, steerVal, speedVal, 30.0, 0.0);
+				DH.driving(frame, steerVal, speedVal, 40.0, 0.0);
 
 				steering.setRatio(steerVal);			//바퀴 조향
 				DCmotor.go(speedVal);
-
-				cout << "steer : " << steerVal << ", speed : " << speedVal << endl;
 			
-				waitKey(10);//33
+				waitKey(1);//33
 			}
 			imshow("frame", frame);
 		}
@@ -171,69 +169,13 @@ int main()
 
 	else if (mode == 5) // SangMin's code
 	{
-		//Mat intrinsic;
-		//Mat disCoeff;
-		//if (calibImage(videocap, intrinsic, disCoeff)) {
-		//	cout << "Calibration Success!" << endl;
-		//}
-		//else {
-		//	cout << "Calibration Failed!" << endl;
-		//}
-		//Mat undistortImg;
-		//vector<Vec4i> exLines;
 
-		//double speedVal(40.0);	//초기 속도(0~100)
-		//double steering_After, steering_Before = 0;
-
-		//int Mode;
-		//cout << "select Mode : ";
-		//cin >> Mode;
-		//cout << "Mode : " << Mode << endl;
-		//while (1) {
-		//	videocap >> frame;
-		//	undistort(frame, undistortImg, intrinsic, disCoeff);
-		//	imshow("Live", undistortImg);
-
-		//	bool Check = extractLines(undistortImg, exLines);
-		//	drivingAngle_SM(undistortImg, exLines, steering_After, steering_Before, Mode);
-		//	steering.setRatio(50 + steering_After); //바퀴 조향
-		//	cout << "조향각 : " << 50 + steering_After << endl;
-		//	DCmotor.go(speedVal);
-		//	waitKey(15);
-
-		//}
 	}
 	//end SangMin's code
 
 	else if (mode == 6)
 	{
-	while (videocap.isOpened()) {
-		videocap >> srcImg;
-		filter_colors(srcImg, filteredImg);
-		//cvtColor(srcImg, grayImg, COLOR_BGR2GRAY);
-		//이미지 처리 blur 및 edge 검출
 
-		imgProcessing(filteredImg, blurImg, 1);
-		imgProcessing(blurImg, edgeImg, 2);
-
-		//roi 설정
-		//Point pt[4] = { Point(0,height * 1/2),Point(width,height * 1/2),Point(width,height),Point(0,height) };
-		Point pt[4] = { Point(width * 3 / 7,height * 3 / 5),Point(width * 4 / 7,height * 3 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
-		Mat roiImg;
-		Scalar WHITE_BGR(255, 255, 255);
-		roiImg = regionOfInterest(edgeImg, pt, WHITE_BGR);
-
-		vector<Vec4i> lines;
-		imshow("roiImg", roiImg);
-		HoughLinesP(roiImg, lines, 1, CV_PI / 180.0, 30, 10, 20);
-		srcImg.copyTo(dstImg);
-		double steering;
-
-		drivingAngle_MS(dstImg, lines, steering, steer1);
-
-		//imshow("roiImg", roiImg);
-
-	}
 	}
 
 
