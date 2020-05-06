@@ -11,34 +11,34 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 	Vec4f params;
 	Point pt1, pt2;
 	int x1, y1, x2, y2;
-	vector<Vec4i> newLines;//í›„ì— ì™¼ìª½ì˜¤ë¥¸ìª½ í•˜ë‚˜ë§Œ ë‚¨ê¸°ê¸°
+	vector<Vec4i> newLines;//ÈÄ¿¡ ¿ŞÂÊ¿À¸¥ÂÊ ÇÏ³ª¸¸ ³²±â±â
 	const int width = inputImg.size().width;
 	const int height = inputImg.size().height;
 	vector<float> slopeDegrees;
-	float slopeDegree;//í•­ìƒ ë¼ë””ì•ˆìœ¼ë¡œ ë§Œë“¤ê²ƒ
-	double preSteering = steering;//ì´ì „ ê°’ë¶ˆëŸ¬ì˜¤ê¸° ìµœì¢… ì¡°í–¥ê°ë„ ì¡°ì ˆìš©
-	float slopeThreshold = 0.3;//í•­ìƒ ë¼ë””ì•ˆìœ¼ë¡œ ë§Œë“¤ ê²ƒ
+	float slopeDegree;//Ç×»ó ¶óµğ¾ÈÀ¸·Î ¸¸µé°Í
+	double preSteering = steering;//ÀÌÀü °ªºÒ·¯¿À±â ÃÖÁ¾ Á¶Çâ°¢µµ Á¶Àı¿ë
+	float slopeThreshold = 0.3;//Ç×»ó ¶óµğ¾ÈÀ¸·Î ¸¸µé °Í
 	float headingAngle;
-	//ì„ì‹œë¡œ 1rad(56.6ë„ ì •ë„) ìœ¼ë¡œí•´ì„œ ëª¨ë“  ë¼ì¸ ë‹¤ ê²€ì¶œ
+	//ÀÓ½Ã·Î 1rad(56.6µµ Á¤µµ) À¸·ÎÇØ¼­ ¸ğµç ¶óÀÎ ´Ù °ËÃâ
 
-	//vector pointë¡œ ì„ ì–¸í•´ë³´ì
+	//vector point·Î ¼±¾ğÇØº¸ÀÚ
 	vector<Point> newPoint;
 	for (int k = 0; k < lines.size(); k++) {
 		params = lines[k];
 		x1 = params[0];
 		y1 = params[1];
-		//x1,y1ì˜ ì 
+		//x1,y1ÀÇ Á¡
 		x2 = params[2];
 		y2 = params[3];
-		//x2,y2ì˜ ì 
+		//x2,y2ÀÇ Á¡
 
 		pt1 = Point(x1, y1);
 		pt2 = Point(x2, y2);
 
 		if (x2 - x1 == 0)
-			slopeDegree = 999;//xì˜ ë³€í™”ëŸ‰ì´ ì—†ëŠ” ê²½ìš° ê°ë„ 90ë„ë¡œ ë§Œë“¤ê¸°
+			slopeDegree = 999;//xÀÇ º¯È­·®ÀÌ ¾ø´Â °æ¿ì °¢µµ 90µµ·Î ¸¸µé±â
 		else slopeDegree = (y2 - y1) / (float)(x2 - x1);
-		//slope degree ì— ë”°ë¼ ë„£ì„ì§€ë§ì§€ ê²°ì •
+		//slope degree ¿¡ µû¶ó ³ÖÀ»Áö¸»Áö °áÁ¤
 		if (abs(slopeDegree) > slopeThreshold) {
 			newLines.push_back(params);
 			slopeDegree = atan(slopeDegree);
@@ -62,10 +62,10 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 		float cx = width * 0.5; //x coordinate of center of image
 		if (slope > 0 && x1 > cx&& x2 > cx)
 			right_lines.push_back(line);
-		//slopeê°€ 0ë³´ë‹¤ í¬ë©´ pi/2+a radì—ì„œ ì˜¨ ê²ƒì´ë¯€ë¡œ ì˜¤ë¥¸ìª½ì¼ ê²ƒ
+		//slope°¡ 0º¸´Ù Å©¸é pi/2+a rad¿¡¼­ ¿Â °ÍÀÌ¹Ç·Î ¿À¸¥ÂÊÀÏ °Í
 		else if (slope < 0 && x1 < cx && x2 < cx)
 			left_lines.push_back(line);
-		//slopeê°€ 0ë³´ë‹¤ ì‘ìœ¼ë©´ pit/2-a radì—ì„œ ì˜¨ ê²ƒì´ë¯€ë¡œ ì™¼ìª½ì¼ ê²ƒì„
+		//slope°¡ 0º¸´Ù ÀÛÀ¸¸é pit/2-a rad¿¡¼­ ¿Â °ÍÀÌ¹Ç·Î ¿ŞÂÊÀÏ °ÍÀÓ
 	}
 
 	//Run linear regression to find best fit line for right and left lane lines
@@ -120,11 +120,11 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 
 	Vec4f fitLeft, fitRight;
 
-	Point rp1, rp0;//ì˜¤ë¥¸ìª½
-	Point lp1, lp0;//ì™¼ìª½
-	float s = 1000;//ê°’ 
-	double dydxLeft, dydxRight;//ê° ì¶•ë³„ ê¸°ìš¸ê¸° ê°’
-	//ë°©í–¥ ë²¡í„° êµ¬í•˜ëŠ” ê³³ì„
+	Point rp1, rp0;//¿À¸¥ÂÊ
+	Point lp1, lp0;//¿ŞÂÊ
+	float s = 1000;//°ª 
+	double dydxLeft, dydxRight;//°¢ Ãàº° ±â¿ï±â °ª
+	//¹æÇâ º¤ÅÍ ±¸ÇÏ´Â °÷ÀÓ
 	if (left_index > 0) {
 		fitLine(leftLines, fitLeft, DIST_L2, 0, 0.01, 0.01);
 		lp1.x = cvRound(fitLeft[0] * (+s) + fitLeft[2]);
@@ -134,35 +134,35 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 
 		dydxLeft = double(-fitLeft[1]) / double(fitLeft[0]);
 	}
-	else { dydxLeft = 0; }//í•œìª½ë¼ì¸ ì¸ì‹ ì•ˆë˜ëŠ” ì˜ˆì™¸ ì²˜ë¦¬ ë¶€ë¶„
+	else { dydxLeft = 0; }//ÇÑÂÊ¶óÀÎ ÀÎ½Ä ¾ÈµÇ´Â ¿¹¿Ü Ã³¸® ºÎºĞ
 
 	if (right_index > 0) {
 		fitLine(rightLines, fitRight, DIST_L2, 0, 0.01, 0.01);
-		rp1.x = cvRound(fitRight[0] * s + fitRight[2]);//[0]ì€ ë°©í–¥ ë²¡í„° dx
-		rp1.y = cvRound(fitRight[1] * s + fitRight[3]);//[1]ì€ ë°©í–¥ë²¡í„° dy
+		rp1.x = cvRound(fitRight[0] * s + fitRight[2]);//[0]Àº ¹æÇâ º¤ÅÍ dx
+		rp1.y = cvRound(fitRight[1] * s + fitRight[3]);//[1]Àº ¹æÇâº¤ÅÍ dy
 		rp0.x = cvRound(fitRight[0] * (-s) + fitRight[2]);
 		rp0.y = cvRound(fitRight[1] * (-s) + fitRight[3]);
 
 		dydxRight = double(-fitRight[1]) / double(fitRight[0]);
 	}
-	else { dydxRight = 0; } // í•œìª½ë¼ì¸ ì¸ì‹ ì•ˆë˜ëŠ” ì˜ˆì™¸ ì²˜ë¦¬ ë¶€ë¶„
+	else { dydxRight = 0; } // ÇÑÂÊ¶óÀÎ ÀÎ½Ä ¾ÈµÇ´Â ¿¹¿Ü Ã³¸® ºÎºĞ
 
-	//ê°’ì €ì¥
-	double angleThreshold = 10;// 10ë„ ì´í•˜ëŠ” 0ìœ¼ë¡œë§Œë“¤ê¸°
+	//°ªÀúÀå
+	double angleThreshold = 10;// 10µµ ÀÌÇÏ´Â 0À¸·Î¸¸µé±â
 	if (abs(atan(dydxLeft) + atan(dydxRight)) <= (angleThreshold * CV_PI / 180)) {
 		headingAngle = 0;
 	}
 	else {
 		headingAngle = -180 / CV_PI * (atan((dydxLeft)) + atan((dydxRight)));
 	}
-	//steeringê°’ì€ ê°ë„ë¡œ ë‚˜ì˜¤ë©° ì •ë©´ê¸°ì¤€ 0ë„ì„
+	//steering°ªÀº °¢µµ·Î ³ª¿À¸ç Á¤¸é±âÁØ 0µµÀÓ
 
-	// ì¢Œìš° ì¸ì‹ ì•ˆë˜ëŠ” ê²½ìš° ì•Œê³ ë¦¬ì¦˜ ì¸ì‹ ë¶€ë¶„(íšŒì „ì˜ ê²½ìš°) -> ìˆ˜ì • ììœ ë¡­ê²Œ í•˜ì„¸ìš”
-	
-	// ì•„ì£¼ ê¸°ë³¸ì ì¸ ì•Œê³ ë¦¬ì¦˜ ìƒsteering = -headingAngle;
-	//right_index=0ì¼ë•Œ ì˜¤ë¥¸ì„  ê²€ì¶œX
-	//left_index=0ì¼ë•Œ ì™¼ì„  ê²€ì¶œ
-	//heading Angleì€ ì°¨ëŸ‰ì´ ë°”ë¼ë³´ëŠ” ë°©í–¥
+	// ÁÂ¿ì ÀÎ½Ä ¾ÈµÇ´Â °æ¿ì ¾Ë°í¸®Áò ÀÎ½Ä ºÎºĞ(È¸ÀüÀÇ °æ¿ì) -> ¼öÁ¤ ÀÚÀ¯·Ó°Ô ÇÏ¼¼¿ä
+
+	// ¾ÆÁÖ ±âº»ÀûÀÎ ¾Ë°í¸®Áò »ósteering = -headingAngle;
+	//right_index=0ÀÏ¶§ ¿À¸¥¼± °ËÃâX
+	//left_index=0ÀÏ¶§ ¿Ş¼± °ËÃâ
+	//heading AngleÀº Â÷·®ÀÌ ¹Ù¶óº¸´Â ¹æÇâ
 	cout << "steering: " << steering << endl;
 	slopeDegrees.clear();
 	leftLines.clear();
@@ -173,38 +173,38 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 	newLines.clear();
 }
 
-void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before , int Mode) {
+void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int Mode) {
 	Vec4f params;
 	Point pt1, pt2;
 	int x1, y1, x2, y2;
-	vector<Vec4i> newLines;//í›„ì— ì™¼ìª½ì˜¤ë¥¸ìª½ í•˜ë‚˜ë§Œ ë‚¨ê¸°ê¸°
+	vector<Vec4i> newLines;//ÈÄ¿¡ ¿ŞÂÊ¿À¸¥ÂÊ ÇÏ³ª¸¸ ³²±â±â
 	const int width = inputImg.size().width;
 	const int height = inputImg.size().height;
 	vector<float> slopeDegrees;
-	float slopeDegree;//í•­ìƒ ë¼ë””ì•ˆìœ¼ë¡œ ë§Œë“¤ê²ƒ
-	double preSteering = steering;//ì´ì „ ê°’ë¶ˆëŸ¬ì˜¤ê¸° ìµœì¢… ì¡°í–¥ê°ë„ ì¡°ì ˆìš©
-	float slopeThreshold = 0.3;//í•­ìƒ ë¼ë””ì•ˆìœ¼ë¡œ ë§Œë“¤ ê²ƒ
+	float slopeDegree;//Ç×»ó ¶óµğ¾ÈÀ¸·Î ¸¸µé°Í
+	double preSteering = steering;//ÀÌÀü °ªºÒ·¯¿À±â ÃÖÁ¾ Á¶Çâ°¢µµ Á¶Àı¿ë
+	float slopeThreshold = 0.3;//Ç×»ó ¶óµğ¾ÈÀ¸·Î ¸¸µé °Í
 	float headingAngle;
-	//ì„ì‹œë¡œ 1rad(56.6ë„ ì •ë„) ìœ¼ë¡œí•´ì„œ ëª¨ë“  ë¼ì¸ ë‹¤ ê²€ì¶œ
+	//ÀÓ½Ã·Î 1rad(56.6µµ Á¤µµ) À¸·ÎÇØ¼­ ¸ğµç ¶óÀÎ ´Ù °ËÃâ
 
-	//vector pointë¡œ ì„ ì–¸í•´ë³´ì
+	//vector point·Î ¼±¾ğÇØº¸ÀÚ
 	vector<Point> newPoint;
 	for (int k = 0; k < lines.size(); k++) {
 		params = lines[k];
 		x1 = params[0];
 		y1 = params[1];
-		//x1,y1ì˜ ì 
+		//x1,y1ÀÇ Á¡
 		x2 = params[2];
 		y2 = params[3];
-		//x2,y2ì˜ ì 
+		//x2,y2ÀÇ Á¡
 
 		pt1 = Point(x1, y1);
 		pt2 = Point(x2, y2);
 
 		if (x2 - x1 == 0)
-			slopeDegree = 999;//xì˜ ë³€í™”ëŸ‰ì´ ì—†ëŠ” ê²½ìš° ê°ë„ 90ë„ë¡œ ë§Œë“¤ê¸°
+			slopeDegree = 999;//xÀÇ º¯È­·®ÀÌ ¾ø´Â °æ¿ì °¢µµ 90µµ·Î ¸¸µé±â
 		else slopeDegree = (y2 - y1) / (float)(x2 - x1);
-		//slope degree ì— ë”°ë¼ ë„£ì„ì§€ë§ì§€ ê²°ì •
+		//slope degree ¿¡ µû¶ó ³ÖÀ»Áö¸»Áö °áÁ¤
 		if (abs(slopeDegree) > slopeThreshold) {
 			newLines.push_back(params);
 			slopeDegree = atan(slopeDegree);
@@ -226,12 +226,12 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		y2 = line[3];
 
 		float cx = width * 0.5; //x coordinate of center of image
-		if (slope > 0 && x1 > cx && x2 > cx)
+		if (slope > 0 && x1 > cx&& x2 > cx)
 			right_lines.push_back(line);
-		//slopeê°€ 0ë³´ë‹¤ í¬ë©´ pi/2+a radì—ì„œ ì˜¨ ê²ƒì´ë¯€ë¡œ ì˜¤ë¥¸ìª½ì¼ ê²ƒ
+		//slope°¡ 0º¸´Ù Å©¸é pi/2+a rad¿¡¼­ ¿Â °ÍÀÌ¹Ç·Î ¿À¸¥ÂÊÀÏ °Í
 		else if (slope < 0 && x1 < cx && x2 < cx)
 			left_lines.push_back(line);
-		//slopeê°€ 0ë³´ë‹¤ ì‘ìœ¼ë©´ pit/2-a radì—ì„œ ì˜¨ ê²ƒì´ë¯€ë¡œ ì™¼ìª½ì¼ ê²ƒì„
+		//slope°¡ 0º¸´Ù ÀÛÀ¸¸é pit/2-a rad¿¡¼­ ¿Â °ÍÀÌ¹Ç·Î ¿ŞÂÊÀÏ °ÍÀÓ
 	}
 
 	//Run linear regression to find best fit line for right and left lane lines
@@ -286,14 +286,14 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 
 	Vec4f fitLeft, fitRight;
 
-	Point rp1, rp0;//ì˜¤ë¥¸ìª½
-	Point lp1, lp0;//ì™¼ìª½
-	float s = 1000;//ê°’ 
-	double dydxLeft, dydxRight;//ê° ì¶•ë³„ ê¸°ìš¸ê¸° ê°’
+	Point rp1, rp0;//¿À¸¥ÂÊ
+	Point lp1, lp0;//¿ŞÂÊ
+	float s = 1000;//°ª 
+	double dydxLeft, dydxRight;//°¢ Ãàº° ±â¿ï±â °ª
 
 	double left_interP = 0, right_interP = 0;
 	double left_b, right_b;
-	//ë°©í–¥ ë²¡í„° êµ¬í•˜ëŠ” ê³³ì„
+	//¹æÇâ º¤ÅÍ ±¸ÇÏ´Â °÷ÀÓ
 	if (left_index > 0) {
 		fitLine(leftLines, fitLeft, DIST_L2, 0, 0.01, 0.01);
 		lp1.x = cvRound(fitLeft[0] * (+s) + fitLeft[2]);
@@ -302,30 +302,30 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		lp0.y = cvRound(fitLeft[1] * (-s) + fitLeft[3]);
 
 		dydxLeft = double(-fitLeft[1]) / double(fitLeft[0]);
-		left_b = dydxLeft * lp1.x - lp1.y; // y = ax + b ì—ì„œ bë¥¼ êµ¬í•˜ëŠ” ì‹
-		left_interP = dydxLeft * width / 2 + left_b; // ì°¨ì„ ì˜ ë°©ì •ì‹ì—ì„œ xê°’ì´ xì¶• ì¤‘ì‹¬ì¼ë•Œ yì˜ ê°’
+		left_b = dydxLeft * lp1.x - lp1.y; // y = ax + b ¿¡¼­ b¸¦ ±¸ÇÏ´Â ½Ä
+		left_interP = dydxLeft * width / 2 + left_b; // Â÷¼±ÀÇ ¹æÁ¤½Ä¿¡¼­ x°ªÀÌ xÃà Áß½ÉÀÏ¶§ yÀÇ °ª
 	}
-	else { dydxLeft = 0; }//í•œìª½ë¼ì¸ ì¸ì‹ ì•ˆë˜ëŠ” ì˜ˆì™¸ ì²˜ë¦¬ ë¶€ë¶„
+	else { dydxLeft = 0; }//ÇÑÂÊ¶óÀÎ ÀÎ½Ä ¾ÈµÇ´Â ¿¹¿Ü Ã³¸® ºÎºĞ
 
 	if (right_index > 0) {
 		fitLine(rightLines, fitRight, DIST_L2, 0, 0.01, 0.01);
-		rp1.x = cvRound(fitRight[0] * s + fitRight[2]);//[0]ì€ ë°©í–¥ ë²¡í„° dx
-		rp1.y = cvRound(fitRight[1] * s + fitRight[3]);//[1]ì€ ë°©í–¥ë²¡í„° dy
+		rp1.x = cvRound(fitRight[0] * s + fitRight[2]);//[0]Àº ¹æÇâ º¤ÅÍ dx
+		rp1.y = cvRound(fitRight[1] * s + fitRight[3]);//[1]Àº ¹æÇâº¤ÅÍ dy
 		rp0.x = cvRound(fitRight[0] * (-s) + fitRight[2]);
 		rp0.y = cvRound(fitRight[1] * (-s) + fitRight[3]);
 
 		dydxRight = double(-fitRight[1]) / double(fitRight[0]);
-		right_b = dydxRight * rp1.x - rp1.y; // y = ax + b ì—ì„œ bë¥¼ êµ¬í•˜ëŠ” ì‹
-		right_interP = dydxRight * width / 2 + right_b; // ë¼ì¸ì˜ ë°©ì •ì‹ì—ì„œ xê°’ì´ xì¶• ì¤‘ì‹¬ì¼ë•Œ yì˜ ê°’
+		right_b = dydxRight * rp1.x - rp1.y; // y = ax + b ¿¡¼­ b¸¦ ±¸ÇÏ´Â ½Ä
+		right_interP = dydxRight * width / 2 + right_b; // ¶óÀÎÀÇ ¹æÁ¤½Ä¿¡¼­ x°ªÀÌ xÃà Áß½ÉÀÏ¶§ yÀÇ °ª
 	}
-	else { dydxRight = 0; } // í•œìª½ë¼ì¸ ì¸ì‹ ì•ˆë˜ëŠ” ì˜ˆì™¸ ì²˜ë¦¬ ë¶€ë¶„
-	//ê°’ì €ì¥
-	
-	//steeringê°’ì€ ê°ë„ë¡œ ë‚˜ì˜¤ë©° ì •ë©´ê¸°ì¤€ 0ë„ì„
+	else { dydxRight = 0; } // ÇÑÂÊ¶óÀÎ ÀÎ½Ä ¾ÈµÇ´Â ¿¹¿Ü Ã³¸® ºÎºĞ
+	//°ªÀúÀå
+
+	//steering°ªÀº °¢µµ·Î ³ª¿À¸ç Á¤¸é±âÁØ 0µµÀÓ
 	////////////////////////////////////////////////////////////////////
-	// ìˆ˜ì •ëœ ë¶€ë¶„
+	// ¼öÁ¤µÈ ºÎºĞ
 	////////////////////////////////////////////////////////////////////
-	double angleThreshold = 2.5;// 2.5ë„ ì´í•˜ëŠ” 0ìœ¼ë¡œë§Œë“¤ê¸°
+	double angleThreshold = 2.5;// 2.5µµ ÀÌÇÏ´Â 0À¸·Î¸¸µé±â
 	if (abs(atan(dydxLeft) + atan(dydxRight)) <= (angleThreshold * CV_PI / 180)) {
 		headingAngle = 0;
 	}
@@ -333,12 +333,12 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		headingAngle = -180 / CV_PI * (atan((dydxLeft)) + atan((dydxRight)));
 	}
 
-	double weight = 1.75; // steeringì— ê°€ì¤‘ì¹˜ë¥¼ ì¤˜ì„œ ì¡°í–¥ê°ì„ ë§ì¶°ì¤Œ. Mode1ì—ì„œ ì‚¬ìš©
+	double weight = 1.75; // steering¿¡ °¡ÁßÄ¡¸¦ Áà¼­ Á¶Çâ°¢À» ¸ÂÃçÁÜ. Mode1¿¡¼­ »ç¿ë
 
 	if (Mode == 1) {
-		// ë²”ìœ„ë¥¼ ì§€ì •í•´ì„œ í•´ë‹¹ ë²”ìœ„ë§ˆë‹¤ ì¼ì •í•œ ì¡°í–¥ê°ì„ ì„¤ì •í•´ë‘ .(í—¤ë”©ê°ì´ í•´ë‹¹ ë²”ìœ„ì— ë“¤ì–´ì˜¤ë©´ ì¡°í–¥ê°ì´ ì„¤ì •ë¨)
-		// ì°¨ì„ ì˜ ê°œìˆ˜ì— ë”°ë¼ ì¡°í–¥ê°ì˜ ë°©í–¥ì„ ì¡ì•„ì¤Œ.
-		// steeringì˜ ê°ë„ ì¡°ì •
+		// ¹üÀ§¸¦ ÁöÁ¤ÇØ¼­ ÇØ´ç ¹üÀ§¸¶´Ù ÀÏÁ¤ÇÑ Á¶Çâ°¢À» ¼³Á¤ÇØµÒ.(Çìµù°¢ÀÌ ÇØ´ç ¹üÀ§¿¡ µé¾î¿À¸é Á¶Çâ°¢ÀÌ ¼³Á¤µÊ)
+		// Â÷¼±ÀÇ °³¼ö¿¡ µû¶ó Á¶Çâ°¢ÀÇ ¹æÇâÀ» Àâ¾ÆÁÜ.
+		// steeringÀÇ °¢µµ Á¶Á¤
 		if (headingAngle == 0)
 			steering = 0;
 		else if (abs(headingAngle) <= 10) {
@@ -366,40 +366,40 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 				steering = -20;
 		}
 		steering *= weight;
-		// steeringì˜ ë°©í–¥ ì¡°ì •
-		if ((right_index != 0) && (left_index != 0)) { // ì°¨ì„ ì´ ë‘ ê°œì¼ ë•Œ
-			// steering ê·¸ëŒ€ë¡œ
+		// steeringÀÇ ¹æÇâ Á¶Á¤
+		if ((right_index != 0) && (left_index != 0)) { // Â÷¼±ÀÌ µÎ °³ÀÏ ¶§
+			// steering ±×´ë·Î
 		}
-		else if (((right_index == 0) && (left_index != 0)) || ((right_index != 0) && (left_index == 0))) { // ì°¨ì„ ì´ í•œ ê°œì¼ ë•Œ
-			// steering ë°˜ëŒ€ë¡œ
+		else if (((right_index == 0) && (left_index != 0)) || ((right_index != 0) && (left_index == 0))) { // Â÷¼±ÀÌ ÇÑ °³ÀÏ ¶§
+			// steering ¹İ´ë·Î
 			steering = -steering;
 		}
-		else { // ì°¨ì„ ì´ ì—†ì„ ë•Œ
+		else { // Â÷¼±ÀÌ ¾øÀ» ¶§
 			steering = steering_Before;
 		}
 	}
 	else if (Mode == 2) {
-		// í•œ ìª½ ì°¨ì„ ì— ê°€ê¹Œì›Œ ì¡Œì„ ë•Œ ê°ë„ë¥¼ ë°˜ëŒ€ë¡œ í¬ê²Œ ì¤˜ì„œ í—¤ë”©ê°ì´ 0ì´ ë  ë•Œ ê¹Œì§€ ìœ ì§€ì‹œì¼œ ì¤€ë‹¤.
-		// í—¤ë”©ê°ì´ 0ì´ ë˜ë©´ ì¡°í–¥ê°ì„ 0ìœ¼ë¡œ ë°”ê¿”ì¤€ë‹¤.
-		if ((left_interP > 0) || (right_interP > 0)) { // í•œ ìª½ ë¼ì¸ì— ê°€ê¹Œì›Œ ì¡Œì„ ë•Œ
-			if (left_interP > right_interP) // ì˜¤ë¥¸ìª½ ì°¨ì„ ì— ê°€ê¹Œì›Œ ì¡Œì„ ë•Œ
+		// ÇÑ ÂÊ Â÷¼±¿¡ °¡±î¿ö Á³À» ¶§ °¢µµ¸¦ ¹İ´ë·Î Å©°Ô Áà¼­ Çìµù°¢ÀÌ 0ÀÌ µÉ ¶§ ±îÁö À¯Áö½ÃÄÑ ÁØ´Ù.
+		// Çìµù°¢ÀÌ 0ÀÌ µÇ¸é Á¶Çâ°¢À» 0À¸·Î ¹Ù²ãÁØ´Ù.
+		if ((left_interP > 0) || (right_interP > 0)) { // ÇÑ ÂÊ ¶óÀÎ¿¡ °¡±î¿ö Á³À» ¶§
+			if (left_interP > right_interP) // ¿À¸¥ÂÊ Â÷¼±¿¡ °¡±î¿ö Á³À» ¶§
 				steering = -30;
-			else // ì™¼ìª½ ì°¨ì„ ì— ê°€ê¹Œì›Œ ì¡Œì„ ë•Œ
+			else // ¿ŞÂÊ Â÷¼±¿¡ °¡±î¿ö Á³À» ¶§
 				steering = 30;
 		}
-		else if (headingAngle == 0) { // í—¤ë”©ê°ì´ 0ì¼ ë•Œ
+		else if (headingAngle == 0) { // Çìµù°¢ÀÌ 0ÀÏ ¶§
 			steering = 0;
 		}
-		else // ì´ ì™¸ì— ê²½ìš°ëŠ” ê°ë„ ìœ ì§€
+		else // ÀÌ ¿Ü¿¡ °æ¿ì´Â °¢µµ À¯Áö
 			steering = steering_Before;
 	}
 	else {
 		cout << " Mode error" << endl;
 	}
-	// ì•„ì£¼ ê¸°ë³¸ì ì¸ ì•Œê³ ë¦¬ì¦˜ ìƒsteering = -headingAngle;
-	//right_index=0ì¼ë•Œ ì˜¤ë¥¸ì„  ê²€ì¶œX
-	//left_index=0ì¼ë•Œ ì™¼ì„  ê²€ì¶œ
-	//heading Angleì€ ì°¨ëŸ‰ì´ ë°”ë¼ë³´ëŠ” ë°©í–¥
+	// ¾ÆÁÖ ±âº»ÀûÀÎ ¾Ë°í¸®Áò »ósteering = -headingAngle;
+	//right_index=0ÀÏ¶§ ¿À¸¥¼± °ËÃâX
+	//left_index=0ÀÏ¶§ ¿Ş¼± °ËÃâ
+	//heading AngleÀº Â÷·®ÀÌ ¹Ù¶óº¸´Â ¹æÇâ
 	cout << "steering: " << steering << endl;
 	slopeDegrees.clear();
 	leftLines.clear();
@@ -410,12 +410,12 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	newLines.clear();
 }
 
-void regionOfInterest(Mat& src, Mat& dst, Point* points) {// pointsì˜ í¬ì¸í„°ì¸ ì´ìœ -> ì—¬ëŸ¬ê°œì˜ ê¼­ì§“ì  ê²½ìš°
+void regionOfInterest(Mat& src, Mat& dst, Point* points) {// pointsÀÇ Æ÷ÀÎÅÍÀÎ ÀÌÀ¯-> ¿©·¯°³ÀÇ ²ÀÁşÁ¡ °æ¿ì
 
 	Mat maskImg = Mat::zeros(src.size(), CV_8UC1);
 
 	Scalar ignore_mask_color = Scalar(255, 255, 255);
-	const Point* ppt[1] = { points };//ê°œì˜ ê¼­ì§“ì  :n vertices
+	const Point* ppt[1] = { points };//°³ÀÇ ²ÀÁşÁ¡ :n vertices
 	int npt[] = { 4 };
 
 	fillPoly(maskImg, ppt, npt, 1, Scalar(255, 255, 255), LINE_8);
@@ -438,12 +438,12 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 	Mat grayImg, blurImg, edgeImg, roiImg, dstImg;
 	int width = src.size().width;
 	int height = src.size().height;
-	filter_colors(src, filterImg,lower_yellow,higher_white);
+	filter_colors(src, filterImg, lower_yellow, higher_white);
 	cvtColor(filterImg, grayImg, COLOR_BGR2GRAY);
 	imgBlur(grayImg, blurImg, 1);
 	imgBlur(blurImg, edgeImg, 2);
 	Point pt[4] = { Point(0,height * 2 / 5),Point(width,height * 2 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
-	//roi point ì„¤ì •
+	//roi point ¼³Á¤
 
 	regionOfInterest(edgeImg, roiImg, pt);
 	vector<Vec4i> extractLines;
@@ -454,7 +454,7 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 
 }
 
-void filter_colors(Mat& src, Mat& img_filtered,Scalar& lower,Scalar& upper) {
+void filter_colors(Mat& src, Mat& img_filtered, Scalar& lower, Scalar& upper) {
 	//
 	UMat bgrImg;
 	UMat hsvImg;
@@ -463,15 +463,149 @@ void filter_colors(Mat& src, Mat& img_filtered,Scalar& lower,Scalar& upper) {
 	UMat imgCombined;
 	src.copyTo(bgrImg);
 
-	//white ë³€ê²½
+	//white º¯°æ
 	//inRange(bgrImg, lower_white, upper_white, maskWhite);
-	//lowerì™€ upperì‚¬ì´ì˜ ê°’ì„ 1ë¡œ ë‚˜ë¨¸ì§€ëŠ” 0ìœ¼ë¡œ ì €ì¥
+	//lower¿Í upper»çÀÌÀÇ °ªÀ» 1·Î ³ª¸ÓÁö´Â 0À¸·Î ÀúÀå
 	//bitwise_and(bgrImg, bgrImg, whiteImg, maskWhite);
 
 	cvtColor(bgrImg, hsvImg, COLOR_BGR2HSV);
 	inRange(hsvImg, lower, upper, maskYellow);
 	bitwise_and(bgrImg, bgrImg, yellowImg, maskYellow);
-	//addWeighted(whiteImg, 1.0, yellowImg, 1.0, 0.0, imgCombined);//ë‘ ì´ë¯¸ì§€ í•©ì¹˜ê¸°
-	yellowImg.copyTo(imgCombined);;//ë…¸ë€ìƒ‰ë§Œ ê²€ì¶œí• ë•Œê¹Œì§€ ì‚¬ìš©
+	//addWeighted(whiteImg, 1.0, yellowImg, 1.0, 0.0, imgCombined);//µÎ ÀÌ¹ÌÁö ÇÕÄ¡±â
+	yellowImg.copyTo(imgCombined);;//³ë¶õ»ö¸¸ °ËÃâÇÒ¶§±îÁö »ç¿ë
 	imgCombined.copyTo(img_filtered);
+}
+
+
+class Steer {
+public:
+	Steer();
+	void inputData(double dydxRight, double dydxLeft, double headingAngle);
+	double getSteering();
+private:
+	int nextIdx(int pos);
+	int predIdx(int pos);
+	double RightAngle[MAX_SAVINGANGLE];
+	double LeftAngle[MAX_SAVINGANGLE];
+	double Steering[MAX_SAVINGANGLE];
+	int currentPos;
+	int setLeftFlag = 0;
+	int setRightFlag = 0;
+	int setStraightLeftFlag = 0;
+	int setStraightRightFlag = 0;
+	double currentHeading;
+};
+double Steer::getSteering() {
+	//°¡ÁßÄ¡ÀÇ ÇÕÀº Ç×»ó 1ÀÌ µÇµµ·ÏÇÏ¿©¾ßÇÔ. ¹ş¾î³ª¾ß ÇÑ´Ù¸é °ªÀÇ ´©Àû Àû¿ëÀ» ³·Ãç¾ßµÊ.
+	double returnVal;
+	bool goLeft = setLeftFlag >= MAX_SAVINGANGLE;
+	bool goRight = setRightFlag >= MAX_SAVINGANGLE;
+	bool goStraight = abs(currentHeading) < 20;
+	if (goLeft) {//ÁÂÃø ¶óÀÎ ÀÎ½Ä X ÁÂÈ¸Àü »óÈ²
+		if (LeftAngle[currentPos] != 0)//ÁÂÈ¸Àü »óÈ²¿¡¼­ ¿ŞÂÊÂ÷¼±ÀÌ º¸ÀÌ´Â °æ¿ì
+		{
+			setStraightLeftFlag++;
+		}
+		else if (LeftAngle[currentPos] == 0) { setStraightLeftFlag--; }
+
+		if (setStraightLeftFlag >= MAX_SAVINGANGLE) { //ÁÂÈ¸Àü¿¡¼­ Á÷ÁøÀ¸·Î º¯È¯µÇ´Â »óÈ²
+			setLeftFlag = 0;
+			setRightFlag = 0;
+			setStraightLeftFlag = 0;
+			returnVal = Steering[predIdx(currentPos)];
+		}
+		else {
+			returnVal = 0.5 * currentHeading + 0.5 * Steering[predIdx(currentPos)];
+		}
+	}
+	else if (goRight) {//¿ìÃø ¶óÀÎ ÀÎ½Ä X ¿ìÈ¸Àü »óÈ²
+		if (RightAngle[currentPos] != 0) { setStraightRightFlag++; }
+		else if (RightAngle[currentPos] == 0) { setStraightRightFlag--; }
+
+		if (setStraightRightFlag >= MAX_SAVINGANGLE) { //¿ìÈ¸Àü¿¡¼­ Á÷ÁøÀ¸·Î º¯È¯µÇ´Â »óÈ²
+			setLeftFlag = 0;
+			setRightFlag = 0;
+			setStraightLeftFlag = 0;
+			returnVal = Steering[predIdx(currentPos)];
+		}
+		else {//Á¤»óÀÏ ½Ã¿¡´Â
+			returnVal = 0.5 * currentHeading + 0.5 * Steering[predIdx(currentPos)];
+		}
+	}
+	else if (goStraight) {//Á÷Áø »óÈ²
+		if (RightAngle[currentPos] == 0) { setRightFlag++; }
+		else if (LeftAngle[currentPos] == 0) { setLeftFlag++; }
+		else if (RightAngle[currentPos] != 0 && setRightFlag > 0) { setRightFlag--; }
+		else if (LeftAngle[currentPos] != 0 && setLeftFlag > 0) { setLeftFlag--; }
+		returnVal = (-currentHeading) * 2.0;//Á÷Áø½Ã Çìµù¹æÇâ ¹İ´ë·Î 1/2¸¸Å­
+	}
+	Steering[currentPos] = returnVal;
+	return Steering[currentPos];
+}
+Steer::Steer() {
+	for (int i = 0; i < MAX_SAVINGANGLE; i++) {
+		RightAngle[i] = 0;
+		LeftAngle[i] = 0;
+		Steering[i] = 0;
+	}
+	currentPos = 0;
+}
+void Steer::inputData(double dydxRight, double dydxLeft, double currentHead) {
+	currentPos = nextIdx(currentPos);
+	RightAngle[currentPos] = dydxRight;
+	LeftAngle[currentPos] = dydxLeft;
+	currentHeading = currentHead;
+}
+int Steer::nextIdx(int pos) {
+	if (pos < MAX_SAVINGANGLE - 1) { return pos + 1; }
+	else return 0;
+}
+int Steer::predIdx(int pos) {
+	if (pos <= 0) { return MAX_SAVINGANGLE - 1; }
+	else return pos--;
+}
+
+
+
+
+
+void steeringAlgo(int right_index, double left_index, double& steeringAngle, double preSteering) {
+	if (right_index == 0 && left_index != 0) {//¿ìÈ¸ÀüÀÇ °æ¿ì ÀÎÁö ÆÇ´Ü
+		steeringFlag++;
+
+		if (steeringFlag >= steeringThresholdFlag)//ÀÏÁ¤ ÇÁ·¹ÀÓµ¿¾È ¹ß°ßµÇÁö ¾Ê´Â °æ¿ì ÁÂÈ¸ÀüÀ¸·Î ÀÎ½Ä
+		{
+			steeringAngle = (steeringAngle - preSteering) / 2.0 + (-1.0) * preSteering;//º¯È­°ª °¡ÁßÄ¡/2
+			//±âÁ¸ Á÷Áø»óÅÂ¿¡¼­´Â ¹İ´ë¹æÇâÀ¸·Î Á¶ÇâÇÏ°Ô ÇßÀ¸¹Ç·Î preSteeringÀÌ À½¼ö·Î º¯È¯µÈ ÈÄ °öÇØ¾ßÇÔ
+			cout << "¿ìÈ¸Àü" << endl;
+		}
+		else {//flagÀü¿¡´Â ÀÌÀü steering°¢µµ À¯Áö
+			steeringAngle = preSteering;
+		}
+	}
+	else if (right_index != 0 && left_index == 0) {//ÁÂÈ¸ÀüÀÇ °æ¿ìÀÎÁö ÆÇ´Ü
+		steeringFlag++;
+		if (steeringFlag >= steeringThresholdFlag)//ÀÏÁ¤ ÇÁ·¹ÀÓµ¿¾È ¹ß°ßµÇÁö ¾Ê´Â °æ¿ì ÁÂÈ¸ÀüÀ¸·Î ÀÎ½Ä
+		{
+			steeringAngle = (steeringAngle - preSteering) / 2.0 + (-1.0) * preSteering;//º¯È­°ª °¡ÁßÄ¡/2
+			//±âÁ¸ Á÷Áø»óÅÂ¿¡¼­´Â ¹İ´ë¹æÇâÀ¸·Î Á¶ÇâÇÏ°Ô ÇßÀ¸¹Ç·Î preSteeringÀÌ À½¼ö·Î º¯È¯µÈ ÈÄ °öÇØ¾ßÇÔ
+			cout << "ÁÂÈ¸Àü" << endl;
+		}
+		else {//flagÀü¿¡´Â ÀÌÀü steering°¢µµ À¯Áö
+			steeringAngle = preSteering;
+		}
+	}
+	else if (left_index != 0 && right_index != 0) {//Æò»ó½Ã Á÷ÁøÀÇ °æ¿ì º¯È­°ªÀÇ ¹İ´ë 1/2·Î °¡ÁßÄ¡¸¦ ÁÜ
+		//´Ù¸¥ °æ¿ì¿¡¼­ flagÁõ°¡½ÃÅ² °Í ÃÊ±âÈ­
+		if (steeringFlag <= 0) {
+			steeringAngle = (-1.0) / 2.0 * (steeringAngle);
+		}
+		else if (steeringFlag > 0) {
+			steeringAngle = steeringAngle * 0.75 + preSteering * 0.25;
+			steeringFlag--;
+		}
+	}
+	else {//µÑ´Ù ¾øÀ» ¶§,
+		steeringAngle = 0;
+	}
 }
