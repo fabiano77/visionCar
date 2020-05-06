@@ -8,23 +8,24 @@
 using namespace cv;
 using namespace std;
 //for drivingAngle
-// ¶óÀÎ °ËÃâ±â´É°ú °¢µµ ¹İÈ¯À» ÅëÇØ¼­ Á¶ÀÛ °¡´ÉÇÏ´Ù
+// ë¼ì¸ ê²€ì¶œê¸°ëŠ¥ê³¼ ê°ë„ ë°˜í™˜ì„ í†µí•´ì„œ ì¡°ì‘ ê°€ëŠ¥í•˜ë‹¤
 void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering);
 //precondition: at least one lines for calculate drivingAngle
 // lines for already detected by extracLines function
 // postcondition : none
-// return :steering Angle for driving (degree·Î Ç¥ÇöµÇ¸ç Á¤¸éÀÌ 0µµ ¿À¸¥ÂÊÀÌ + ¿ŞÂÊÀÌ -ÀÓ
-Mat regionOfInterest(Mat& src, Mat& dst, Point* points);//roi ÁöÁ¤
+// return :steering Angle for driving (degreeë¡œ í‘œí˜„ë˜ë©° ì •ë©´ì´ 0ë„ ì˜¤ë¥¸ìª½ì´ + ì™¼ìª½ì´ -ì„
+void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int Mode);
+Mat regionOfInterest(Mat& src, Mat& dst, Point* points);//roi ì§€ì •
 //precondition : point that you want to roi(3 or 4 points recommended
 //postcondition : fill white without roi sector
 // return : masked img dst 
 
-bool extractLines(Mat& src, vector<Vec4i>& lines);//ÃßÃâµÇ¸é 1 ¾ÈµÇ¸é 0
+bool extractLines(Mat& src, vector<Vec4i>& lines);//ì¶”ì¶œë˜ë©´ 1 ì•ˆë˜ë©´ 0
 //precondition: src must be color image
-// return : lines´Â call by ref·Î ¹İÈ¯µÊ
+// return : linesëŠ” call by refë¡œ ë°˜í™˜ë¨
 void filter_colors(Mat& src, Mat& img_filtered,Scalar& lower,Scalar& upper);
 //color filtering
 //precondition src: must be color image
-//postcondition : ³ë¶õ»ö°ú Èò»öÀ¸·Î ±¸ºĞµÇ°í ³ª¸ÓÁö´Â °ËÁ¤À¸·Î Ã¤¿ö ¹İÈ¯µÈ´Ù.
-//threshold °ªÀº imageProcessing constant¿¡ µé¾îÀÖÀ½
+//postcondition : ë…¸ë€ìƒ‰ê³¼ í°ìƒ‰ìœ¼ë¡œ êµ¬ë¶„ë˜ê³  ë‚˜ë¨¸ì§€ëŠ” ê²€ì •ìœ¼ë¡œ ì±„ì›Œ ë°˜í™˜ëœë‹¤.
+//threshold ê°’ì€ imageProcessing constantì— ë“¤ì–´ìˆìŒ
 #endif

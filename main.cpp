@@ -6,6 +6,7 @@
 #include "CV_Calibration.h"
 #include "CV_drivingAngle.h"
 #include "Driving_DH.h"
+#include "DetectColorSign.h"
 
 //cpp를 추가해보는 것은 어떠한가
 
@@ -31,16 +32,6 @@ int main()
 		cerr << "video capture fail!" << endl;
 		return -1;
 	}
-	double fps = videocap.get(CAP_PROP_FPS);
-	cout << "video width :" << videocap.get(CAP_PROP_FRAME_WIDTH) << endl;
-	cout << "video height :" << videocap.get(CAP_PROP_FRAME_HEIGHT) << endl;
-	cout << "video FPS :" << fps << endl << endl;;
-	int delay = cvRound(1000 / fps);
-	for (int i = 0; i < 5; i++) {
-		videocap.read(frame);
-		imshow("Test Cam out", frame);
-		waitKey(33);
-	}
 	cout << "Camera test is complete" << endl << endl;
 
 	//mode selection---------------------------------------------
@@ -55,7 +46,6 @@ int main()
 	cout << "select mode : ";
 	int mode;
 	cin >> mode;
-
 
 	//start mode------------------------------------------------
 	if (mode == 1)//test mode
@@ -124,31 +114,46 @@ int main()
 		*/
 		//Mat undistortFrame;
 
-		Driving_DH DH(true, 0.80, 1.00);//printFlag, cLevel, sLevel
-										//cLevel : 코너구간 민감도(높을수록 많이 꺾임)
-										//sLevel : 직선구간 민감도
+		Driving_DH DH(true, 1.00);	//printFlag, sLevel
+									//sLevel : 직선구간 민감도(높을수록 많이 꺾임)
+		DH.mappingSetSection(0, 0.10, 0.40, 0.70, 0.77, 1.00);
+		DH.mappingSetValue(0.0, 0.00, 10.0, 25.0, 50.0, 50.0);
+		//DH.mappingSetValue(10, 10.0, 15.0, 25.0, 50.0, 50.0);
+		//코너구간 조향수준 맵핑값 세팅
+
+		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
+
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 
 		while (true)
 		{
 			videocap >> frame;
-			if (false) //신호등체크
+			//undistort(frame, undistortFrame, intrinsic, disCoeff);
+
+			if (false) //event 체크
 			{
+
 			}
-			else if (false) //추월 등등 event 삽입부
+			else if (detectColorSign.isRedStop(frame, 10)) //빨간색 표지판 감지
 			{
+				while (detectColorSign.isRedStop(frame, 10))
+				{
+					DCmotor.stop();	//멈춘다.
+				}
 			}
-			else if (false)	//기타 등등 event
+			else if (false)	//기타 event 체크
 			{
+
 			}
 			else //정상주행
 			{
-				//undistort(frame, undistortFrame, intrinsic, disCoeff);
 				//DH.driving(undistortFrame, steerVal, speedVal, 40.0, 2.0);
-				DH.driving(frame, steerVal, speedVal, 40.0, 2.0);
+				DH.driving(frame, steerVal, speedVal, 30.0, 0.0);
+
 				steering.setRatio(steerVal);			//바퀴 조향
 				DCmotor.go(speedVal);
+
 				cout << "steer : " << steerVal << ", speed : " << speedVal << endl;
 
 				//imshow("frame", undistortFrame);
@@ -160,11 +165,41 @@ int main()
 	//end daehee's code
 
 
-	else if (mode == 5)
+	else if (mode == 5) // SangMin's code
 	{
-		//write your code
-	}
+		Mat intrinsic;
+		Mat disCoeff;
+		if (calibImage(videocap, intrinsic, disCoeff)) {
+			cout << "Calibration Success!" << endl;
+		}
+		else {
+			cout << "Calibration Failed!" << endl;
+		}
+		Mat undistortImg;
+		vector<Vec4i> exLines;
 
+		double speedVal(40.0);	//초기 속도(0~100)
+		double steering_After, steering_Before = 0;
+		
+		int Mode;
+		cout << "select Mode : ";
+		cin >> Mode;
+		cout << "Mode : " << Mode << endl;
+		while (1) {
+			videocap >> frame;
+			undistort(frame, undistortImg, intrinsic, disCoeff);
+			imshow("Live", undistortImg);
+
+			bool Check = extractLines(undistortImg, exLines);
+			drivingAngle_SM(undistortImg, exLines, steering_After, steering_Before, Mode);
+			steering.setRatio(50 + steering_After); //바퀴 조향
+			cout << "조향각 : " << 50 + steering_After << endl;			
+			DCmotor.go(speedVal);
+			waitKey(15);
+			
+		}
+	}
+	//end SangMin's code
 
 	else if (mode == 6)
 	{
@@ -178,6 +213,7 @@ int main()
 	}
 
 	else cout << "invalid mode selection" << endl;
+
 	cout << "program finished" << endl;
 	allServoReset(pca);	// 3 Servo motor center reset
 	return 0;
