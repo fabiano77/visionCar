@@ -8,11 +8,18 @@
 
 //cpp를 추가해보는 것은 어떠한가
 
+
+
 using namespace std;
 using namespace auto_car;
 using namespace cv;
 
 void filter_image(Mat image_color, Mat& image_filtered);
+
+Scalar lower_w = Scalar(120, 120, 120); //흰색 차선 (RGB)
+Scalar upper_w = Scalar(255, 255, 255);
+Scalar lower_y = Scalar(10, 100, 100); //노란색 차선 (HSV)
+Scalar upper_y = Scalar(40, 255, 255);
 
 int main()
 {
@@ -169,7 +176,7 @@ int main()
 				cout << "Extract Failed!" << endl;
 			}
 
-			drivingAngle(image_edge, lines, steering);
+			linePt = drivingAngle(image_edge, lines, steering);
 
 			line(image, linePt[0], linePt[1], Scalar(0, 0, 255), LINE_4);
 			line(image, linePt[2], linePt[3], Scalar(0, 0, 255), LINE_4);
@@ -184,6 +191,7 @@ int main()
 			imshow("sss", image);
 			waitKey(33);
 		}
+		delete[] linePt;
 	}
 	//end daehee's code
 
