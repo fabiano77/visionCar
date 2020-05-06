@@ -113,9 +113,9 @@ int main()
 		*/
 
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
-		Mat distCoeffs;
+		Mat disCoeffs;
 		int numBoards = 20;
-		DoCalib(distCoeffs, intrinsic, numBoards);
+		DoCalib(disCoeffs, intrinsic, numBoards);
 
 		Mat distortFrame;
 		
