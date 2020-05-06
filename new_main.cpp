@@ -207,7 +207,33 @@ int main()
 
 	else if (mode == 6)
 	{
-		//write your code
+	while (videocap.isOpened()) {
+		videocap >> srcImg;
+		filter_colors(srcImg, filteredImg);
+		//cvtColor(srcImg, grayImg, COLOR_BGR2GRAY);
+		//이미지 처리 blur 및 edge 검출
+
+		imgProcessing(filteredImg, blurImg, 1);
+		imgProcessing(blurImg, edgeImg, 2);
+
+		//roi 설정
+		//Point pt[4] = { Point(0,height * 1/2),Point(width,height * 1/2),Point(width,height),Point(0,height) };
+		Point pt[4] = { Point(width * 3 / 7,height * 3 / 5),Point(width * 4 / 7,height * 3 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
+		Mat roiImg;
+		Scalar WHITE_BGR(255, 255, 255);
+		roiImg = regionOfInterest(edgeImg, pt, WHITE_BGR);
+
+		vector<Vec4i> lines;
+		imshow("roiImg", roiImg);
+		HoughLinesP(roiImg, lines, 1, CV_PI / 180.0, 30, 10, 20);
+		srcImg.copyTo(dstImg);
+		double steering;
+
+		drivingAngle(dstImg, lines, steering, steer1);
+
+		//imshow("roiImg", roiImg);
+
+	}
 	}
 
 
