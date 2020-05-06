@@ -34,7 +34,7 @@ int main()
 	cout << "Camera test is complete" << endl << endl;
 
 	//mode selection---------------------------------------------
-	cout << "[visionCar] program start" << endl << endl;
+	cout << "[visionCar] program start" << endl;
 
 	cout << "mode 4 : daehee's code" << endl << endl;
 	cout << "select mode : ";
@@ -117,9 +117,9 @@ int main()
 
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
 									//sLevel : 직선구간 민감도(높을수록 많이 꺾임)
-		DH.mappingSetSection(0, 0.10, 0.40, 0.70, 0.77, 1.00);
+		DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
 		//DH.mappingSetValue(0.0, 0.00, 10.0, 25.0, 50.0, 50.0);
-		DH.mappingSetValue(10, 10.0, 15.0, 25.0, 50.0, 50.0);
+		DH.mappingSetValue(10, 10.0, 15.0, 20.0, 50.0, 50.0);
 		//코너구간 조향수준 맵핑값 세팅
 
 		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
@@ -127,8 +127,12 @@ int main()
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 
+		TickMeter tm;		//시간 측정 클래스
+
 		while (true)
 		{
+			tm.start();		//시간측정 시작
+
 			videocap >> distortFrame;
 			undistort(distortFrame, frame, intrinsic, disCoeffs);
 
@@ -157,7 +161,11 @@ int main()
 			
 				waitKey(1);//33
 			}
+
 			imshow("frame", frame);
+
+			tm.stop();		//시간측정 끝
+			cout << tm.getTimeMilli << [ms] << '\n';
 		}
 	}
 	//end daehee's code
