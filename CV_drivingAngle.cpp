@@ -98,7 +98,6 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 	double left_lines_x[1000];
 	double left_lines_y[1000];
 	vector<Point> leftLines;
-	float left_m, left_b;
 
 	int left_index = 0;
 	for (int i = 0; i < left_lines.size(); i++) {
@@ -238,7 +237,6 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	//Right lane lines
 	double right_lines_x[1000];
 	double right_lines_y[1000];
-	float right_m, right_b;
 	vector<Point> rightLines;
 
 	int right_index = 0;
@@ -264,7 +262,6 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	double left_lines_x[1000];
 	double left_lines_y[1000];
 	vector<Point> leftLines;
-	float left_m, left_b;
 
 	int left_index = 0;
 	for (int i = 0; i < left_lines.size(); i++) {
@@ -438,7 +435,7 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 	Mat grayImg, blurImg, edgeImg, roiImg, dstImg;
 	int width = src.size().width;
 	int height = src.size().height;
-	filter_colors(src, filterImg, lower_yellow, higher_white);
+	filter_colors(src, filterImg, lower_yellow, upper_yellow);
 	cvtColor(filterImg, grayImg, COLOR_BGR2GRAY);
 	imgBlur(grayImg, blurImg, 1);
 	imgBlur(blurImg, edgeImg, 2);
@@ -493,10 +490,10 @@ double Steer::getSteering() {
 			setLeftFlag = 0;
 			setRightFlag = 0;
 			setStraightLeftFlag = 0;
-			returnVal = Steering[predIdx(currentPos)];
+			returnVal = steering[predIdx(currentPos)];
 		}
 		else {
-			returnVal = 0.5 * currentHeading + 0.5 * Steering[predIdx(currentPos)];
+			returnVal = 0.5 * currentHeading + 0.5 * steering[predIdx(currentPos)];
 		}
 	}
 	else if (goRight) {//우측 라인 인식 X 우회전 상황
@@ -507,10 +504,10 @@ double Steer::getSteering() {
 			setLeftFlag = 0;
 			setRightFlag = 0;
 			setStraightLeftFlag = 0;
-			returnVal = Steering[predIdx(currentPos)];
+			returnVal = steering[predIdx(currentPos)];
 		}
 		else {//정상일 시에는
-			returnVal = 0.5 * currentHeading + 0.5 * Steering[predIdx(currentPos)];
+			returnVal = 0.5 * currentHeading + 0.5 * steering[predIdx(currentPos)];
 		}
 	}
 	else if (goStraight) {//직진 상황
@@ -520,14 +517,14 @@ double Steer::getSteering() {
 		else if (LeftAngle[currentPos] != 0 && setLeftFlag > 0) { setLeftFlag--; }
 		returnVal = (-currentHeading) * 2.0;//직진시 헤딩방향 반대로 1/2만큼
 	}
-	Steering[currentPos] = returnVal;
-	return Steering[currentPos];
+	steering[currentPos] = returnVal;
+	return steering[currentPos];
 }
 Steer::Steer() {
 	for (int i = 0; i < MAX_SAVINGANGLE; i++) {
 		RightAngle[i] = 0;
 		LeftAngle[i] = 0;
-		Steering[i] = 0;
+		steering[i] = 0;
 	}
 	currentPos = 0;
 }
@@ -549,44 +546,3 @@ int Steer::predIdx(int pos) {
 
 
 
-
-void steeringAlgo(int right_index, double left_index, double& steeringAngle, double preSteering) {
-	if (right_index == 0 && left_index != 0) {//우회전의 경우 인지 판단
-		steeringFlag++;
-
-		if (steeringFlag >= steeringThresholdFlag)//일정 프레임동안 발견되지 않는 경우 좌회전으로 인식
-		{
-			steeringAngle = (steeringAngle - preSteering) / 2.0 + (-1.0) * preSteering;//변화값 가중치/2
-			//기존 직진상태에서는 반대방향으로 조향하게 했으므로 preSteering이 음수로 변환된 후 곱해야함
-			cout << "우회전" << endl;
-		}
-		else {//flag전에는 이전 steering각도 유지
-			steeringAngle = preSteering;
-		}
-	}
-	else if (right_index != 0 && left_index == 0) {//좌회전의 경우인지 판단
-		steeringFlag++;
-		if (steeringFlag >= steeringThresholdFlag)//일정 프레임동안 발견되지 않는 경우 좌회전으로 인식
-		{
-			steeringAngle = (steeringAngle - preSteering) / 2.0 + (-1.0) * preSteering;//변화값 가중치/2
-			//기존 직진상태에서는 반대방향으로 조향하게 했으므로 preSteering이 음수로 변환된 후 곱해야함
-			cout << "좌회전" << endl;
-		}
-		else {//flag전에는 이전 steering각도 유지
-			steeringAngle = preSteering;
-		}
-	}
-	else if (left_index != 0 && right_index != 0) {//평상시 직진의 경우 변화값의 반대 1/2로 가중치를 줌
-		//다른 경우에서 flag증가시킨 것 초기화
-		if (steeringFlag <= 0) {
-			steeringAngle = (-1.0) / 2.0 * (steeringAngle);
-		}
-		else if (steeringFlag > 0) {
-			steeringAngle = steeringAngle * 0.75 + preSteering * 0.25;
-			steeringFlag--;
-		}
-	}
-	else {//둘다 없을 때,
-		steeringAngle = 0;
-	}
-}
