@@ -472,76 +472,76 @@ void filter_colors(Mat& src, Mat& img_filtered, Scalar& lower, Scalar& upper) {
 	yellowImg.copyTo(imgCombined);;//노란색만 검출할때까지 사용
 	imgCombined.copyTo(img_filtered);
 }
-
-double Steer::getSteering() {
-	//가중치의 합은 항상 1이 되도록하여야함. 벗어나야 한다면 값의 누적 적용을 낮춰야됨.
-	double returnVal;
-	bool goLeft = setLeftFlag >= MAX_SAVINGANGLE;
-	bool goRight = setRightFlag >= MAX_SAVINGANGLE;
-	bool goStraight = abs(currentHeading) < 20;
-	if (goLeft) {//좌측 라인 인식 X 좌회전 상황
-		if (LeftAngle[currentPos] != 0)//좌회전 상황에서 왼쪽차선이 보이는 경우
-		{
-			setStraightLeftFlag++;
-		}
-		else if (LeftAngle[currentPos] == 0) { setStraightLeftFlag--; }
-
-		if (setStraightLeftFlag >= MAX_SAVINGANGLE) { //좌회전에서 직진으로 변환되는 상황
-			setLeftFlag = 0;
-			setRightFlag = 0;
-			setStraightLeftFlag = 0;
-			returnVal = steering[predIdx(currentPos)];
-		}
-		else {
-			returnVal = 0.5 * currentHeading + 0.5 * steering[predIdx(currentPos)];
-		}
-	}
-	else if (goRight) {//우측 라인 인식 X 우회전 상황
-		if (RightAngle[currentPos] != 0) { setStraightRightFlag++; }
-		else if (RightAngle[currentPos] == 0) { setStraightRightFlag--; }
-
-		if (setStraightRightFlag >= MAX_SAVINGANGLE) { //우회전에서 직진으로 변환되는 상황
-			setLeftFlag = 0;
-			setRightFlag = 0;
-			setStraightLeftFlag = 0;
-			returnVal = steering[predIdx(currentPos)];
-		}
-		else {//정상일 시에는
-			returnVal = 0.5 * currentHeading + 0.5 * steering[predIdx(currentPos)];
-		}
-	}
-	else if (goStraight) {//직진 상황
-		if (RightAngle[currentPos] == 0) { setRightFlag++; }
-		else if (LeftAngle[currentPos] == 0) { setLeftFlag++; }
-		else if (RightAngle[currentPos] != 0 && setRightFlag > 0) { setRightFlag--; }
-		else if (LeftAngle[currentPos] != 0 && setLeftFlag > 0) { setLeftFlag--; }
-		returnVal = (-currentHeading) * 2.0;//직진시 헤딩방향 반대로 1/2만큼
-	}
-	steering[currentPos] = returnVal;
-	return steering[currentPos];
-}
-Steer::Steer() {
-	for (int i = 0; i < MAX_SAVINGANGLE; i++) {
-		RightAngle[i] = 0;
-		LeftAngle[i] = 0;
-		steering[i] = 0;
-	}
-	currentPos = 0;
-}
-void Steer::inputData(double dydxRight, double dydxLeft, double currentHead) {
-	currentPos = nextIdx(currentPos);
-	RightAngle[currentPos] = dydxRight;
-	LeftAngle[currentPos] = dydxLeft;
-	currentHeading = currentHead;
-}
-int Steer::nextIdx(int pos) {
-	if (pos < MAX_SAVINGANGLE - 1) { return pos + 1; }
-	else return 0;
-}
-int Steer::predIdx(int pos) {
-	if (pos <= 0) { return MAX_SAVINGANGLE - 1; }
-	else return pos--;
-}
+//
+//double Steer::getSteering() {
+//	//가중치의 합은 항상 1이 되도록하여야함. 벗어나야 한다면 값의 누적 적용을 낮춰야됨.
+//	double returnVal;
+//	bool goLeft = setLeftFlag >= MAX_SAVINGANGLE;
+//	bool goRight = setRightFlag >= MAX_SAVINGANGLE;
+//	bool goStraight = abs(currentHeading) < 20;
+//	if (goLeft) {//좌측 라인 인식 X 좌회전 상황
+//		if (LeftAngle[currentPos] != 0)//좌회전 상황에서 왼쪽차선이 보이는 경우
+//		{
+//			setStraightLeftFlag++;
+//		}
+//		else if (LeftAngle[currentPos] == 0) { setStraightLeftFlag--; }
+//
+//		if (setStraightLeftFlag >= MAX_SAVINGANGLE) { //좌회전에서 직진으로 변환되는 상황
+//			setLeftFlag = 0;
+//			setRightFlag = 0;
+//			setStraightLeftFlag = 0;
+//			returnVal = steering[predIdx(currentPos)];
+//		}
+//		else {
+//			returnVal = 0.5 * currentHeading + 0.5 * steering[predIdx(currentPos)];
+//		}
+//	}
+//	else if (goRight) {//우측 라인 인식 X 우회전 상황
+//		if (RightAngle[currentPos] != 0) { setStraightRightFlag++; }
+//		else if (RightAngle[currentPos] == 0) { setStraightRightFlag--; }
+//
+//		if (setStraightRightFlag >= MAX_SAVINGANGLE) { //우회전에서 직진으로 변환되는 상황
+//			setLeftFlag = 0;
+//			setRightFlag = 0;
+//			setStraightLeftFlag = 0;
+//			returnVal = steering[predIdx(currentPos)];
+//		}
+//		else {//정상일 시에는
+//			returnVal = 0.5 * currentHeading + 0.5 * steering[predIdx(currentPos)];
+//		}
+//	}
+//	else if (goStraight) {//직진 상황
+//		if (RightAngle[currentPos] == 0) { setRightFlag++; }
+//		else if (LeftAngle[currentPos] == 0) { setLeftFlag++; }
+//		else if (RightAngle[currentPos] != 0 && setRightFlag > 0) { setRightFlag--; }
+//		else if (LeftAngle[currentPos] != 0 && setLeftFlag > 0) { setLeftFlag--; }
+//		returnVal = (-currentHeading) * 2.0;//직진시 헤딩방향 반대로 1/2만큼
+//	}
+//	steering[currentPos] = returnVal;
+//	return steering[currentPos];
+//}
+//Steer::Steer() {
+//	for (int i = 0; i < MAX_SAVINGANGLE; i++) {
+//		RightAngle[i] = 0;
+//		LeftAngle[i] = 0;
+//		steering[i] = 0;
+//	}
+//	currentPos = 0;
+//}
+//void Steer::inputData(double dydxRight, double dydxLeft, double currentHead) {
+//	currentPos = nextIdx(currentPos);
+//	RightAngle[currentPos] = dydxRight;
+//	LeftAngle[currentPos] = dydxLeft;
+//	currentHeading = currentHead;
+//}
+//int Steer::nextIdx(int pos) {
+//	if (pos < MAX_SAVINGANGLE - 1) { return pos + 1; }
+//	else return 0;
+//}
+//int Steer::predIdx(int pos) {
+//	if (pos <= 0) { return MAX_SAVINGANGLE - 1; }
+//	else return pos--;
+//}
 
 
 

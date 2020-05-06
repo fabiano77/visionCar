@@ -8,24 +8,24 @@
 using namespace cv;
 using namespace std;
 
-class Steer {
-public:
-	Steer();
-	void inputData(double dydxRight, double dydxLeft, double headingAngle);
-	double getSteering();
-private:
-	int nextIdx(int pos);
-	int predIdx(int pos);
-	double RightAngle[MAX_SAVINGANGLE];
-	double LeftAngle[MAX_SAVINGANGLE];
-	double steering[MAX_SAVINGANGLE];
-	int currentPos;
-	int setLeftFlag = 0;
-	int setRightFlag = 0;
-	int setStraightLeftFlag = 0;
-	int setStraightRightFlag = 0;
-	double currentHeading;
-};
+//class Steer {
+//public:
+//	Steer();
+//	void inputData(double dydxRight, double dydxLeft, double headingAngle);
+//	double getSteering();
+//private:
+//	int nextIdx(int pos);
+//	int predIdx(int pos);
+//	double RightAngle[MAX_SAVINGANGLE];
+//	double LeftAngle[MAX_SAVINGANGLE];
+//	double steering[MAX_SAVINGANGLE];
+//	int currentPos;
+//	int setLeftFlag = 0;
+//	int setRightFlag = 0;
+//	int setStraightLeftFlag = 0;
+//	int setStraightRightFlag = 0;
+//	double currentHeading;
+//};
 //for drivingAngle
 // 라인 검출기능과 각도 반환을 통해서 조작 가능하다
 void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering);
