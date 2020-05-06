@@ -124,7 +124,10 @@ int main()
 
 
 			drivingAngle_MS(dstImg, lines, steeringValue, steer1);
-
+			//이부분은 그냥 설정
+			if (steeringValue > 50) { steeringValue = 45; }
+			else if (steeringValue < -50) { steeringValue = -45; }
+			steeringValue = 50 + steeringValue;
 			//imshow("roiImg", roiImg);
 			steering.setRatio(steeringValue);			//바퀴 조향
 			DCmotor.go(speedVal);
