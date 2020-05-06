@@ -35,13 +35,8 @@ int main()
 
 	//mode selection---------------------------------------------
 	cout << "[visionCar] program start" << endl << endl;
-	cout << "mode 1 : test mode" << endl;
-	cout << "mode 2 : manual mode" << endl;
-	cout << "mode 3 : calb & angle mode" << endl;
-	cout << "mode 4 : daehee's code" << endl;
-	cout << "mode 5 : who's code?" << endl;
-	cout << "mode 6 : who's code?" << endl;
-	cout << "mode 7 : who's code?" << endl << endl;
+
+	cout << "mode 4 : daehee's code" << endl << endl;
 	cout << "select mode : ";
 	int mode;
 	cin >> mode;
