@@ -14,7 +14,6 @@ int main(void) {
 	Mat intrinsic = Mat(3, 3, CV_32FC1);
 	Mat distCoeffs;
 	int numBoards = 20;
-
 	DoCalib(distCoeffs, intrinsic, numBoards);
 
 	Mat imageUndistorted; // Calibration 이후의 이미지를 담을 객채
