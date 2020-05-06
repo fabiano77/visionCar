@@ -127,11 +127,11 @@ int main()
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 
-		TickMeter tm;		//시간 측정 클래스
 
 		while (true)
 		{
-			tm.start();		//시간측정 시작
+			TickMeter tm;	//시간 측정 클래스
+			tm.start();		//시간 측정 시작
 
 			videocap >> distortFrame;
 			undistort(distortFrame, frame, intrinsic, disCoeffs);
