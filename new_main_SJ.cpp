@@ -169,7 +169,7 @@ int main()
 				cout << "Extract Failed!" << endl;
 			}
 
-			linePt = drivingAngle(image_edge, lines, steering);
+			drivingAngle(image_edge, lines, steering);
 
 			line(image, linePt[0], linePt[1], Scalar(0, 0, 255), LINE_4);
 			line(image, linePt[2], linePt[3], Scalar(0, 0, 255), LINE_4);

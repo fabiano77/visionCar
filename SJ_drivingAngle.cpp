@@ -11,7 +11,12 @@ static int leftCorner_threshold = 0;
 static int rightCorner_threshold = 0;
 // 일정 갯수 이상의 프레임 동안 연속해서 하나의 차선만 검출되는지 기록하기 위한 변수
 
-Point* drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
+Scalar lower_w = Scalar(120, 120, 120); //흰색 차선 (RGB)
+Scalar upper_w = Scalar(255, 255, 255);
+Scalar lower_y = Scalar(10, 100, 100); //노란색 차선 (HSV)
+Scalar upper_y = Scalar(40, 255, 255);
+
+void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 
 	double outSteering = 0;
 	bool leftCorner_flag = false;
@@ -20,7 +25,7 @@ Point* drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 	// 그 이후에 Corner에 대한 조건문이 실행
 	Vec4f params;
 	Point pt1, pt2;
-	Point returnPt[4];
+	//Point *returnPt;
 	int x1, y1, x2, y2;
 	vector<Vec4i> newLines;//후에 왼쪽오른쪽 하나만 남기기
 	const int width = inputImg.size().width;
@@ -240,7 +245,7 @@ Point* drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 	left_lines.clear();
 	newPoint.clear();
 	newLines.clear();
-	return returnPt;
+	//return returnPt;
 }
 //void regionOfInterest(Mat& src, Mat& dst, Point* points) {// points의 포인터인 이유-> 여러개의 꼭짓점 경우
 //
