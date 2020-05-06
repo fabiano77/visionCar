@@ -169,7 +169,7 @@ int main()
 				cout << "Extract Failed!" << endl;
 			}
 
-			drivingAngle(image_edge, lines, steering);
+			linePt = drivingAngle(image_edge, lines, steering);
 
 			line(image, linePt[0], linePt[1], Scalar(0, 0, 255), LINE_4);
 			line(image, linePt[2], linePt[3], Scalar(0, 0, 255), LINE_4);
@@ -184,6 +184,7 @@ int main()
 			imshow("sss", image);
 			waitKey(33);
 		}
+		delete[] linePt;
 	}
 	//end daehee's code
 
