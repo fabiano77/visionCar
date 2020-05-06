@@ -53,15 +53,9 @@ Driving_DH::Driving_DH()
 	print = PRINT;
 	straightLevel = STRAIGHT_LEVEL;	// 직선 구간에서의 가중치
 
-	VideoCapture videocap(0);
-	if (!videocap.isOpened())
-	{
-		cerr << "video load fail !" << endl;
-	}
-
 	frame_size = Size(
-		cvRound(videocap.get(CAP_PROP_FRAME_WIDTH)),
-		cvRound(videocap.get(CAP_PROP_FRAME_HEIGHT))
+		640,
+		480
 	);
 	//비디오 사이즈등 불러오기
 	basicSetting();

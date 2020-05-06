@@ -118,7 +118,6 @@ int main()
 		DoCalib(disCoeffs, intrinsic, numBoards);
 
 		Mat distortFrame;
-		
 
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
 									//sLevel : 직선구간 민감도(높을수록 많이 꺾임)
