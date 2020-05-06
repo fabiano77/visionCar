@@ -119,7 +119,7 @@ int main()
 		cout << "complete 'DoCalib()' function" << endl;
 		Mat distortFrame;
 
-		Driving_DH DH(false, 1.00);	//printFlag, sLevel
+		Driving_DH DH(true, 1.00);	//printFlag, sLevel
 									//sLevel : Á÷¼±±¸°£ ¹Î°¨µµ(³ôÀ»¼ö·Ï ¸¹ÀÌ ²ªÀÓ)
 		DH.mappingSetSection(0, 0.10, 0.40, 0.70, 0.77, 1.00);
 		//DH.mappingSetValue(0.0, 0.00, 10.0, 25.0, 50.0, 50.0);
@@ -140,27 +140,24 @@ int main()
 			{
 
 			}
-			else if (detectColorSign.isRedStop(frame, 10)) //»¡°£»ö Ç¥ÁöÆÇ °¨Áö
-			{
-				while (detectColorSign.isRedStop(frame, 10))
-				{
-					DCmotor.stop();	//¸ØÃá´Ù.
-					imshow("frame", frame);
-				}
-			}
+			//else if (detectColorSign.isRedStop(frame, 10)) //»¡°£»ö Ç¥ÁöÆÇ °¨Áö
+			//{
+			//	while (detectColorSign.isRedStop(frame, 10))
+			//	{
+			//		DCmotor.stop();	//¸ØÃá´Ù.
+			//		imshow("frame", frame);
+			//	}
+			//}
 			else if (false)	//±âÅ¸ event Ã¼Å©
 			{
 
 			}
 			else //Á¤»óÁÖÇà
 			{
-				//DH.driving(undistortFrame, steerVal, speedVal, 40.0, 2.0);
-				DH.driving(frame, steerVal, speedVal, 20.0, 0.0);
+				DH.driving(frame, steerVal, speedVal, 40.0, 0.0);
 
 				steering.setRatio(steerVal);			//¹ÙÄû Á¶Çâ
 				DCmotor.go(speedVal);
-
-				//cout << "steer : " << steerVal << ", speed : " << speedVal << endl;
 			
 				waitKey(1);//33
 			}
