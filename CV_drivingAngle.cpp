@@ -67,7 +67,6 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 			left_lines.push_back(line);
 		//slope가 0보다 작으면 pit/2-a rad에서 온 것이므로 왼쪽일 것임
 	}
-
 	//Run linear regression to find best fit line for right and left lane lines
 	//Right lane lines
 	double right_lines_x[1000];
@@ -163,6 +162,8 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering) {
 	//right_index=0일때 오른선 검출X
 	//left_index=0일때 왼선 검출
 	//heading Angle은 차량이 바라보는 방향
+	cout << "Heading: " << headingAngle << endl;
+	steering = (-headingAngle);
 	cout << "steering: " << steering << endl;
 	slopeDegrees.clear();
 	leftLines.clear();
@@ -236,4 +237,138 @@ void filter_colors(Mat& src, Mat& img_filtered,Scalar& lower,Scalar& upper) {
 	//addWeighted(whiteImg, 1.0, yellowImg, 1.0, 0.0, imgCombined);//두 이미지 합치기
 	yellowImg.copyTo(imgCombined);;//노란색만 검출할때까지 사용
 	imgCombined.copyTo(img_filtered);
+}
+
+
+class Steer {
+public:
+	Steer();
+	void inputData(double dydxRight, double dydxLeft, double headingAngle);
+	double getSteering();
+private:
+	int nextIdx(int pos);
+	int predIdx(int pos);
+	double RightAngle[MAX_SAVINGANGLE];
+	double LeftAngle[MAX_SAVINGANGLE];
+	double Steering[MAX_SAVINGANGLE];
+	int currentPos;
+	int setLeftFlag = 0;
+	int setRightFlag = 0;
+	int setStraightLeftFlag = 0;
+	int setStraightRightFlag = 0;
+	double currentHeading;
+};
+double Steer::getSteering() {
+	//가중치의 합은 항상 1이 되도록하여야함. 벗어나야 한다면 값의 누적 적용을 낮춰야됨.
+	double returnVal;
+	bool goLeft = setLeftFlag >= MAX_SAVINGANGLE;
+	bool goRight = setRightFlag >= MAX_SAVINGANGLE;
+	bool goStraight = abs(currentHeading) < 20;
+	if (goLeft) {//좌측 라인 인식 X 좌회전 상황
+		if (LeftAngle[currentPos] != 0)//좌회전 상황에서 왼쪽차선이 보이는 경우
+		{
+			setStraightLeftFlag++;
+		}
+		else if (LeftAngle[currentPos] == 0) { setStraightLeftFlag--; }
+
+		if (setStraightLeftFlag >= MAX_SAVINGANGLE) { //좌회전에서 직진으로 변환되는 상황
+			setLeftFlag = 0;
+			setRightFlag = 0;
+			setStraightLeftFlag = 0;
+			returnVal = Steering[predIdx(currentPos)];
+		}
+		else {
+			returnVal = 0.5 * currentHeading + 0.5 * Steering[predIdx(currentPos)];
+		}
+	}
+	else if (goRight) {//우측 라인 인식 X 우회전 상황
+		if (RightAngle[currentPos] != 0) { setStraightRightFlag++; }
+		else if (RightAngle[currentPos] == 0) { setStraightRightFlag--; }
+
+		if (setStraightRightFlag >= MAX_SAVINGANGLE) { //우회전에서 직진으로 변환되는 상황
+			setLeftFlag = 0;
+			setRightFlag = 0;
+			setStraightLeftFlag = 0;
+			returnVal = Steering[predIdx(currentPos)];
+		}
+		else {//정상일 시에는
+			returnVal = 0.5 * currentHeading + 0.5 * Steering[predIdx(currentPos)];
+		}
+	}
+	else if (goStraight) {//직진 상황
+		if (RightAngle[currentPos] == 0) { setRightFlag++; }
+		else if (LeftAngle[currentPos] == 0) { setLeftFlag++; }
+		else if (RightAngle[currentPos] != 0 && setRightFlag > 0) { setRightFlag--; }
+		else if (LeftAngle[currentPos] != 0 && setLeftFlag > 0) { setLeftFlag--; }
+		returnVal = (-currentHeading) * 2.0;//직진시 헤딩방향 반대로 1/2만큼
+	}
+	Steering[currentPos] = returnVal;
+	return Steering[currentPos];
+}
+Steer::Steer() {
+	for (int i = 0; i < MAX_SAVINGANGLE; i++) {
+		RightAngle[i] = 0;
+		LeftAngle[i] = 0;
+		Steering[i] = 0;
+	}
+	currentPos = 0;
+}
+void Steer::inputData(double dydxRight, double dydxLeft, double currentHead) {
+	currentPos = nextIdx(currentPos);
+	RightAngle[currentPos] = dydxRight;
+	LeftAngle[currentPos] = dydxLeft;
+	currentHeading = currentHead;
+}
+int Steer::nextIdx(int pos) {
+	if (pos < MAX_SAVINGANGLE - 1) { return pos + 1; }
+	else return 0;
+}
+int Steer::predIdx(int pos) {
+	if (pos <= 0) { return MAX_SAVINGANGLE - 1; }
+	else return pos--;
+}
+
+
+
+
+
+void steeringAlgo(int right_index, double left_index, double& steeringAngle, double preSteering) {
+	if (right_index == 0 && left_index != 0) {//우회전의 경우 인지 판단
+		steeringFlag++;
+
+		if (steeringFlag >= steeringThresholdFlag)//일정 프레임동안 발견되지 않는 경우 좌회전으로 인식
+		{
+			steeringAngle = (steeringAngle - preSteering) / 2.0 + (-1.0) * preSteering;//변화값 가중치/2
+			//기존 직진상태에서는 반대방향으로 조향하게 했으므로 preSteering이 음수로 변환된 후 곱해야함
+			cout << "우회전" << endl;
+		}
+		else {//flag전에는 이전 steering각도 유지
+			steeringAngle = preSteering;
+		}
+	}
+	else if (right_index != 0 && left_index == 0) {//좌회전의 경우인지 판단
+		steeringFlag++;
+		if (steeringFlag >= steeringThresholdFlag)//일정 프레임동안 발견되지 않는 경우 좌회전으로 인식
+		{
+			steeringAngle = (steeringAngle - preSteering) / 2.0 + (-1.0) * preSteering;//변화값 가중치/2
+			//기존 직진상태에서는 반대방향으로 조향하게 했으므로 preSteering이 음수로 변환된 후 곱해야함
+			cout << "좌회전" << endl;
+		}
+		else {//flag전에는 이전 steering각도 유지
+			steeringAngle = preSteering;
+		}
+	}
+	else if (left_index != 0 && right_index != 0) {//평상시 직진의 경우 변화값의 반대 1/2로 가중치를 줌
+		//다른 경우에서 flag증가시킨 것 초기화
+		if (steeringFlag <= 0) {
+			steeringAngle = (-1.0) / 2.0 * (steeringAngle);
+		}
+		else if (steeringFlag > 0) {
+			steeringAngle = steeringAngle * 0.75 + preSteering * 0.25;
+			steeringFlag--;
+		}
+	}
+	else {//둘다 없을 때,
+		steeringAngle = 0;
+	}
 }
