@@ -74,7 +74,7 @@ int main()
 		{
 			videocap >> frame;
 			imshow("Live camera", frame);
-			int key = waitKey(delay);	//if you not press, return -1
+			int key = waitKey(33);	//if you not press, return -1
 			Manual.input(key);		//movement by keyboard
 		}
 	}
@@ -135,7 +135,7 @@ int main()
 		while (true)
 		{
 			videocap >> distortFrame;
-			undistort(distortFrame, frame, intrinsic, disCoeff);
+			undistort(distortFrame, frame, intrinsic, disCoeffs);
 
 			if (false) //event üũ
 			{
