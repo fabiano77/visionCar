@@ -216,7 +216,7 @@ int main()
 		DoCalib(disCoeffs, intrinsic, numBoards);
 		Mat distortFrame;
 		Mat srcImg;
-		videoR >> srcImg;
+		videocap >> srcImg;
 		int width = srcImg.size().width;
 		int height = srcImg.size().height;
 		Mat grayImg;
@@ -226,7 +226,8 @@ int main()
 		Steer steer1;
 		double steeringValue;	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
-
+		Point pointROI[4] = { Point(width * 3 / 7,height * 3 / 5),Point(width * 4 / 7,height * 3 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
+		Scalar WHITE_BGR(255, 255, 255);
 		while (videocap.isOpened()) {
 			videocap >> distortFrame;
 			undistort(distortFrame, frame, intrinsic, disCoeffs);
@@ -239,10 +240,10 @@ int main()
 
 			//roi 설정
 			//Point pt[4] = { Point(0,height * 1/2),Point(width,height * 1/2),Point(width,height),Point(0,height) };
-			Point pt[4] = { Point(width * 3 / 7,height * 3 / 5),Point(width * 4 / 7,height * 3 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
+			
 			Mat roiImg;
-			Scalar WHITE_BGR(255, 255, 255);
-			roiImg = regionOfInterest(edgeImg, pt, WHITE_BGR);
+			
+			roiImg = regionOfInterest(edgeImg, pointROI, WHITE_BGR);
 
 			vector<Vec4i> lines;
 			imshow("roiImg", roiImg);

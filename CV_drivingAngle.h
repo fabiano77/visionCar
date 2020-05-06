@@ -35,6 +35,7 @@ void drivingAngle(Mat& inputImg, vector<Vec4i> lines, double& steering);
 // return :steering Angle for driving (degree로 표현되며 정면이 0도 오른쪽이 + 왼쪽이 -임
 void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int Mode);
 void drivingAngle_MS(Mat& inputImg, vector<Vec4i> lines, double& steering, Steer& test);
+
 void regionOfInterest(Mat& src, Mat& dst, Point* points);//roi 지정
 //precondition : point that you want to roi(3 or 4 points recommended
 //postcondition : fill white without roi sector
@@ -48,5 +49,5 @@ void filter_colors(Mat& src, Mat& img_filtered,Scalar& lower,Scalar& upper);
 //precondition src: must be color image
 //postcondition : 노란색과 흰색으로 구분되고 나머지는 검정으로 채워 반환된다.
 //threshold 값은 imageProcessing constant에 들어있음
-
+void imgProcessing(Mat& src, Mat& dst, int processingCode);
 #endif

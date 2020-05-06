@@ -543,7 +543,15 @@ int Steer::predIdx(int pos) {
 	else return pos--;
 }
 
+void imgProcessing(Mat& src, Mat& dst, int processingCode) {
+	if (processingCode == 1) {//gaussian Blur
+		GaussianBlur(src, dst, Size(3, 3), 0, 0);
+	}
+	else if (processingCode == 2) {//Canny edge
+		Canny(src, dst, 70, 150);
+	}
 
+}
 void drivingAngle_MS(Mat& inputImg, vector<Vec4i> lines, double& steering,Steer& test) {
 	Vec4f params;
 	Point pt1, pt2;
