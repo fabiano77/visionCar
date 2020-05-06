@@ -40,7 +40,7 @@ int main()
 	cout << "mode 3 : calb & angle mode" << endl;
 	cout << "mode 4 : daehee's code" << endl;
 	cout << "mode 5 : who's code?" << endl;
-	cout << "mode 6 : who's code?" << endl;
+	cout << "mode 6 : Minsoo's code" << endl;
 	cout << "mode 7 : who's code?" << endl << endl;
 	cout << "select mode : ";
 	int mode;
