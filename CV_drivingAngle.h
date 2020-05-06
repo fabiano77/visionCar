@@ -28,4 +28,22 @@ void filter_colors(Mat& src, Mat& img_filtered,Scalar& lower,Scalar& upper);
 //precondition src: must be color image
 //postcondition : 노란색과 흰색으로 구분되고 나머지는 검정으로 채워 반환된다.
 //threshold 값은 imageProcessing constant에 들어있음
+class Steer {
+public:
+	Steer();
+	void inputData(double dydxRight, double dydxLeft, double headingAngle);
+	double getSteering();
+private:
+	int nextIdx(int pos);
+	int predIdx(int pos);
+	double RightAngle[MAX_SAVINGANGLE];
+	double LeftAngle[MAX_SAVINGANGLE];
+	double Steering[MAX_SAVINGANGLE];
+	int currentPos;
+	int setLeftFlag = 0;
+	int setRightFlag = 0;
+	int setStraightLeftFlag = 0;
+	int setStraightRightFlag = 0;
+	double currentHeading;
+};
 #endif

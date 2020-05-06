@@ -476,25 +476,6 @@ void filter_colors(Mat& src, Mat& img_filtered, Scalar& lower, Scalar& upper) {
 	imgCombined.copyTo(img_filtered);
 }
 
-
-class Steer {
-public:
-	Steer();
-	void inputData(double dydxRight, double dydxLeft, double headingAngle);
-	double getSteering();
-private:
-	int nextIdx(int pos);
-	int predIdx(int pos);
-	double RightAngle[MAX_SAVINGANGLE];
-	double LeftAngle[MAX_SAVINGANGLE];
-	double Steering[MAX_SAVINGANGLE];
-	int currentPos;
-	int setLeftFlag = 0;
-	int setRightFlag = 0;
-	int setStraightLeftFlag = 0;
-	int setStraightRightFlag = 0;
-	double currentHeading;
-};
 double Steer::getSteering() {
 	//가중치의 합은 항상 1이 되도록하여야함. 벗어나야 한다면 값의 누적 적용을 낮춰야됨.
 	double returnVal;
