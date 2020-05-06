@@ -43,7 +43,8 @@ void Driving_DH::basicSetting()
 
 	RoiCenter = Point(
 		cvRound(frame_ROI_Line.size().width * (50.0 / 100.0)),
-		cvRound(frame_ROI_Line.size().height * ((81.5) / 100.0))
+		//cvRound(frame_ROI_Line.size().height * ((81.5) / 100.0))
+		cvRound(frame_ROI_Line.size().height * (79.0 / 100.0))
 	);
 	//RoiCenter는 직선이 어떤상태인지 판단 기준이 된다.
 }
