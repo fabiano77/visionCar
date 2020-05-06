@@ -3,6 +3,7 @@
 #include <opencv2/opencv.hpp>
 using namespace cv;
 
+const int MAX_SAVINGANGLE=5;
 Scalar lower_white = Scalar(120, 120, 120); //흰색 차선 (RGB)
 Scalar upper_white = Scalar(255, 255, 255);
 Scalar lower_yellow = Scalar(10, 100, 100); //노란색 차선 (HSV)
