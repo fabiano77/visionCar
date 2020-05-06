@@ -243,7 +243,7 @@ int main()
 			
 			Mat roiImg;
 			
-			roiImg = regionOfInterest(edgeImg, pointROI, WHITE_BGR);
+			regionOfInterest(edgeImg, roiImg,pointROI);
 
 			vector<Vec4i> lines;
 			imshow("roiImg", roiImg);
