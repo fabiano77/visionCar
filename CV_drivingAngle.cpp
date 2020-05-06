@@ -364,21 +364,25 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		}
 		steering *= weight;
 		// steering의 방향 조정
-		if ((right_index != 0) && (left_index != 0)) { // 차선이 두 개일 때
+		//if ((right_index != 0) && (left_index != 0)) { // 차선이 두 개일 때
 			// steering 그대로
-		}
-		else if (((right_index == 0) && (left_index != 0)) || ((right_index != 0) && (left_index == 0))) { // 차선이 한 개일 때
+		//}
+		//else if (((right_index == 0) && (left_index != 0)) || ((right_index != 0) && (left_index == 0))) { // 차선이 한 개일 때
 			// steering 반대로
-			steering = -steering;
-		}
-		else { // 차선이 없을 때
+		//	steering = -steering;
+		//}
+		//else { // 차선이 없을 때
+		//	steering = steering_Before;
+		//}
+		if ((right_index == 0) && (left_index == 0))
 			steering = steering_Before;
-		}
+		else
+			steering = -steering;
 	}
 	else if (Mode == 2) {
 		// 한 쪽 차선에 가까워 졌을 때 각도를 반대로 크게 줘서 헤딩각이 0이 될 때 까지 유지시켜 준다.
 		// 헤딩각이 0이 되면 조향각을 0으로 바꿔준다.
-		if ((left_interP > 0) || (right_interP > 0)) { // 한 쪽 라인에 가까워 졌을 때
+		/*if ((left_interP > 0) || (right_interP > 0)) { // 한 쪽 라인에 가까워 졌을 때
 			if (left_interP > right_interP) // 오른쪽 차선에 가까워 졌을 때
 				steering = -30;
 			else // 왼쪽 차선에 가까워 졌을 때
@@ -389,9 +393,24 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		}
 		else // 이 외에 경우는 각도 유지
 			steering = steering_Before;
-	}
+		}
 	else {
 		cout << " Mode error" << endl;
+	}*/
+		if (headingAngle != 0) {
+			if ((right_index != 0) && (left_index == 0)) {
+				steering = -30;
+			}
+			else if ((right_index == 0) && (left_index != 0)) {
+				steering = -30;
+			}
+			else {
+				steering = steering_Before;
+			}
+		}
+		else {
+			steering = 0;
+		}
 	}
 	// 아주 기본적인 알고리즘 상steering = -headingAngle;
 	//right_index=0일때 오른선 검출X
@@ -466,8 +485,9 @@ void filter_colors(Mat& src, Mat& img_filtered) {
 	//bitwise_and(bgrImg, bgrImg, whiteImg, maskWhite);
 	Scalar lower_w = Scalar(120, 120, 120); //흰색 차선 (RGB)
 	Scalar upper_w = Scalar(255, 255, 255);
-	Scalar lower_y = Scalar(10, 100, 100); //노란색 차선 (HSV)
-	Scalar upper_y = Scalar(40, 255, 255);
+	Scalar lower_y(14, 30, 35);
+	Scalar upper_y(46, 255, 255);
+
 
 	cvtColor(bgrImg, hsvImg, COLOR_BGR2HSV);
 	inRange(hsvImg, lower_y, upper_y, maskYellow);
