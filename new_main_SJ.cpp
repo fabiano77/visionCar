@@ -178,6 +178,8 @@ int main()
 
 			Objsteering.setRatio(Dosteering);
 
+			cout << "DoSteering : " << Dosteering << endl;
+			// 바퀴 조향 출력 0 ~ 100
 			namedWindow("sss", WINDOW_AUTOSIZE);
 			imshow("sss", image);
 			waitKey(33);
