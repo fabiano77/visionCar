@@ -435,7 +435,7 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 	Mat grayImg, blurImg, edgeImg, roiImg, dstImg;
 	int width = src.size().width;
 	int height = src.size().height;
-	filter_colors(src, filterImg, lower_yellow, upper_yellow);
+	filter_colors(src, filterImg, lower_y, upper_y);
 	cvtColor(filterImg, grayImg, COLOR_BGR2GRAY);
 	imgBlur(grayImg, blurImg, 1);
 	imgBlur(blurImg, edgeImg, 2);
