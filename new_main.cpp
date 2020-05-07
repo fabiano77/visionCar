@@ -62,71 +62,42 @@ int main()
 
 	else if (mode == 2)//manual mode
 	{
-		ManualMode Manual(pca, 40);	//ManualMode class & basic speed rate
-		Manual.guide();				//cout the key guide 
-		int key(-1);
-		while (key != 27)			//if not ESC
-		{
-			videocap >> frame;
-			imshow("Live camera", frame);
-			int key = waitKey(33);	//if you not press, return -1
-			Manual.input(key);		//movement by keyboard
-		}
+
 	}
 	//end manual mode
 
 
-	else if (mode == 3) {
-		//Mat intrinsic;
-		//Mat disCoeff;
-		//if (calibImage(videocap, intrinsic, disCoeff)) {
-		//	cout << "Calibration Success!" << endl;
-		//}
-		//else {
-		//	cout << "Calibration Failed!" << endl;
-		//}
-		//Mat undistortImg;
-		//vector<Vec4i> exLines;
-		//double steeringAngle;
-		//while (1) {
-		//	videocap >> frame;
-		//	undistort(frame, undistortImg, intrinsic, disCoeff);
-		//	imshow("Live", undistortImg);
+	else if (mode == 3) 
+	{
 
-		//	bool Check = extractLines(undistortImg, exLines);
-		//	drivingAngle(undistortImg, exLines, steeringAngle);
-		//	waitKey(15);
-		//}
 	}
-	//end calb mode
+
 
 
 	else if (mode == 4)	//daehee's code
 	{
-		/*
-		~code processing calibration~
-		*/
-
+		//calibration start
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
-		int numBoards = 5;	// 5개의 사진을 사용
+		int numBoards = 5;	
 		DoCalib(disCoeffs, intrinsic, numBoards);
 		cout << "complete 'DoCalib()' function" << endl;
+		//calib done
 
 		Mat distortFrame;
 
+		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
 									//sLevel : 직선구간 민감도(높을수록 많이 꺾임)
 		DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
+		DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);
 		//DH.mappingSetValue(0.0, 0.00, 10.0, 25.0, 50.0, 50.0);
-		DH.mappingSetValue(10, 10.0, 15.0, 20.0, 50.0, 50.0);
 		//코너구간 조향수준 맵핑값 세팅
-
-		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
 
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 
+		cam_pan.setRatio(52);	//카메라 좌우 조절
 
 		while (true)
 		{
@@ -134,18 +105,18 @@ int main()
 			tm.start();		//시간 측정 시작
 
 			videocap >> distortFrame;
-			undistort(distortFrame, frame, intrinsic, disCoeffs);
 
 			if (false) //event 체크
 			{
 
 			}
-			//else if (detectColorSign.isRedStop(frame, 10)) //빨간색 표지판 감지
+			//else if (detectColorSign.isRedStop(distortFrame, 10)) //빨간색 표지판 감지
 			//{
-			//	while (detectColorSign.isRedStop(frame, 10))
+			//	while (detectColorSign.isRedStop(distortFrame, 10))
 			//	{
 			//		DCmotor.stop();	//멈춘다.
 			//		imshow("frame", frame);
+			//		waitKey(5);
 			//	}
 			//}
 			else if (false)	//기타 event 체크
@@ -154,9 +125,10 @@ int main()
 			}
 			else //정상주행
 			{
-				DH.driving(frame, steerVal, speedVal, 35.0, 0.0);
+				undistort(distortFrame, frame, intrinsic, disCoeffs);
+				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
 
-				steering.setRatio(steerVal);			//바퀴 조향
+				steering.setRatio(steerVal);
 				DCmotor.go(speedVal);
 
 			}
@@ -171,11 +143,11 @@ int main()
 	//end daehee's code
 
 
-	else if (mode == 5) // SangMin's code
+	else if (mode == 5) 
 	{
 
 	}
-	//end SangMin's code
+
 
 	else if (mode == 6)
 	{

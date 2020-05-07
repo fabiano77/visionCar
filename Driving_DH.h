@@ -36,6 +36,19 @@ private:
 	Mat frame_ROI_Line;
 	Point RoiCenter;
 
+	Mat frame_ROI;
+	Mat frame_hsv;
+	Mat yellowThreshold;
+	Mat frame_yellow;
+	Mat frame_edge;
+
+	Point lowest;
+	Vec4i lowestLine;
+	Vec4i rightLine;
+	Vec4i leftLine;
+
+	Vec4i resultLine;
+
 	bool print;
 	bool printResult;
 
