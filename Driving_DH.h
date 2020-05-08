@@ -46,6 +46,8 @@ private:
 	Vec4i lowestLine;
 	Vec4i rightLine;
 	Vec4i leftLine;
+	//double rightSlope;
+	//double leftSlope;
 
 	Vec4i resultLine;
 
