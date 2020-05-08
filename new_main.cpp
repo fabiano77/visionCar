@@ -37,7 +37,7 @@ int main()
 	cout << "[visionCar] program start" << endl;
 
 	cout << "mode 4 : daehee's code" << endl;
-	cout << "mode 5 : daehee's code_no camera" << endl << endl;
+	cout << "mode 5 : function timer check" << endl << endl;
 	cout << "select mode : ";
 	int mode;
 	cin >> mode;
@@ -68,7 +68,7 @@ int main()
 	//end manual mode
 
 
-	else if (mode == 3) 
+	else if (mode == 3)
 	{
 
 	}
@@ -80,7 +80,7 @@ int main()
 		//calibration start
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
-		int numBoards = 5;	
+		int numBoards = 5;
 		DoCalib(disCoeffs, intrinsic, numBoards);
 		cout << "complete 'DoCalib()' function" << endl;
 		//calib done
@@ -89,15 +89,10 @@ int main()
 
 		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
-									//sLevel : 직선구간 민감도(높을수록 많이 꺾임)
 		DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
-		DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);
-		//DH.mappingSetValue(0.0, 0.00, 10.0, 25.0, 50.0, 50.0);
-		//코너구간 조향수준 맵핑값 세팅
-
+		DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
-
 		cam_pan.setRatio(52);	//카메라 좌우 조절
 
 		while (true)
@@ -144,11 +139,12 @@ int main()
 	//end daehee's code
 
 
-	else if (mode == 5) 
-	{//calibration start
+	else if (mode == 5)
+	{
+		//calibration start
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
-		int numBoards = 5;	
+		int numBoards = 5;
 		DoCalib(disCoeffs, intrinsic, numBoards);
 		cout << "complete 'DoCalib()' function" << endl;
 		//calib done
@@ -157,52 +153,59 @@ int main()
 
 		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
-									//sLevel : 직선구간 민감도(높을수록 많이 꺾임)
 		DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
-		DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);
-		//DH.mappingSetValue(0.0, 0.00, 10.0, 25.0, 50.0, 50.0);
-		//코너구간 조향수준 맵핑값 세팅
-
+		DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+		Driving_DH DH_false(false, 1.00);	//printFlag, sLevel
+		DH_false.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
+		DH_false.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
-
 		cam_pan.setRatio(52);	//카메라 좌우 조절
 
 		while (true)
 		{
-			TickMeter tm;	//시간 측정 클래스
-			tm.start();		//시간 측정 시작
-
+			TickMeter tm1;	//시간 측정 클래스
+			tm1.start();
 			videocap >> distortFrame;
+			tm1.stop();
 
-			if (false) //event 체크
-			{
+			TickMeter tm2;	//시간 측정 클래스
+			tm2.start();
+			undistort(distortFrame, frame, intrinsic, disCoeffs);
+			tm2.stop();
 
-			}
-			//else if (detectColorSign.isRedStop(distortFrame, 10)) //빨간색 표지판 감지
-			//{
-			//	while (detectColorSign.isRedStop(distortFrame, 10))
-			//	{
-			//		DCmotor.stop();	//멈춘다.
-			//		imshow("frame", frame);
-			//		waitKey(5);
-			//	}
-			//}
-			else if (false)	//기타 event 체크
-			{
+			TickMeter tm0;	//시간 측정 클래스
+			tm0.start();
+			DH_false.driving(distortFrame, steerVal, speedVal, 37.0, 0.0);
+			tm0.stop();
 
-			}
-			else //정상주행
-			{
-				undistort(distortFrame, frame, intrinsic, disCoeffs);
-				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+			TickMeter tm3;	//시간 측정 클래스
+			tm3.start();
+			DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+			tm3.stop();
 
-				steering.setRatio(steerVal);
-				DCmotor.go(speedVal);
+			TickMeter tm4;	//시간 측정 클래스
+			tm4.start();
+			steering.setRatio(steerVal);
+			tm4.stop();
 
-			}
-			tm.stop();		//시간측정 끝
-			cout << tm.getTimeMilli() << "[ms]" << '\n';
+			TickMeter tm5;	//시간 측정 클래스
+			tm5.start();
+			DCmotor.go(speedVal);
+			tm5.stop();
+
+			TickMeter tm6;	//시간 측정 클래스
+			tm6.start();
+			imshow("frame", frame);
+			waitKey(5);//33
+			tm5.stop();
+
+			cout << "videocap >>    : " << tm1.getTimeMilli() << "[ms]" << '\n';
+			cout << "undistort()    : " << tm2.getTimeMilli() << "[ms]" << '\n';
+			cout << "DH_fal.driving : " << tm0.getTimeMilli() << "[ms]" << '\n';
+			cout << "DH.    driving : " << tm3.getTimeMilli() << "[ms]" << '\n';
+			cout << "steering.set() : " << tm4.getTimeMilli() << "[ms]" << '\n';
+			cout << "DCmotor.go()   : " << tm5.getTimeMilli() << "[ms]" << '\n' << '\n';
 		}
 
 	}
