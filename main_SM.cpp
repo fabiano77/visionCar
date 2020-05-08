@@ -6,7 +6,7 @@
 #include "CV_drivingAngle.h"
 #include "Calibration.h"
 
-//cpp¸¦ Ãß°¡ÇØº¸´Â °ÍÀº ¾î¶°ÇÑ°¡
+//cppë¥¼ ì¶”ê°€í•´ë³´ëŠ” ê²ƒì€ ì–´ë– í•œê°€
 
 using namespace std;
 using namespace auto_car;
@@ -48,18 +48,18 @@ int main()
 	//start mode------------------------------------------------
 	if (mode == 1)//test mode
 	{
-		steering.setRatio(100);			//¹ÙÄû ¿ìÃø
-		steering.setRatio(0);			//¹ÙÄû ÁÂÃø
-		steering.resetCenter();			//¹ÙÄû Á¤·Ä
-		cam_tilt.setRatio(100);			//Ä«¸Ş¶ó »óÇâ
-		cam_tilt.setRatio(0);			//Ä«¸Ş¶ó ÇÏÇâ
-		cam_tilt.resetCenter();			//Ä«¸Ş¶ó Á¤·Ä
-		cam_pan.setRatio(100);			//Ä«¸Ş¶ó ¿ìÇâ
-		cam_pan.setRatio(0);			//Ä«¸Ş¶ó ÁÂÇâ
-		cam_pan.resetCenter();			//Ä«¸Ş¶ó Á¤·Ä
-		DCmotor.go();					//dc¸ğÅÍ ½ÃÀÛ
+		steering.setRatio(100);			//ë°”í€´ ìš°ì¸¡
+		steering.setRatio(0);			//ë°”í€´ ì¢Œì¸¡
+		steering.resetCenter();			//ë°”í€´ ì •ë ¬
+		cam_tilt.setRatio(100);			//ì¹´ë©”ë¼ ìƒí–¥
+		cam_tilt.setRatio(0);			//ì¹´ë©”ë¼ í•˜í–¥
+		cam_tilt.resetCenter();			//ì¹´ë©”ë¼ ì •ë ¬
+		cam_pan.setRatio(100);			//ì¹´ë©”ë¼ ìš°í–¥
+		cam_pan.setRatio(0);			//ì¹´ë©”ë¼ ì¢Œí–¥
+		cam_pan.resetCenter();			//ì¹´ë©”ë¼ ì •ë ¬
+		DCmotor.go();					//dcëª¨í„° ì‹œì‘
 		waitKey(1500);					//wait 1.5sec
-		DCmotor.stop();					//dc¸ğÅÍ ¸ØÃã
+		DCmotor.stop();					//dcëª¨í„° ë©ˆì¶¤
 	}
 	//end test mode
 
@@ -88,13 +88,13 @@ int main()
 	{
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
-		int numBoards = 20;
+		int numBoards = 5;
 		DoCalib(disCoeffs, intrinsic, numBoards);
 
 		Mat undistortImg;
 		vector<Vec4i> exLines;
 
-		double speedVal(35.0);	//ÃÊ±â ¼Óµµ(0~100)
+		double speedVal(35.0);	//ì´ˆê¸° ì†ë„(0~100)
 		double steering_After, steering_Before = 0;
 
 		int Mode;
@@ -102,24 +102,54 @@ int main()
 		cin >> Mode;
 		cout << "Mode : " << Mode << endl;
 		while (1) {
+			TickMeter tm;	//ì‹œê°„ ì¸¡ì • í´ë˜ìŠ¤
+			tm.start();
 			videocap >> frame;
 			undistort(frame, undistortImg, intrinsic, disCoeffs);
 			imshow("Live", undistortImg);
 
 			bool Check = extractLines(undistortImg, exLines);
 			drivingAngle_SM(undistortImg, exLines, steering_After, steering_Before, Mode);
-			steering.setRatio(50 + steering_After); //¹ÙÄû Á¶Çâ
-			cout << "Á¶Çâ°¢ : " << 50 + steering_After << endl;
-			DCmotor.go(speedVal);
+			steering.setRatio(50 + steering_After); //ë°”í€´ ì¡°í–¥
+			cout << "ì¡°í–¥ê° : " << 50 + steering_After << endl;
+			DCmotor.go(speedVal);			
 			waitKey(15);
-
+			tm.stop();		//ì‹œê°„ì¸¡ì • ë
+			cout << tm.getTimeMilli() << "[ms]" << '\n';
 		}
 	}
 	//end SangMin's code
 
 	else if (mode == 6)
 	{
-		//write your code
+		Mat intrinsic = Mat(3, 3, CV_32FC1);
+		Mat disCoeffs;
+		int numBoards = 5;
+		DoCalib(disCoeffs, intrinsic, numBoards);
+
+		Mat undistortImg;
+		vector<Vec4i> exLines;
+
+		double speedVal(35.0);	//ì´ˆê¸° ì†ë„(0~100)
+		double steering_After, steering_Before = 0;
+
+		int Mode;
+		cout << "select Mode : ";
+		cin >> Mode;
+		cout << "Mode : " << Mode << endl;
+		while (1) {
+			TickMeter tm;	//ì‹œê°„ ì¸¡ì • í´ë˜ìŠ¤
+			tm.start();
+			videocap >> frame;
+			undistort(frame, undistortImg, intrinsic, disCoeffs);
+
+			bool Check = extractLines(undistortImg, exLines);
+			drivingAngle_SM(undistortImg, exLines, steering_After, steering_Before, Mode);
+			steering.setRatio(50 + steering_After); //ë°”í€´ ì¡°í–¥
+			DCmotor.go(speedVal);
+			tm.stop();		//ì‹œê°„ì¸¡ì • ë
+			cout << tm.getTimeMilli() << "[ms]" << '\n';
+		}
 	}
 
 
@@ -133,5 +163,5 @@ int main()
 	cout << "program finished" << endl;
 	allServoReset(pca);	// 3 Servo motor center reset
 	return 0;
-	//³¡
+	//ë
 }
