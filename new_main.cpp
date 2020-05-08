@@ -7,7 +7,7 @@
 #include "DetectColorSign.h"
 #include "Calibration.h"
 
-//cpp¸¦ Ãß°¡ÇØº¸´Â °ÍÀº ¾î¶°ÇÑ°¡
+//cppë¥¼ ì¶”ê°€í•´ë³´ëŠ” ê²ƒì€ ì–´ë– í•œê°€
 
 using namespace std;
 using namespace auto_car;
@@ -36,7 +36,8 @@ int main()
 	//mode selection---------------------------------------------
 	cout << "[visionCar] program start" << endl;
 
-	cout << "mode 4 : daehee's code" << endl << endl;
+	cout << "mode 4 : daehee's code" << endl;
+	cout << "mode 5 : daehee's code_no camera" << endl << endl;
 	cout << "select mode : ";
 	int mode;
 	cin >> mode;
@@ -44,18 +45,18 @@ int main()
 	//start mode------------------------------------------------
 	if (mode == 1)//test mode
 	{
-		steering.setRatio(100);			//¹ÙÄû ¿ìÃø
-		steering.setRatio(0);			//¹ÙÄû ÁÂÃø
-		steering.resetCenter();			//¹ÙÄû Á¤·Ä
-		cam_tilt.setRatio(100);			//Ä«¸Ş¶ó »óÇâ
-		cam_tilt.setRatio(0);			//Ä«¸Ş¶ó ÇÏÇâ
-		cam_tilt.resetCenter();			//Ä«¸Ş¶ó Á¤·Ä
-		cam_pan.setRatio(100);			//Ä«¸Ş¶ó ¿ìÇâ
-		cam_pan.setRatio(0);			//Ä«¸Ş¶ó ÁÂÇâ
-		cam_pan.resetCenter();			//Ä«¸Ş¶ó Á¤·Ä
-		DCmotor.go();					//dc¸ğÅÍ ½ÃÀÛ
+		steering.setRatio(100);			//ë°”í€´ ìš°ì¸¡
+		steering.setRatio(0);			//ë°”í€´ ì¢Œì¸¡
+		steering.resetCenter();			//ë°”í€´ ì •ë ¬
+		cam_tilt.setRatio(100);			//ì¹´ë©”ë¼ ìƒí–¥
+		cam_tilt.setRatio(0);			//ì¹´ë©”ë¼ í•˜í–¥
+		cam_tilt.resetCenter();			//ì¹´ë©”ë¼ ì •ë ¬
+		cam_pan.setRatio(100);			//ì¹´ë©”ë¼ ìš°í–¥
+		cam_pan.setRatio(0);			//ì¹´ë©”ë¼ ì¢Œí–¥
+		cam_pan.resetCenter();			//ì¹´ë©”ë¼ ì •ë ¬
+		DCmotor.go();					//dcëª¨í„° ì‹œì‘
 		waitKey(1500);					//wait 1.5sec
-		DCmotor.stop();					//dc¸ğÅÍ ¸ØÃã
+		DCmotor.stop();					//dcëª¨í„° ë©ˆì¶¤
 	}
 	//end test mode
 
@@ -86,44 +87,44 @@ int main()
 
 		Mat distortFrame;
 
-		DetectColorSign detectColorSign(false);	//»ö±ò Ç¥ÁöÆÇ °¨Áö Å¬·¡½º
+		DetectColorSign detectColorSign(false);	//ìƒ‰ê¹” í‘œì§€íŒ ê°ì§€ í´ë˜ìŠ¤
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
-									//sLevel : Á÷¼±±¸°£ ¹Î°¨µµ(³ôÀ»¼ö·Ï ¸¹ÀÌ ²ªÀÓ)
+									//sLevel : ì§ì„ êµ¬ê°„ ë¯¼ê°ë„(ë†’ì„ìˆ˜ë¡ ë§ì´ êº¾ì„)
 		DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
 		DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);
 		//DH.mappingSetValue(0.0, 0.00, 10.0, 25.0, 50.0, 50.0);
-		//ÄÚ³Ê±¸°£ Á¶Çâ¼öÁØ ¸ÊÇÎ°ª ¼¼ÆÃ
+		//ì½”ë„ˆêµ¬ê°„ ì¡°í–¥ìˆ˜ì¤€ ë§µí•‘ê°’ ì„¸íŒ…
 
-		double steerVal(50.0);	//ÃÊ±â °¢µµ(50ÀÌ Áß½É)
-		double speedVal(40.0);	//ÃÊ±â ¼Óµµ(0~100)
+		double steerVal(50.0);	//ì´ˆê¸° ê°ë„(50ì´ ì¤‘ì‹¬)
+		double speedVal(40.0);	//ì´ˆê¸° ì†ë„(0~100)
 
-		cam_pan.setRatio(52);	//Ä«¸Ş¶ó ÁÂ¿ì Á¶Àı
+		cam_pan.setRatio(52);	//ì¹´ë©”ë¼ ì¢Œìš° ì¡°ì ˆ
 
 		while (true)
 		{
-			TickMeter tm;	//½Ã°£ ÃøÁ¤ Å¬·¡½º
-			tm.start();		//½Ã°£ ÃøÁ¤ ½ÃÀÛ
+			TickMeter tm;	//ì‹œê°„ ì¸¡ì • í´ë˜ìŠ¤
+			tm.start();		//ì‹œê°„ ì¸¡ì • ì‹œì‘
 
 			videocap >> distortFrame;
 
-			if (false) //event Ã¼Å©
+			if (false) //event ì²´í¬
 			{
 
 			}
-			//else if (detectColorSign.isRedStop(distortFrame, 10)) //»¡°£»ö Ç¥ÁöÆÇ °¨Áö
+			//else if (detectColorSign.isRedStop(distortFrame, 10)) //ë¹¨ê°„ìƒ‰ í‘œì§€íŒ ê°ì§€
 			//{
 			//	while (detectColorSign.isRedStop(distortFrame, 10))
 			//	{
-			//		DCmotor.stop();	//¸ØÃá´Ù.
+			//		DCmotor.stop();	//ë©ˆì¶˜ë‹¤.
 			//		imshow("frame", frame);
 			//		waitKey(5);
 			//	}
 			//}
-			else if (false)	//±âÅ¸ event Ã¼Å©
+			else if (false)	//ê¸°íƒ€ event ì²´í¬
 			{
 
 			}
-			else //Á¤»óÁÖÇà
+			else //ì •ìƒì£¼í–‰
 			{
 				undistort(distortFrame, frame, intrinsic, disCoeffs);
 				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
@@ -136,7 +137,7 @@ int main()
 			imshow("frame", frame);
 			waitKey(5);//33
 
-			tm.stop();		//½Ã°£ÃøÁ¤ ³¡
+			tm.stop();		//ì‹œê°„ì¸¡ì • ë
 			cout << tm.getTimeMilli() << "[ms]" << '\n';
 		}
 	}
@@ -144,7 +145,65 @@ int main()
 
 
 	else if (mode == 5) 
-	{
+	{//calibration start
+		Mat intrinsic = Mat(3, 3, CV_32FC1);
+		Mat disCoeffs;
+		int numBoards = 5;	
+		DoCalib(disCoeffs, intrinsic, numBoards);
+		cout << "complete 'DoCalib()' function" << endl;
+		//calib done
+
+		Mat distortFrame;
+
+		DetectColorSign detectColorSign(false);	//ìƒ‰ê¹” í‘œì§€íŒ ê°ì§€ í´ë˜ìŠ¤
+		Driving_DH DH(true, 1.00);	//printFlag, sLevel
+									//sLevel : ì§ì„ êµ¬ê°„ ë¯¼ê°ë„(ë†’ì„ìˆ˜ë¡ ë§ì´ êº¾ì„)
+		DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
+		DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);
+		//DH.mappingSetValue(0.0, 0.00, 10.0, 25.0, 50.0, 50.0);
+		//ì½”ë„ˆêµ¬ê°„ ì¡°í–¥ìˆ˜ì¤€ ë§µí•‘ê°’ ì„¸íŒ…
+
+		double steerVal(50.0);	//ì´ˆê¸° ê°ë„(50ì´ ì¤‘ì‹¬)
+		double speedVal(40.0);	//ì´ˆê¸° ì†ë„(0~100)
+
+		cam_pan.setRatio(52);	//ì¹´ë©”ë¼ ì¢Œìš° ì¡°ì ˆ
+
+		while (true)
+		{
+			TickMeter tm;	//ì‹œê°„ ì¸¡ì • í´ë˜ìŠ¤
+			tm.start();		//ì‹œê°„ ì¸¡ì • ì‹œì‘
+
+			videocap >> distortFrame;
+
+			if (false) //event ì²´í¬
+			{
+
+			}
+			//else if (detectColorSign.isRedStop(distortFrame, 10)) //ë¹¨ê°„ìƒ‰ í‘œì§€íŒ ê°ì§€
+			//{
+			//	while (detectColorSign.isRedStop(distortFrame, 10))
+			//	{
+			//		DCmotor.stop();	//ë©ˆì¶˜ë‹¤.
+			//		imshow("frame", frame);
+			//		waitKey(5);
+			//	}
+			//}
+			else if (false)	//ê¸°íƒ€ event ì²´í¬
+			{
+
+			}
+			else //ì •ìƒì£¼í–‰
+			{
+				undistort(distortFrame, frame, intrinsic, disCoeffs);
+				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+
+				steering.setRatio(steerVal);
+				DCmotor.go(speedVal);
+
+			}
+			tm.stop();		//ì‹œê°„ì¸¡ì • ë
+			cout << tm.getTimeMilli() << "[ms]" << '\n';
+		}
 
 	}
 
@@ -165,5 +224,5 @@ int main()
 	cout << "program finished" << endl;
 	allServoReset(pca);	// 3 Servo motor center reset
 	return 0;
-	//³¡
+	//ë
 }
