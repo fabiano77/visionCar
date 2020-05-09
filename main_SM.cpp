@@ -63,29 +63,9 @@ int main()
 	}
 	//end test mode
 
-
-	else if (mode == 2)//manual mode
-	{
-
-	}
-	//end manual mode
-
-
-	else if (mode == 3) {
-
-	}
-	//end calb mode
-
-
-	else if (mode == 4)	//daehee's code
-	{
-		
-	}
-	//end daehee's code
-
-
 	else if (mode == 5) // SangMin's code
 	{
+		cam_tilt.setRatio(35);
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
 		int numBoards = 5;
@@ -98,12 +78,10 @@ int main()
 		double steering_After, steering_Before = 0;
 
 		int Mode;
-		cout << "select Mode : ";
+		cout << "select Mode(1,2) : ";
 		cin >> Mode;
 		cout << "Mode : " << Mode << endl;
 		while (1) {
-			TickMeter tm;	//시간 측정 클래스
-			tm.start();
 			videocap >> frame;
 			undistort(frame, undistortImg, intrinsic, disCoeffs);
 			imshow("Live", undistortImg);
@@ -113,15 +91,14 @@ int main()
 			steering.setRatio(50 + steering_After); //바퀴 조향
 			cout << "조향각 : " << 50 + steering_After << endl;
 			DCmotor.go(speedVal);			
-			waitKey(15);
-			tm.stop();		//시간측정 끝
-			cout << tm.getTimeMilli() << "[ms]" << '\n';
+			waitKey(15);	
 		}
 	}
 	//end SangMin's code
 
 	else if (mode == 6)
 	{
+		cam_tilt.setRatio(35);
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
 		int numBoards = 5;
@@ -134,21 +111,21 @@ int main()
 		double steering_After, steering_Before = 0;
 
 		int Mode;
-		cout << "select Mode : ";
+		cout << "select Mode(1,2) : ";
 		cin >> Mode;
 		cout << "Mode : " << Mode << endl;
 		while (1) {
-			TickMeter tm;	//시간 측정 클래스
-			tm.start();
+			//TickMeter tm;	//시간 측정 클래스
+			//tm.start();
 			videocap >> frame;
 			undistort(frame, undistortImg, intrinsic, disCoeffs);
 
 			bool Check = extractLines(undistortImg, exLines);
 			drivingAngle_SM(undistortImg, exLines, steering_After, steering_Before, Mode);
 			steering.setRatio(50 + steering_After); //바퀴 조향
-			DCmotor.go(speedVal);
-			tm.stop();		//시간측정 끝
-			cout << tm.getTimeMilli() << "[ms]" << '\n';
+			//DCmotor.go(speedVal);
+			//tm.stop();		//시간측정 끝
+			//cout << tm.getTimeMilli() << "[ms]" << '\n';
 		}
 	}
 
