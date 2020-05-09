@@ -364,20 +364,20 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		}
 		steering *= weight;
 		// steering의 방향 조정
-		if ((right_index != 0) && (left_index != 0)) { // 차선이 두 개일 때
+		//if ((right_index != 0) && (left_index != 0)) { // 차선이 두 개일 때
 			// steering 그대로
-		}
-		else if (((right_index == 0) && (left_index != 0)) || ((right_index != 0) && (left_index == 0))) { // 차선이 한 개일 때
+		//}
+		//else if (((right_index == 0) && (left_index != 0)) || ((right_index != 0) && (left_index == 0))) { // 차선이 한 개일 때
 			// steering 반대로
-			steering = -steering;
-		}
-		else { // 차선이 없을 때
-			steering = steering_Before;
-		}
-		//if ((right_index == 0) && (left_index == 0))
-		//	steering = steering_Before;
-		//else
 		//	steering = -steering;
+		//}
+		//else { // 차선이 없을 때
+		//	steering = steering_Before;
+		//}
+		if ((right_index == 0) && (left_index == 0))
+			steering = steering_Before;
+		else
+			steering = -steering;
 	}
 	else if (Mode == 2) {
 		// 한 쪽 차선에 가까워 졌을 때 각도를 반대로 크게 줘서 헤딩각이 0이 될 때 까지 유지시켜 준다.
@@ -416,7 +416,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	//right_index=0일때 오른선 검출X
 	//left_index=0일때 왼선 검출
 	//heading Angle은 차량이 바라보는 방향
-	cout << "headingAngle: " << headingAngle << endl;
+	cout << "steering: " << steering << endl;
 	slopeDegrees.clear();
 	leftLines.clear();
 	rightLines.clear();
