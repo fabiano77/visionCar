@@ -397,6 +397,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	else {
 		cout << " Mode error" << endl;
 	}
+	     
 		/*if (headingAngle != 0) {
 			if ((right_index != 0) && (left_index == 0)) {
 				steering = -30;
@@ -411,7 +412,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		else {
 			steering = 0;
 		}*/
-	}
+	
 	// 아주 기본적인 알고리즘 상steering = -headingAngle;
 	//right_index=0일때 오른선 검출X
 	//left_index=0일때 왼선 검출
