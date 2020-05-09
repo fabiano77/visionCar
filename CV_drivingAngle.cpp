@@ -379,23 +379,10 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		else
 			steering = -steering;
 	}
-	else if (Mode == 2) {
+	else if (Mode == 2) 
+	{
 		// 한 쪽 차선에 가까워 졌을 때 각도를 반대로 크게 줘서 헤딩각이 0이 될 때 까지 유지시켜 준다.
 		// 헤딩각이 0이 되면 조향각을 0으로 바꿔준다.
-		/*if ((left_interP > 0) || (right_interP > 0)) { // 한 쪽 라인에 가까워 졌을 때
-			if (left_interP > right_interP) // 오른쪽 차선에 가까워 졌을 때
-				steering = -30;
-			else // 왼쪽 차선에 가까워 졌을 때
-				steering = 30;
-		}
-		else if (headingAngle == 0) { // 헤딩각이 0일 때
-			steering = 0;
-		}
-		else // 이 외에 경우는 각도 유지
-			steering = steering_Before;
-		}*/
-	
-	     
 		if (headingAngle != 0)
 		{
 			if ((left_interP > 0) || (right_interP > 0)) 
@@ -405,8 +392,9 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			        else // 왼쪽 차선에 가까워 졌을 때
 				    steering = 30;
 		        }
-			else
+			else{
 				steering = steering_Before;
+			}
 			/*if ((right_index != 0) && (left_index == 0)) {
 				steering = -30;
 			}
@@ -420,7 +408,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		else {
 			steering = 0;
 		}
-	
+	}	
 	// 아주 기본적인 알고리즘 상steering = -headingAngle;
 	//right_index=0일때 오른선 검출X
 	//left_index=0일때 왼선 검출
