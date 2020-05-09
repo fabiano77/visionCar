@@ -417,7 +417,9 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	//right_index=0일때 오른선 검출X
 	//left_index=0일때 왼선 검출
 	//heading Angle은 차량이 바라보는 방향
-	cout << "steering: " << steering << endl;
+	cout << "headingAngle: " << headingAngle << endl;
+	cout << "steering: " << steering << endl << endl;
+	
 	slopeDegrees.clear();
 	leftLines.clear();
 	rightLines.clear();
