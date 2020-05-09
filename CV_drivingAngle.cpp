@@ -393,18 +393,18 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		}
 		else // 이 외에 경우는 각도 유지
 			steering = steering_Before;
-		}
-	else {
-		cout << " Mode error" << endl;
-	}*/
+		}*/
+	
 	     
-		if (headingAngle != 0) {
-			if ((left_interP > 0) || (right_interP > 0)) { // 한 쪽 라인에 가까워 졌을 때
-			    if (left_interP > right_interP) // 오른쪽 차선에 가까워 졌을 때
-				steering = -30;
-			    else // 왼쪽 차선에 가까워 졌을 때
-				steering = 30;
-		            }
+		if (headingAngle != 0)
+		{
+			if ((left_interP > 0) || (right_interP > 0)) 
+			{ // 한 쪽 라인에 가까워 졌을 때
+			        if (left_interP > right_interP) // 오른쪽 차선에 가까워 졌을 때
+				    steering = -30;
+			        else // 왼쪽 차선에 가까워 졌을 때
+				    steering = 30;
+		        }
 			else
 				steering = steering_Before;
 			/*if ((right_index != 0) && (left_index == 0)) {
