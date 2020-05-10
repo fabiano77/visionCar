@@ -13,6 +13,7 @@ public:
 	Steer();
 	void inputData(double dydxRight, double dydxLeft, double headingAngle);
 	double getSteering();
+	bool gostop();
 private:
 	int nextIdx(int pos);
 	int predIdx(int pos);
@@ -25,6 +26,7 @@ private:
 	int setStraightLeftFlag = 0;
 	int setStraightRightFlag = 0;
 	double currentHeading;
+	int stopFlag = 0;
 };
 //for drivingAngle
 // 라인 검출기능과 각도 반환을 통해서 조작 가능하다

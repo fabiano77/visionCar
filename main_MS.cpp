@@ -97,10 +97,12 @@ int main()
 		Mat filteredImg;
 		Steer steer1;
 		double steeringValue;	//초기 각도(50이 중심)
-		double speedVal(40.0);	//초기 속도(0~100)
+		double speedVal_straight(40.0);	//초기 속도(0~100)
+		double speedVal_turn(30.0);
+		bool gostop = true;
 		Point pointROI[4] = { Point(width * 3 / 7,height * 3 / 5),Point(width * 4 / 7,height * 3 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
 		Scalar WHITE_BGR(255, 255, 255);
-		while (videocap.isOpened()) {
+		while (videocap.isOpened()&&gostop==true) {
 			videocap >> distortFrame;
 			undistort(distortFrame, frame, intrinsic, disCoeffs);
 			filter_colors(frame, filteredImg);
@@ -124,13 +126,24 @@ int main()
 
 
 			drivingAngle_MS(dstImg, lines, steeringValue, steer1);
-			//이부분은 그냥 설정
-			if (steeringValue > 50) { steeringValue = 45; }
-			else if (steeringValue < -50) { steeringValue = -45; }
+			if (abs(steeringValue)>24) {
+				DCmotor.go(speedVal_turn);
+			}
+			else {
+				DCmotor.go(speedVal_straight);
+			}
 			steeringValue = 50 + steeringValue;
-			//imshow("roiImg", roiImg);
-			steering.setRatio(steeringValue);			//바퀴 조향
-			DCmotor.go(speedVal);
+			steering.setRatio(steeringValue);//방향각 조정
+
+			gostop=steer1.gostop();
+			if (gostop == false) {
+				DCmotor.stop();
+				cout << "정지합니다" << endl;
+				break;
+			}
+
+			//imshow("roiImg", roiImg);			//바퀴 조향
+			
 		}
 
 	}
