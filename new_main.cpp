@@ -66,10 +66,10 @@ int main()
 		Size videoSize = Size(640, 480);
 		Mat map1, map2;
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
-		Mat disCoeffs;
+		Mat distCoeffs;
 		int numBoards = 5;
-		DoCalib(disCoeffs, intrinsic, numBoards);
-		initUndistortRectifyMap(intrinsic, disCoeffs, Mat(), intrinsic, videoSize, CV_32FC1, map1, map2);
+		DoCalib(distCoeffs, intrinsic, numBoards);
+		initUndistortRectifyMap(intrinsic, distCoeffs, Mat(), intrinsic, videoSize, CV_32FC1, map1, map2);
 		cout << "[complete calibration]" << endl;
 		Mat distortedFrame;
 		//calibration done
@@ -112,7 +112,7 @@ int main()
 			}
 
 			imshow("frame", frame);
-			waitKey(5);//33
+			if (waitKey(1) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 
 			tm.stop();		//시간측정 끝
 			cout << tm.getTimeMilli() << "[ms]" << '\n';
@@ -140,7 +140,7 @@ int main()
 
 	else cout << "invalid mode selection" << endl;
 
-	cout << "program finished" << endl;
+	cout << "program finished" << endl << endl;
 	allServoReset(pca);	// 3 Servo motor center reset
 	return 0;
 	//끝

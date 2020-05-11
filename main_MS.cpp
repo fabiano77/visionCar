@@ -146,7 +146,8 @@ int main()
 			}
 
 			//imshow("roiImg", roiImg);			//바퀴 조향
-			
+
+			if (waitKey(1) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 		}
 
 	}

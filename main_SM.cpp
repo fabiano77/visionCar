@@ -89,7 +89,9 @@ int main()
 			steering.setRatio(50 + steering_After); //바퀴 조향
 			//cout << "조향각 : " << 50 + steering_After << endl;
 			DCmotor.go(speedVal);			
-			waitKey(15);	
+			//waitKey(15);	
+			int key = waitKey(15);	//33
+			if (key == 27) break;	//프로그램 종료 ESC키.
 		}
 	}
 	//end SangMin's code
@@ -148,7 +150,9 @@ int main()
 			steering.setRatio(50 + steering_After); //바퀴 조향
 			tm5.stop();
 
-			waitKey(15);
+			//waitKey(15);
+			if (waitKey(1) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
+
 			tm7.stop();
 			//DCmotor.go(speedVal);
 			//tm.stop();		//시간측정 끝

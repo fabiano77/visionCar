@@ -146,7 +146,8 @@ int main()
 			// 바퀴 조향 출력 0 ~ 100
 			namedWindow("sss", WINDOW_AUTOSIZE);
 			imshow("sss", image);
-			waitKey(33);
+			//waitKey(33);
+			if (waitKey(33) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 		}
 		delete[] linePt;
 	}
