@@ -199,21 +199,21 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		}
 		steering *= weight;
 		// steering의 방향 조정
-		if ((right_index != 0) && (left_index != 0)) { // 차선이 두 개일 때
+		/*if ((right_index != 0) && (left_index != 0)) { // 차선이 두 개일 때
 			// steering 반대로
-			
+			steering = -steering;
 		}
 		else if (((right_index == 0) && (left_index != 0)) || ((right_index != 0) && (left_index == 0))) { // 차선이 한 개일 때
 			// steering 그대로		
-			steering = -steering;
+			
 		}
 		else { // 차선이 없을 때
 			steering = steering_Before;
-		}
-		//if ((right_index == 0) && (left_index == 0))
-		//	steering = steering_Before;
-		//else
-		//	steering = -steering;
+		}*/
+		if ((right_index == 0) && (left_index == 0))
+			steering = steering_Before;
+		else
+			steering = -steering;
 	}
 	else if (Mode == 2) 
 	{
