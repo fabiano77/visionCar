@@ -205,7 +205,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		}
 		else if (((right_index == 0) && (left_index != 0)) || ((right_index != 0) && (left_index == 0))) { // 차선이 한 개일 때
 			// steering 그대로			
-		//}
+		}
 		else { // 차선이 없을 때
 			steering = steering_Before;
 		}

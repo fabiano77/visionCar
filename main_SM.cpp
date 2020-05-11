@@ -60,7 +60,7 @@ int main()
 
 	else if (mode == 5) // SangMin's code
 	{
-		cam_tilt.setRatio(15);
+		cam_tilt.setRatio(10);
 		Size videoSize = Size(640, 480);
 		Mat map1, map2;
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
@@ -87,7 +87,7 @@ int main()
 			bool Check = extractLines(undistortImg, exLines);
 			drivingAngle_SM(undistortImg, exLines, steering_After, steering_Before, Mode);
 			steering.setRatio(50 + steering_After); //바퀴 조향
-			cout << "조향각 : " << 50 + steering_After << endl;
+			//cout << "조향각 : " << 50 + steering_After << endl;
 			DCmotor.go(speedVal);			
 			waitKey(15);	
 		}
@@ -96,7 +96,7 @@ int main()
 
 	else if (mode == 6)
 	{
-		cam_tilt.setRatio(15);
+		cam_tilt.setRatio(10);
 		Size videoSize = Size(640, 480);
 		Mat map1, map2;
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
