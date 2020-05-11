@@ -86,7 +86,7 @@ int main()
 		Mat map1, map2;
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
-		int numBoards = 20;
+		int numBoards = 5;
 		DoCalib(disCoeffs, intrinsic, numBoards);
 		initUndistortRectifyMap(intrinsic, disCoeffs, Mat(), intrinsic, videoSize, CV_32FC1, map1, map2);
 		Mat distortedFrame;
