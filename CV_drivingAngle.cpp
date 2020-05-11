@@ -599,11 +599,8 @@ bool Steer::gostop() {
 	else { if (stopFlag > 0)stopFlag--; }
 	cout << "정지 예고(10회시 종료): " << stopFlag << endl;
 	if (stopFlag >= 10) { return false; }
-	else true;
+	else { return true; }
 }
-
-
-
 
 void imgProcessing(Mat& src, Mat& dst, int processingCode) {
 	if (processingCode == 1) {//gaussian Blur
