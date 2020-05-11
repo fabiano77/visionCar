@@ -60,7 +60,7 @@ int main()
 
 	else if (mode == 5) // SangMin's code
 	{
-		cam_tilt.setRatio(35);
+		cam_tilt.setRatio(15);
 		Size videoSize = Size(640, 480);
 		Mat map1, map2;
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
@@ -96,7 +96,7 @@ int main()
 
 	else if (mode == 6)
 	{
-		cam_tilt.setRatio(35);
+		cam_tilt.setRatio(15);
 		Size videoSize = Size(640, 480);
 		Mat map1, map2;
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
@@ -128,7 +128,7 @@ int main()
 
 			TickMeter tm2;
 			tm2.start();
-			undistort(frame, undistortImg, intrinsic, disCoeffs);
+			remap(frame, undistortImg, map1, map2, INTER_LINEAR);
 			tm2.stop();
 
 			TickMeter tm3;
