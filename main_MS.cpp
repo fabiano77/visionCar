@@ -82,11 +82,14 @@ int main()
 
 	else if (mode == 6)
 	{
+		Size videoSize = Size(640, 480);
+		Mat map1, map2;
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
 		int numBoards = 20;
 		DoCalib(disCoeffs, intrinsic, numBoards);
-		Mat distortFrame;
+		initUndistortRectifyMap(intrinsic, disCoeffs, Mat(), intrinsic, videoSize, CV_32FC1, map1, map2);
+		Mat distortedFrame;
 		Mat srcImg;
 		videocap >> srcImg;
 		int width = srcImg.size().width;
@@ -103,8 +106,8 @@ int main()
 		Point pointROI[4] = { Point(width * 3 / 7,height * 3 / 5),Point(width * 4 / 7,height * 3 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
 		Scalar WHITE_BGR(255, 255, 255);
 		while (videocap.isOpened()&&gostop==true) {
-			videocap >> distortFrame;
-			undistort(distortFrame, frame, intrinsic, disCoeffs);
+			videocap >> distortedFrame;
+			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 			filter_colors(frame, filteredImg);
 			//cvtColor(srcImg, grayImg, COLOR_BGR2GRAY);
 			//이미지 처리 blur 및 edge 검출

@@ -34,13 +34,8 @@ int main()
 
 	//mode selection---------------------------------------------
 	cout << "[visionCar] program start" << endl << endl;
-	cout << "mode 1 : test mode" << endl;
-	cout << "mode 2 : manual mode" << endl;
-	cout << "mode 3 : calb & angle mode" << endl;
-	cout << "mode 4 : daehee's code" << endl;
-	cout << "mode 5 : who's code?" << endl;
-	cout << "mode 6 : who's code?" << endl;
-	cout << "mode 7 : who's code?" << endl << endl;
+	cout << "mode 5 : SangMin's code" << endl;
+	cout << "mode 6 : SangMin's code" << endl << endl;
 	cout << "select mode : ";
 	int mode;
 	cin >> mode;
@@ -66,10 +61,13 @@ int main()
 	else if (mode == 5) // SangMin's code
 	{
 		cam_tilt.setRatio(35);
+		Size videoSize = Size(640, 480);
+		Mat map1, map2;
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
 		int numBoards = 5;
 		DoCalib(disCoeffs, intrinsic, numBoards);
+		initUndistortRectifyMap(intrinsic, disCoeffs, Mat(), intrinsic, videoSize, CV_32FC1, map1, map2);
 
 		Mat undistortImg;
 		vector<Vec4i> exLines;
@@ -83,7 +81,7 @@ int main()
 		cout << "Mode : " << Mode << endl;
 		while (1) {
 			videocap >> frame;
-			undistort(frame, undistortImg, intrinsic, disCoeffs);
+			remap(frame, undistortImg, map1, map2, INTER_LINEAR);
 			imshow("Live", undistortImg);
 
 			bool Check = extractLines(undistortImg, exLines);
@@ -99,10 +97,13 @@ int main()
 	else if (mode == 6)
 	{
 		cam_tilt.setRatio(35);
+		Size videoSize = Size(640, 480);
+		Mat map1, map2;
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
 		int numBoards = 5;
 		DoCalib(disCoeffs, intrinsic, numBoards);
+		initUndistortRectifyMap(intrinsic, disCoeffs, Mat(), intrinsic, videoSize, CV_32FC1, map1, map2);
 
 		Mat undistortImg;
 		vector<Vec4i> exLines;
@@ -118,7 +119,7 @@ int main()
 			//TickMeter tm;	//시간 측정 클래스
 			//tm.start();
 			videocap >> frame;
-			undistort(frame, undistortImg, intrinsic, disCoeffs);
+			remap(frame, undistortImg, map1, map2, INTER_LINEAR);
 
 			bool Check = extractLines(undistortImg, exLines);
 			drivingAngle_SM(undistortImg, exLines, steering_After, steering_Before, Mode);

@@ -78,14 +78,17 @@ int main()
 	else if (mode == 4)	//daehee's code
 	{
 		//calibration start
+		Size videoSize = Size(640, 480);
+		Mat map1, map2;
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
 		int numBoards = 5;
 		DoCalib(disCoeffs, intrinsic, numBoards);
+		initUndistortRectifyMap(intrinsic, disCoeffs, Mat(), intrinsic, videoSize, CV_32FC1, map1, map2);
 		cout << "complete 'DoCalib()' function" << endl;
+		Mat distortedFrame;
 		//calib done
 
-		Mat distortFrame;
 
 		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
@@ -100,7 +103,7 @@ int main()
 			TickMeter tm;	//시간 측정 클래스
 			tm.start();		//시간 측정 시작
 
-			videocap >> distortFrame;
+			videocap >> distortedFrame;
 
 			if (false) //event 체크
 			{
@@ -121,7 +124,7 @@ int main()
 			}
 			else //정상주행
 			{
-				undistort(distortFrame, frame, intrinsic, disCoeffs);
+				remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
 
 				steering.setRatio(steerVal);
