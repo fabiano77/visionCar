@@ -117,15 +117,47 @@ int main()
 		while (1) {
 			//TickMeter tm;	//시간 측정 클래스
 			//tm.start();
+			TickMeter tm7;
+			tm7.start();
+
+			TickMeter tm1;
+			tm1.start();
 			videocap >> frame;
+			tm1.stop();
+
+			TickMeter tm2;
+			tm2.start();
 			undistort(frame, undistortImg, intrinsic, disCoeffs);
+			tm2.stop();
+
+			TickMeter tm3;
+			tm3.start();
+			imshow("Live", undistortImg);
+			tm3.stop();
 
 			bool Check = extractLines(undistortImg, exLines);
+
+			TickMeter tm4;
+			tm4.start();
 			drivingAngle_SM(undistortImg, exLines, steering_After, steering_Before, Mode);
+			tm4.stop();
+
+			TickMeter tm5;
+			tm5.start();
 			steering.setRatio(50 + steering_After); //바퀴 조향
+			tm5.stop();
+
+			waitKey(15);
+			tm7.stop();
 			//DCmotor.go(speedVal);
 			//tm.stop();		//시간측정 끝
 			//cout << tm.getTimeMilli() << "[ms]" << '\n';
+			cout << "videocap >>    : " << tm1.getTimeMilli() << "[ms]" << '\n';
+			cout << "undistort()    : " << tm2.getTimeMilli() << "[ms]" << '\n';
+			cout << "imshow() : " << tm3.getTimeMilli() << "[ms]" << '\n';
+			cout << "drivingAngle_SM() : " << tm4.getTimeMilli() << "[ms]" << '\n';
+			cout << "steering.set() : " << tm5.getTimeMilli() << "[ms]" << '\n';
+			cout << "all time   : " << tm7.getTimeMilli() << "[ms]" << '\n' << '\n';
 		}
 	}
 
