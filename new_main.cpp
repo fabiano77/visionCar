@@ -27,7 +27,8 @@ int main()
 	//OpenCV setting----------------------------------------------
 	Mat frame;					//standard Mat obj
 	VideoCapture videocap(0);	//camera obj
-	if (!videocap.isOpened()) {
+	if (!videocap.isOpened()) 
+	{
 		cerr << "video capture fail!" << endl;
 		return -1;
 	}
@@ -35,7 +36,6 @@ int main()
 
 	//mode selection---------------------------------------------
 	cout << "[visionCar] program start" << endl;
-
 	cout << "mode 4 : daehee's code" << endl;
 	cout << "mode 5 : function timer check" << endl << endl;
 	cout << "select mode : ";
@@ -58,7 +58,7 @@ int main()
 		waitKey(1500);					//wait 1.5sec
 		DCmotor.stop();					//dc모터 멈춤
 	}
-	//end test mode
+	//end test mode----------------------------------------------
 
 
 	else if (mode == 4)	//daehee's code
@@ -73,12 +73,14 @@ int main()
 		initUndistortRectifyMap(intrinsic, disCoeffs, Mat(), intrinsic, videoSize, CV_32FC1, map1, map2);
 		cout << "[complete calibration]" << endl;
 		Mat distortedFrame;
-		//calib done
+		//calibration done
 
 		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
-		DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
-		DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+		//DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
+		//DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+		DH.mappingSetSection(0, 0.10, 0.40, 0.75, 0.79, 1.00);
+		DH.mappingSetValue(8.0, 8.00, 15.0, 20.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 		cam_pan.setRatio(52);	//카메라 좌우 조절
@@ -94,19 +96,13 @@ int main()
 			{
 
 			}
-			//else if (detectColorSign.isRedStop(distortedFrame, 10)) //빨간색 표지판 감지
+			//else if (detectColorSign.isRedStop(distortedFrame, 7)) //빨간색 표지판 감지
 			//{
-			//	while (detectColorSign.isRedStop(distortedFrame, 10))
-			//	{
-			//		DCmotor.stop();	//멈춘다.
-			//		imshow("frame", frame);
-			//		waitKey(5);
-			//	}
+			//	cout << "A red stop sign was detected." << '\n';
+			//	frame = distortedFrame;
+			//
+			//	DCmotor.stop();
 			//}
-			else if (false)	//기타 event 체크
-			{
-
-			}
 			else //정상주행
 			{
 				remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
@@ -114,7 +110,6 @@ int main()
 
 				steering.setRatio(steerVal);
 				DCmotor.go(speedVal);
-
 			}
 
 			imshow("frame", frame);

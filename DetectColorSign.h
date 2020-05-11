@@ -10,7 +10,6 @@ class DetectColorSign
 public:
 	DetectColorSign();
 	DetectColorSign(bool onPrint);
-	//onPrint는 판단 과정을 출력할 것인가.
 
 	bool isRedStop(Mat& frame, int percent);
 	//PreCondition :: percent에 붉은색이 몇퍼센트 존재해야 검출할건지 입력
@@ -23,6 +22,11 @@ private:
 	Scalar upper_red1;
 	Scalar lower_red2;
 	Scalar upper_red2;
+
+	Mat frame_hsv;
+	Mat frame_red;
+	Mat frame_red1;
+	Mat frame_red2;
 };
 
 #endif	//DETECT_COLOR_SIGN_H
