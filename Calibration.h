@@ -42,7 +42,7 @@ void DoCalib(Mat& distCoeffs, Mat& intrinsic, int& numBoards) {
 	while (successes < numBoards) { // 모든 체스 판의 사진을 처리 할 때 까지 loop를 실행한다.
 
 		osstream.str("");
-		osstream << "capture" << successes + 1 << ".jpg"; // 사진의 제목 처리
+		osstream << "calib_pictures/capture" << successes + 1 << ".jpg"; // 사진의 제목 처리
 
 		image = imread(osstream.str(), IMREAD_COLOR); // 첫 번째 사진부터 image객채에 read시킨다.
 
