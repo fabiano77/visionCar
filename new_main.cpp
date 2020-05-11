@@ -64,14 +64,13 @@ int main()
 	{
 		//calibration start
 		Size videoSize = Size(640, 480);
-		Mat map1, map2;
-		Mat intrinsic = Mat(3, 3, CV_32FC1);
-		Mat distCoeffs;
+		Mat map1, map2, distCoeffs;
+		Mat cameraMatrix = Mat(3, 3, CV_32FC1);
 		int numBoards = 5;
-		DoCalib(distCoeffs, intrinsic, numBoards);
-		initUndistortRectifyMap(intrinsic, distCoeffs, Mat(), intrinsic, videoSize, CV_32FC1, map1, map2);
-		cout << "[complete calibration]" << endl;
+		DoCalib(distCoeffs, cameraMatrix, numBoards);
+		initUndistortRectifyMap(cameraMatrix, distCoeffs, Mat(), cameraMatrix, videoSize, CV_32FC1, map1, map2);
 		Mat distortedFrame;
+		cout << "[calibration complete]" << endl;
 		//calibration done
 
 		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
@@ -82,7 +81,9 @@ int main()
 		DH.mappingSetValue(8.0, 8.00, 15.0, 20.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
-		cam_pan.setRatio(52);	//카메라 좌우 조절
+		bool cornerFlag(false);
+
+		cam_pan.setRatio(52);	//카메라 좌우 보정 50->52 : 살짝 우측으로 보정
 
 		while (true)
 		{
@@ -102,10 +103,19 @@ int main()
 			//
 			//	DCmotor.stop();
 			//}
+			else if(cornerFlag) //코너 flag on일때, 조향하지 않고 꺾은채 유지.
+			{
+				remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
+				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+				if (steerVal >= 30 && steerVal <= 70) cornerFlag = false;	//코너 flag 해제
+
+				DCmotor.go(30);
+			}
 			else //정상주행
 			{
 				remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+				//if (steerVal == 100 || steerVal == 0) cornerFlag = true;
 
 				steering.setRatio(steerVal);
 				DCmotor.go(speedVal);
