@@ -592,6 +592,19 @@ int Steer::predIdx(int pos) {
 	else return pos--;
 }
 
+bool Steer::gostop() {
+	if (RightAngle[currentPos] == 0 && LeftAngle[currentPos] == 0) {
+		stopFlag++;
+	}
+	else { if (stopFlag > 0)stopFlag--; }
+	cout << "정지 예고(10회시 종료): " << stopFlag << endl;
+	if (stopFlag >= 10) { return false; }
+	else true;
+}
+
+
+
+
 void imgProcessing(Mat& src, Mat& dst, int processingCode) {
 	if (processingCode == 1) {//gaussian Blur
 		GaussianBlur(src, dst, Size(3, 3), 0, 0);
@@ -767,14 +780,3 @@ void drivingAngle_MS(Mat& inputImg, vector<Vec4i> lines, double& steering,Steer&
 	newPoint.clear();
 	newLines.clear();
 }
-
-bool Steer::gostop() {
-	if (RightAngle[currentPos] == 0 && LeftAngle[currentPos] == 0) {
-		stopFlag++;
-	}
-	else{ if (stopFlag > 0)stopFlag--; }
-	cout << "정지 예고(10회시 종료): " << stopFlag << endl;
-	if (stopFlag >= 10) { return false; }
-	else true;
-}
-
