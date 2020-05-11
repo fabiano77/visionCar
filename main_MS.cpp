@@ -101,7 +101,7 @@ int main()
 		Steer steer1;
 		double steeringValue;	//초기 각도(50이 중심)
 		double speedVal_straight(40.0);	//초기 속도(0~100)
-		double speedVal_turn(30.0);
+		double speedVal_turn(20.0);
 		bool gostop = true;
 		Point pointROI[4] = { Point(width * 3 / 7,height * 3 / 5),Point(width * 4 / 7,height * 3 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
 		Scalar WHITE_BGR(255, 255, 255);
