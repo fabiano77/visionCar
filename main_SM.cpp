@@ -128,7 +128,7 @@ int main()
 
 			TickMeter tm2;
 			tm2.start();
-			undistort(frame, undistortImg, intrinsic, disCoeffs);
+			remap(frame, undistortImg, map1, map2, INTER_LINEAR);
 			tm2.stop();
 
 			TickMeter tm3;
