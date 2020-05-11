@@ -36,8 +36,7 @@ int main()
 
 	//mode selection---------------------------------------------
 	cout << "[visionCar] program start" << endl;
-	cout << "mode 4 : daehee's code" << endl;
-	cout << "mode 5 : function timer check" << endl << endl;
+	cout << "mode 4 : daehee's code" << endl << endl;
 	cout << "select mode : ";
 	int mode;
 	cin >> mode;
