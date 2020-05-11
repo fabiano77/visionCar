@@ -89,7 +89,6 @@ int main()
 		Mat distortedFrame;
 		//calib done
 
-
 		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
 		DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
@@ -109,9 +108,9 @@ int main()
 			{
 
 			}
-			//else if (detectColorSign.isRedStop(distortFrame, 10)) //빨간색 표지판 감지
+			//else if (detectColorSign.isRedStop(distortedFrame, 10)) //빨간색 표지판 감지
 			//{
-			//	while (detectColorSign.isRedStop(distortFrame, 10))
+			//	while (detectColorSign.isRedStop(distortedFrame, 10))
 			//	{
 			//		DCmotor.stop();	//멈춘다.
 			//		imshow("frame", frame);
@@ -145,22 +144,21 @@ int main()
 	else if (mode == 5)
 	{
 		//calibration start
+		Size videoSize = Size(640, 480);
+		Mat map1, map2;
 		Mat intrinsic = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
 		int numBoards = 5;
 		DoCalib(disCoeffs, intrinsic, numBoards);
+		initUndistortRectifyMap(intrinsic, disCoeffs, Mat(), intrinsic, videoSize, CV_32FC1, map1, map2);
 		cout << "complete 'DoCalib()' function" << endl;
+		Mat distortedFrame;
 		//calib done
-
-		Mat distortFrame;
 
 		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
 		DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
 		DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
-		Driving_DH DH_false(false, 1.00);	//printFlag, sLevel
-		DH_false.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
-		DH_false.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 		cam_pan.setRatio(52);	//카메라 좌우 조절
@@ -169,18 +167,13 @@ int main()
 		{
 			TickMeter tm1;	//시간 측정 클래스
 			tm1.start();
-			videocap >> distortFrame;
+			videocap >> distortedFrame;
 			tm1.stop();
 
 			TickMeter tm2;	//시간 측정 클래스
 			tm2.start();
-			undistort(distortFrame, frame, intrinsic, disCoeffs);
+			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 			tm2.stop();
-
-			TickMeter tm0;	//시간 측정 클래스
-			tm0.start();
-			DH_false.driving(distortFrame, steerVal, speedVal, 37.0, 0.0);
-			tm0.stop();
 
 			TickMeter tm3;	//시간 측정 클래스
 			tm3.start();
@@ -205,7 +198,6 @@ int main()
 
 			cout << "videocap >>    : " << tm1.getTimeMilli() << "[ms]" << '\n';
 			cout << "undistort()    : " << tm2.getTimeMilli() << "[ms]" << '\n';
-			cout << "DH_fal.driving : " << tm0.getTimeMilli() << "[ms]" << '\n';
 			cout << "DH.    driving : " << tm3.getTimeMilli() << "[ms]" << '\n';
 			cout << "steering.set() : " << tm4.getTimeMilli() << "[ms]" << '\n';
 			cout << "DCmotor.go()   : " << tm5.getTimeMilli() << "[ms]" << '\n' << '\n';
