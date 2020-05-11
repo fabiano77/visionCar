@@ -495,10 +495,12 @@ void filter_colors(Mat& src, Mat& img_filtered) {
 	yellowImg.copyTo(imgCombined);;//노란색만 검출할때까지 사용
 	imgCombined.copyTo(img_filtered);
 }
+
 double Steer::getSteering() {
 
 	//가중치의 합은 항상 1이 되도록하여야함. 벗어나야 한다면 값의 누적 적용을 낮춰야됨.
 	double returnVal;
+	const int turnThreshold = 10;
 	bool goLeft = setLeftFlag >= MAX_SAVINGANGLE;
 	bool goRight = setRightFlag >= MAX_SAVINGANGLE;
 	const int turnAngleThreshold = 20;
@@ -510,7 +512,7 @@ double Steer::getSteering() {
 	else if (goLeft) {//좌측 라인 인식 X 좌회전 상황
 		if (LeftAngle[currentPos] != 0)//좌회전 상황에서 왼쪽차선이 보이는 경우
 		{
-			if (setStraightRightFlag <= MAX_SAVINGANGLE)
+			if (setStraightRightFlag <= straightThreshold)
 			{
 				setStraightLeftFlag++; //왼쪽에서 직진변환 플래그 증가
 			}
@@ -524,6 +526,7 @@ double Steer::getSteering() {
 			setLeftFlag = 0;
 			setRightFlag = 0;
 			setStraightLeftFlag = 0;
+			setStraightRightFlag = 0;
 			//returnVal = steering[predIdx(currentPos)]; 
 			returnVal = -25;
 		}
@@ -535,7 +538,7 @@ double Steer::getSteering() {
 	}
 	else if (goRight) {//우측 라인 인식 X 우회전 상황
 		if (RightAngle[currentPos] != 0) {
-			if (setStraightRightFlag <= MAX_SAVINGANGLE)
+			if (setStraightRightFlag <= straightThreshold)
 			{
 				setStraightRightFlag++;
 			}
@@ -562,11 +565,14 @@ double Steer::getSteering() {
 	}
 	else if (goStraight) {//직진 상황
 		if (RightAngle[currentPos] == 0) {
-			if (setRightFlag <= MAX_SAVINGANGLE) { setRightFlag++; } //flag안쌓이게 조정
+			if (setRightFlag <= turnThreshold)
+			{
+				setRightFlag++;
+			} //flag안쌓이게 조정
 
 		}//직진이었는데 뭔가 쎄할 때
 		else if (LeftAngle[currentPos] == 0) {
-			if (setLeftFlag <= MAX_SAVINGANGLE) {
+			if (setLeftFlag <= turnThreshold) {
 				setLeftFlag++;
 			}
 		}
@@ -579,12 +585,12 @@ double Steer::getSteering() {
 	else if (!goStraight) {
 		//직진이 아닌거 같을 때 연산 방식
 		if (RightAngle[currentPos] == 0) {
-			if (setRightFlag <= MAX_SAVINGANGLE) {
+			if (setRightFlag <= turnThreshold) {
 				setRightFlag++;
 			}
 		}
 		else if (LeftAngle[currentPos] == 0) {
-			if (setLeftFlag <= MAX_SAVINGANGLE) {
+			if (setLeftFlag <= turnThreshold) {
 				setLeftFlag++;
 			}
 		}
