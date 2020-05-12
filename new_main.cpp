@@ -59,6 +59,20 @@ int main()
 	}
 	//end test mode----------------------------------------------
 
+	//else if (mode == 2)//manual mode
+	//{
+	//	ManualMode Manual(pca, 40);	//ManualMode class & basic speed rate
+	//	Manual.guide();				//cout the key guide 
+	//	int key(-1);
+	//	while (key != 27)			//if not ESC
+	//	{
+	//		videocap >> frame;
+	//		imshow("Live camera", frame);
+	//		int key = waitKey(delay);	//if you not press, return -1
+	//		Manual.input(key);		//movement by keyboard
+	//	}
+	//}
+	////end manual mode
 
 	else if (mode == 4)	//daehee's code
 	{
