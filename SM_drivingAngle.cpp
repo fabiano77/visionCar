@@ -254,7 +254,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			steering = steering_Before;
 		}
 	
-}
+
 	else if (Mode == 2) 
 	{
 		// 한 쪽 차선에 가까워 졌을 때 각도를 반대로 크게 줘서 헤딩각이 0이 될 때 까지 유지시켜 준다.
