@@ -27,7 +27,7 @@ int main()
 	//OpenCV setting----------------------------------------------
 	Mat frame;					//standard Mat obj
 	VideoCapture videocap(0);	//camera obj
-	if (!videocap.isOpened()) 
+	if (!videocap.isOpened())
 	{
 		cerr << "video capture fail!" << endl;
 		return -1;
@@ -61,18 +61,39 @@ int main()
 
 	//else if (mode == 2)//manual mode
 	//{
+	//	//calibration start
+	//	Size videoSize = Size(640, 480);
+	//	Mat map1, map2, distCoeffs;
+	//	Mat cameraMatrix = Mat(3, 3, CV_32FC1);
+	//	int numBoards = 5;
+	//	DoCalib(distCoeffs, cameraMatrix, numBoards);
+	//	initUndistortRectifyMap(cameraMatrix, distCoeffs, Mat(), cameraMatrix, videoSize, CV_32FC1, map1, map2);
+	//	Mat distortedFrame;
+	//	cout << "[calibration complete]" << endl;
+	//	//calibration done
+
+	//	Driving_DH DH(true, 1.00);	//printFlag, sLevel
+	//	DH.mappingSetSection(0, 0.10, 0.40, 0.75, 0.79, 1.00);
+	//	DH.mappingSetValue(8.0, 8.00, 15.0, 20.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+	//	double steerVal(50.0);	//초기 각도(50이 중심)
+	//	double speedVal(40.0);	//초기 속도(0~100)
+
 	//	ManualMode Manual(pca, 40);	//ManualMode class & basic speed rate
 	//	Manual.guide();				//cout the key guide 
 	//	int key(-1);
 	//	while (key != 27)			//if not ESC
 	//	{
-	//		videocap >> frame;
-	//		imshow("Live camera", frame);
-	//		int key = waitKey(delay);	//if you not press, return -1
+	//		videocap >> distortedFrame;
+	//		remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
+
+	//		DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+
+	//		imshow("frame", frame);
+	//		int key = waitKey(3);	//if you not press, return -1
 	//		Manual.input(key);		//movement by keyboard
 	//	}
 	//}
-	////end manual mode
+	//end manual mode
 
 	else if (mode == 4)	//daehee's code
 	{
@@ -117,7 +138,7 @@ int main()
 			//
 			//	DCmotor.stop();
 			//}
-			else if(cornerFlag) //코너 flag on일때, 조향하지 않고 꺾은채 유지.
+			else if (cornerFlag) //코너 flag on일때, 조향하지 않고 꺾은채 유지.
 			{
 				remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
