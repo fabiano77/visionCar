@@ -500,108 +500,121 @@ double Steer::getSteering() {
 
 	//가중치의 합은 항상 1이 되도록하여야함. 벗어나야 한다면 값의 누적 적용을 낮춰야됨.
 	double returnVal;
-	const int turnThreshold = 10;
 	bool goLeft = setLeftFlag >= MAX_SAVINGANGLE;
 	bool goRight = setRightFlag >= MAX_SAVINGANGLE;
-	const int turnAngleThreshold = 20;
 	bool goStraight = abs(currentHeading) < turnAngleThreshold;
-	const int straightThreshold = 2;//직진변환 기준값
 	if (LeftAngle[currentPos] == 0 && RightAngle[currentPos] == 0) {//둘다 인식이 안되는 경우
-		returnVal = steering[predIdx(currentPos)];
+		returnVal = steering[prevIdx(currentPos)];
 	}
 	else if (goLeft) {//좌측 라인 인식 X 좌회전 상황
 		if (LeftAngle[currentPos] != 0)//좌회전 상황에서 왼쪽차선이 보이는 경우
 		{
-			if (setStraightRightFlag <= straightThreshold)
+			if (setStraightRightFlag <= MAX_GOSTRAIGHTFLAG)
 			{
 				setStraightLeftFlag++; //왼쪽에서 직진변환 플래그 증가
+				if (turnFlag > 0) { turnFlag--; }
 			}
 		}
 		else if (LeftAngle[currentPos] == 0) {
 			if (setStraightLeftFlag > 0)//0초과 일때만 플래그 감소 //이상이면 돌아오지 않을수있음
 				setStraightLeftFlag--;
+			if (turnFlag < MAX_TURNFLAG) { turnFlag++; }
 		} //왼쪽에서 직진 변환 플래그 감소
 
-		if (setStraightLeftFlag >= straightThreshold) { //좌회전에서 직진으로 변환되는 상황
+		if (setStraightLeftFlag >= MAX_GOSTRAIGHTFLAG) { //좌회전에서 직진으로 변환되는 상황
 			setLeftFlag = 0;
 			setRightFlag = 0;
 			setStraightLeftFlag = 0;
 			setStraightRightFlag = 0;
-			//returnVal = steering[predIdx(currentPos)]; 
-			returnVal = -25;
+			turnFlag = 0;
+			//returnVal = steering[prevIdx(currentPos)]; 
+			returnVal = steering[prevIdx(currentPos)] / 2.0;
 		}
 		else {
-			//returnVal = 0.5 * currentHeading + 0.5 * steering[predIdx(currentPos)];
+			//returnVal = 0.5 * currentHeading + 0.5 * steering[prevIdx(currentPos)];
 			returnVal = -40;//좌회전은 확실히 각을 꺾게 만듦
+			returnVal = gradualChange(returnVal);
 		}
+		if (turnFlag < 10) { turnFlag++; }
 		cout << "좌회전";
+
 	}
 	else if (goRight) {//우측 라인 인식 X 우회전 상황
 		if (RightAngle[currentPos] != 0) {
-			if (setStraightRightFlag <= straightThreshold)
+			if (setStraightRightFlag <= MAX_GOSTRAIGHTFLAG)
 			{
 				setStraightRightFlag++;
+				if (turnFlag > 0) { turnFlag--; }
 			}
 		}
 		else if (RightAngle[currentPos] == 0) {
 			if (setStraightRightFlag > 0)
 			{
 				setStraightRightFlag--;
+				if (turnFlag < MAX_TURNFLAG) { turnFlag++; }
 			}
 		}
-		if (setStraightRightFlag >= straightThreshold) { //우회전에서 직진으로 변환되는 상황
+		if (setStraightRightFlag >= MAX_GOSTRAIGHTFLAG) { //우회전에서 직진으로 변환되는 상황
 			setLeftFlag = 0;
 			setRightFlag = 0;
 			setStraightLeftFlag = 0;
 			setStraightRightFlag = 0;
-			//returnVal = steering[predIdx(currentPos)];
-			returnVal = 25;//돌아올때 충격완화
+			//returnVal = steering[prevIdx(currentPos)];
+			returnVal = steering[prevIdx(currentPos)] / 2.0;
 		}
 		else {//정상일 시에는
 			returnVal = 40;
-			//returnVal = 0.5 * currentHeading + 0.5 * steering[predIdx(currentPos)];
+			returnVal = gradualChange(returnVal);
+			//returnVal = 0.5 * currentHeading + 0.5 * steering[prevIdx(currentPos)];
 		}
+		if (turnFlag < 10) { turnFlag++; }
+
 		cout << "우회전";
 	}
 	else if (goStraight) {//직진 상황
+		turnFlag = 0;
 		if (RightAngle[currentPos] == 0) {
-			if (setRightFlag <= turnThreshold)
+			if (setRightFlag <= MAX_TRYTURNFLAG)
 			{
 				setRightFlag++;
 			} //flag안쌓이게 조정
 
 		}//직진이었는데 뭔가 쎄할 때
 		else if (LeftAngle[currentPos] == 0) {
-			if (setLeftFlag <= turnThreshold) {
+			if (setLeftFlag <= MAX_TRYTURNFLAG) {
 				setLeftFlag++;
 			}
 		}
 		else if (RightAngle[currentPos] != 0 && setRightFlag > 0) { setRightFlag--; }
 		else if (LeftAngle[currentPos] != 0 && setLeftFlag > 0) { setLeftFlag--; }
-		if (abs(currentHeading) > 10) { returnVal = -currentHeading / 2.0; }//오차범위 이내일 경우직진시 헤딩방향 반대로 가게
+
+		if (abs(currentHeading) > 10) { returnVal = -currentHeading / 5.0; }//오차범위 이내일 경우직진시 헤딩방향 반대로 가게
 		else returnVal = 0;
 		cout << "직진";
 	}
-	else if (!goStraight) {
+	else if (LeftAngle[currentPos] == 0 && RightAngle[currentPos] == 0) {//양쪽라인 둘다 탐지가 안되는 경우
+		returnVal = steering[prevIdx(currentPos)];
+		cout << "라인 미탐지,이전각 유지";
+	}
+	else {
+		turnFlag = 0;
 		//직진이 아닌거 같을 때 연산 방식
 		if (RightAngle[currentPos] == 0) {
-			if (setRightFlag <= turnThreshold) {
+			if (setRightFlag <= MAX_TRYTURNFLAG) {
 				setRightFlag++;
 			}
 		}
 		else if (LeftAngle[currentPos] == 0) {
-			if (setLeftFlag <= turnThreshold) {
+			if (setLeftFlag <= MAX_TRYTURNFLAG) {
 				setLeftFlag++;
 			}
 		}
 		else if (RightAngle[currentPos] != 0 && setRightFlag > 0) { setRightFlag--; }
 		else if (LeftAngle[currentPos] != 0 && setLeftFlag > 0) { setLeftFlag--; }
-		returnVal = -currentHeading / 10.0;
+		returnVal = -currentHeading / 15.0;
 		cout << "방향각 조정중";
 	}
-	else {
-		returnVal = steering[predIdx(currentPos)];
-	}
+
 	cout << endl;
 	cout << " Flags-------" << endl;
 	cout << "setRight: " << setRightFlag << "setLeft: " << setLeftFlag << endl;
@@ -628,7 +641,7 @@ int Steer::nextIdx(int pos) {
 	if (pos < MAX_SAVINGANGLE - 1) { return pos + 1; }
 	else return 0;
 }
-int Steer::predIdx(int pos) {
+int Steer::prevIdx(int pos) {
 	if (pos <= 0) { return MAX_SAVINGANGLE - 1; }
 	else return pos--;
 }
@@ -641,6 +654,24 @@ bool Steer::gostop() {
 	cout << "정지 예고(10회시 종료): " << stopFlag << endl;
 	if (stopFlag >= 10) { return false; }
 	else { return true; }
+}
+
+double Steer::gradualChange(double steeringInput) {
+	if (steeringInput == 40 && turnFlag <= MAX_TURNFLAG) {
+		return 40.0 / (double(MAX_TURNFLAG) + 1 - double(turnFlag));
+	}
+	else if (steeringInput == 40 && turnFlag >= MAX_TURNFLAG) {
+		return 40.0;
+	}
+	else if (steeringInput == -40 && turnFlag <= MAX_TURNFLAG) {
+		return -40.0 / (double(MAX_TURNFLAG) + 1 - double(turnFlag));
+	}
+	else if (steeringInput == -40 && turnFlag >= MAX_TURNFLAG) {
+		return -40.0;
+	}
+	else {
+		return steeringInput * 0.5 + this->steering[prevIdx(currentPos)];
+	}
 }
 
 void imgProcessing(Mat& src, Mat& dst, int processingCode) {

@@ -8,6 +8,7 @@
 using namespace cv;
 using namespace std;
 
+
 class Steer {
 public:
 	Steer();
@@ -16,15 +17,18 @@ public:
 	bool gostop();
 private:
 	int nextIdx(int pos);
-	int predIdx(int pos);
+	int prevIdx(int pos);
+	double gradualChange(double steeringVal);
+	//점진적 각도변화를 위한 함수
 	double RightAngle[MAX_SAVINGANGLE];
 	double LeftAngle[MAX_SAVINGANGLE];
 	double steering[MAX_SAVINGANGLE];
 	int currentPos;
-	int setLeftFlag = 0;
+	int setLeftFlag = 0;//좌회전 여부 판단 5
 	int setRightFlag = 0;
 	int setStraightLeftFlag = 0;
 	int setStraightRightFlag = 0;
+	int turnFlag = 0;//회전명령 하달 후 프레임마다 증가 최대 10
 	double currentHeading;
 	int stopFlag = 0;
 };

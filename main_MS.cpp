@@ -103,7 +103,7 @@ int main()
 		double speedVal_straight(40.0);	//초기 속도(0~100)
 		double speedVal_turn(30.0);
 		bool gostop = true;
-		Point pointROI[4] = { Point(width * 3 / 7,height * 3 / 5),Point(width * 4 / 7,height * 3 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
+		Point pointROI[4] = { Point(width * 2 / 7,height * 3 / 5),Point(width * 5 / 7,height * 3 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
 		Scalar WHITE_BGR(255, 255, 255);
 		while (videocap.isOpened()&&gostop==true) {
 			videocap >> distortedFrame;
@@ -129,7 +129,7 @@ int main()
 
 
 			drivingAngle_MS(dstImg, lines, steeringValue, steer1);
-			if (abs(steeringValue)>24) {
+			if (abs(steeringValue)>10) {
 				DCmotor.go(speedVal_turn);
 			}
 			else {
