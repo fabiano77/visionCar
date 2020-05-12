@@ -141,8 +141,8 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 
 	if (right_index > 0) {
 		fitLine(rightLines, fitRight, DIST_L2, 0, 0.01, 0.01);
-		rp1.x = cvRound(fitRight[0] * s + fitRight[2]);//[0]은 방향 벡터 dx
-		rp1.y = cvRound(fitRight[1] * s + fitRight[3]);//[1]은 방향벡터 dy
+		rp1.x = cvRound(fitRight[0] * s + fitRight[2]);//[0]은 방향 벡터 dx 오른쪽에 있는 좌표
+		rp1.y = cvRound(fitRight[1] * s + fitRight[3]);//[1]은 방향벡터 dy 아래에 있는 좌표
 		rp0.x = cvRound(fitRight[0] * (-s) + fitRight[2]);
 		rp0.y = cvRound(fitRight[1] * (-s) + fitRight[3]);
 
@@ -157,7 +157,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	////////////////////////////////////////////////////////////////////
 	// 수정된 부분
 	////////////////////////////////////////////////////////////////////
-	double angleThreshold = 2.5;// 2.5도 이하는 0으로만들기
+	double angleThreshold = 2.5;// 절대값 2.5도 이하는 0으로만들기
 	if (abs(atan(dydxLeft) + atan(dydxRight)) <= (angleThreshold * CV_PI / 180)) {
 		headingAngle = 0;
 	}
@@ -170,50 +170,95 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	if (Mode == 1) {
 		// 범위를 지정해서 해당 범위마다 일정한 조향각을 설정해둠.(헤딩각이 해당 범위에 들어오면 조향각이 설정됨)
 		// 차선의 개수에 따라 조향각의 방향을 잡아줌.
-		// steering의 각도 조정
-		if (headingAngle == 0)
-			steering = 0;
-		else if (abs(headingAngle) <= 10) {
-			if (headingAngle > 0)
+
+		if ((right_index != 0) && (left_index != 0)) { // 차선이 두 개일 때
+			// steering 각 조절
+			if (headingAngle == 0) {
+				steering = 0;
+			}
+			else if (abs(headingAngle) <= 10) {
 				steering = 5;
-			else
-				steering = -5;
-		}
-		else if (abs(headingAngle) <= 20) {
-			if (headingAngle > 0)
+			}
+			else if (abs(headingAngle) <= 20) {
 				steering = 10;
-			else
-				steering = -10;
-		}
-		else if (abs(headingAngle) <= 30) {
-			if (headingAngle > 0)
+			}
+			else if (abs(headingAngle) <= 30) {
 				steering = 15;
-			else
-				steering = -15;
-		}
-		else {
-			if (headingAngle > 0)
+			}
+			else {
 				steering = 20;
-			else
-				steering = -20;
-		}
-		steering *= weight;
-		// steering의 방향 조정
-		/*if ((right_index != 0) && (left_index != 0)) { // 차선이 두 개일 때
-			// steering 반대로
-			steering = -steering;
-		}
-		else if (((right_index == 0) && (left_index != 0)) || ((right_index != 0) && (left_index == 0))) { // 차선이 한 개일 때
-			// steering 그대로		
+			}			
+
+			// steering 방향 조절 : 기본적으로 heading 방향과 반대 방향임
+			if (headingAngle > 0) {
+				steering = -steering;
+			}
+			// 위에는 기본적인 경우
+			//////////////////////////////////////////////////////
+			// 아래는 special case
+			// 한 쪽 차선에 붙어있을 경우, 곡선 차선이 나올 경우
+
 			
+			if (abs(rp1.y - rp0.y) > abs(lp1.y - lp0.y)) {// 오른쪽 차선에 붙어있을 경우
+				if (headingAngle < 0) {
+					steering = -steering;
+				}
+			}
+			//if(rp0.y > height / 2)
+			}
+			else {// 왼쪽 차선에 붙어있을 경우
+				if (headingAngle > 0) {
+					steering = -steering;
+				}				
+			}
+			// 30은 임계값
+			//if ((atan(dydxRight) > -30) && (atan(dydxLeft) > 30)) { // 좌회전 구간 (곡선인 오른쪽 차선 나올 때) 
+				// heading > 0 이다.
+			//	steering =
+			//}
+			steering *= weight;
+		}
+		else if ((right_index != 0) && (left_index == 0)) { // 오른쪽 차선만 보일 때
+			// steering 그대로		
+			if (headingAngle < -70) {
+				steering = -5;
+			}
+			else if (headingAngle <= -50) {			
+				steering = -10;
+			}
+			else if (headingAngle <= -30) {
+				steering = -15;
+			}
+			else {
+				steering = -20;
+			}
+			steering *= weight;
+		}
+		else if (((right_index == 0) && (left_index != 0)){ // 왼쪽 차선만 보일 때
+			if (headingAngle > 70) {
+				steering = 5;
+			}
+			else if (headingAngle >= 50) {
+				steering = 10;
+			}
+			else if (headingAngle >= 30) {
+				steering = 15;
+			}
+			else {
+				steering = 20;
+			}
+			steering *= weight;
 		}
 		else { // 차선이 없을 때
 			steering = steering_Before;
-		}*/
+		}
+		
+		/*
 		if ((right_index == 0) && (left_index == 0))
 			steering = steering_Before;
 		else
 			steering = -steering;
+			*/
 	}
 	else if (Mode == 2) 
 	{

@@ -62,15 +62,15 @@ int main()
 	{
 		cam_tilt.setRatio(10);
 		Size videoSize = Size(640, 480);
-		Mat map1, map2;
-		Mat intrinsic = Mat(3, 3, CV_32FC1);
-		Mat disCoeffs;
+		Mat map1, map2, disCoeffs;
+		Mat cameraMatrix = Mat(3, 3, CV_32FC1);
 		int numBoards = 5;
-		DoCalib(disCoeffs, intrinsic, numBoards);
-		initUndistortRectifyMap(intrinsic, disCoeffs, Mat(), intrinsic, videoSize, CV_32FC1, map1, map2);
+		DoCalib(disCoeffs, cameraMatrix, numBoards);
+		initUndistortRectifyMap(cameraMatrix, disCoeffs, Mat(), cameraMatrix, videoSize, CV_32FC1, map1, map2);
 
-		Mat undistortImg;
+		Mat distortedFrame;
 		vector<Vec4i> exLines;
+		cout << "[calibration complete]" << endl;
 
 		double speedVal(35.0);	//초기 속도(0~100)
 		double steering_After, steering_Before = 0;
@@ -78,14 +78,14 @@ int main()
 		int Mode;
 		cout << "select Mode(1,2) : ";
 		cin >> Mode;
-		cout << "Mode : " << Mode << endl;
+		cout << "Mode : " << Mode << endl << endl;
 		while (1) {
 			videocap >> frame;
-			remap(frame, undistortImg, map1, map2, INTER_LINEAR);
-			imshow("Live", undistortImg);
+			remap(frame, distortedFrame, map1, map2, INTER_LINEAR);
+			imshow("Live", distortedFrame);
 
-			bool Check = extractLines(undistortImg, exLines);
-			drivingAngle_SM(undistortImg, exLines, steering_After, steering_Before, Mode);
+			bool Check = extractLines(distortedFrame, exLines);
+			drivingAngle_SM(distortedFrame, exLines, steering_After, steering_Before, Mode);
 			steering.setRatio(50 + steering_After); //바퀴 조향
 			//cout << "조향각 : " << 50 + steering_After << endl;
 			DCmotor.go(speedVal);			
@@ -101,13 +101,13 @@ int main()
 		cam_tilt.setRatio(10);
 		Size videoSize = Size(640, 480);
 		Mat map1, map2;
-		Mat intrinsic = Mat(3, 3, CV_32FC1);
+		Mat cameraMatrix = Mat(3, 3, CV_32FC1);
 		Mat disCoeffs;
 		int numBoards = 5;
-		DoCalib(disCoeffs, intrinsic, numBoards);
-		initUndistortRectifyMap(intrinsic, disCoeffs, Mat(), intrinsic, videoSize, CV_32FC1, map1, map2);
+		DoCalib(disCoeffs, cameraMatrix, numBoards);
+		initUndistortRectifyMap(cameraMatrix, disCoeffs, Mat(), cameraMatrix, videoSize, CV_32FC1, map1, map2);
 
-		Mat undistortImg;
+		Mat distortedFrame;
 		vector<Vec4i> exLines;
 
 		double speedVal(35.0);	//초기 속도(0~100)
@@ -130,19 +130,19 @@ int main()
 
 			TickMeter tm2;
 			tm2.start();
-			remap(frame, undistortImg, map1, map2, INTER_LINEAR);
+			remap(frame, distortedFrame, map1, map2, INTER_LINEAR);
 			tm2.stop();
 
 			TickMeter tm3;
 			tm3.start();
-			imshow("Live", undistortImg);
+			imshow("Live", distortedFrame);
 			tm3.stop();
 
-			bool Check = extractLines(undistortImg, exLines);
+			bool Check = extractLines(distortedFrame, exLines);
 
 			TickMeter tm4;
 			tm4.start();
-			drivingAngle_SM(undistortImg, exLines, steering_After, steering_Before, Mode);
+			drivingAngle_SM(distortedFrame, exLines, steering_After, steering_Before, Mode);
 			tm4.stop();
 
 			TickMeter tm5;
