@@ -187,7 +187,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			}
 			else {
 				steering = 20;
-			}			
+			}
 
 			// steering 방향 조절 : 기본적으로 heading 방향과 반대 방향임
 			if (headingAngle > 0) {
@@ -198,26 +198,27 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			// 아래는 special case
 			// 한 쪽 차선에 붙어있을 경우, 곡선 차선이 나올 경우
 
-			
+
 			if (abs(rp1.y - rp0.y) > abs(lp1.y - lp0.y)) {// 오른쪽 차선에 붙어있을 경우
 				if (headingAngle < 0) {
 					steering = -steering;
 				}
 			}
 			//if(rp0.y > height / 2)
-			}
+
 			else {// 왼쪽 차선에 붙어있을 경우
 				if (headingAngle > 0) {
 					steering = -steering;
-				}				
+				}
 			}
+		}
 			// 30은 임계값
 			//if ((atan(dydxRight) > -30) && (atan(dydxLeft) > 30)) { // 좌회전 구간 (곡선인 오른쪽 차선 나올 때) 
 				// heading > 0 이다.
 			//	steering =
 			//}
 			steering *= weight;
-		}
+	}
 		else if ((right_index != 0) && (left_index == 0)) { // 오른쪽 차선만 보일 때
 			// steering 그대로		
 			if (headingAngle < -70) {
@@ -252,14 +253,8 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		else { // 차선이 없을 때
 			steering = steering_Before;
 		}
-		
-		/*
-		if ((right_index == 0) && (left_index == 0))
-			steering = steering_Before;
-		else
-			steering = -steering;
-			*/
-	}
+	
+}
 	else if (Mode == 2) 
 	{
 		// 한 쪽 차선에 가까워 졌을 때 각도를 반대로 크게 줘서 헤딩각이 0이 될 때 까지 유지시켜 준다.
