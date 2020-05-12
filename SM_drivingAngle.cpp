@@ -211,20 +211,19 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 					steering = -steering;
 				}
 			}
-		}
-			// 30은 임계값
-			//if ((atan(dydxRight) > -30) && (atan(dydxLeft) > 30)) { // 좌회전 구간 (곡선인 오른쪽 차선 나올 때) 
-				// heading > 0 이다.
-			//	steering =
-			//}
 			steering *= weight;
-	}
+		}
+		// 30은 임계값
+		//if ((atan(dydxRight) > -30) && (atan(dydxLeft) > 30)) { // 좌회전 구간 (곡선인 오른쪽 차선 나올 때) 
+			// heading > 0 이다.
+		//	steering =
+		//}
 		else if ((right_index != 0) && (left_index == 0)) { // 오른쪽 차선만 보일 때
 			// steering 그대로		
 			if (headingAngle < -70) {
 				steering = -5;
 			}
-			else if (headingAngle <= -50) {			
+			else if (headingAngle <= -50) {
 				steering = -10;
 			}
 			else if (headingAngle <= -30) {
@@ -235,7 +234,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			}
 			steering *= weight;
 		}
-		else if ((right_index == 0) && (left_index != 0)){ // 왼쪽 차선만 보일 때
+		else if ((right_index == 0) && (left_index != 0)) { // 왼쪽 차선만 보일 때
 			if (headingAngle > 70) {
 				steering = 5;
 			}
@@ -253,7 +252,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		else { // 차선이 없을 때
 			steering = steering_Before;
 		}
-	
+	}
 
 	else if (Mode == 2) 
 	{
