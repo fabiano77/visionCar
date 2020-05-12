@@ -235,7 +235,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			}
 			steering *= weight;
 		}
-		else if (((right_index == 0) && (left_index != 0)){ // 왼쪽 차선만 보일 때
+		else if ((right_index == 0) && (left_index != 0)){ // 왼쪽 차선만 보일 때
 			if (headingAngle > 70) {
 				steering = 5;
 			}
