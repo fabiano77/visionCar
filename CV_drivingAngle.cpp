@@ -588,7 +588,7 @@ double Steer::getSteering() {
 		else if (RightAngle[currentPos] != 0 && setRightFlag > 0) { setRightFlag--; }
 		else if (LeftAngle[currentPos] != 0 && setLeftFlag > 0) { setLeftFlag--; }
 
-		if (abs(currentHeading) > 10) { returnVal = -currentHeading / 5.0; }//오차범위 이내일 경우직진시 헤딩방향 반대로 가게
+		if (abs(currentHeading) > 10) { returnVal = -currentHeading / 4.0; }//오차범위 이내일 경우직진시 헤딩방향 반대로 가게
 		else returnVal = 0;
 		cout << "직진";
 	}
@@ -611,7 +611,7 @@ double Steer::getSteering() {
 		}
 		else if (RightAngle[currentPos] != 0 && setRightFlag > 0) { setRightFlag--; }
 		else if (LeftAngle[currentPos] != 0 && setLeftFlag > 0) { setLeftFlag--; }
-		returnVal = -currentHeading / 7;
+		returnVal = -currentHeading / 4.0;
 		cout << "방향각 조정중";
 	}
 
