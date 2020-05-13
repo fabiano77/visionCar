@@ -113,7 +113,7 @@ int main()
 		//DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
 		//DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
 		DH.mappingSetSection(0, 0.10, 0.50, 0.77, 0.81, 1.00);
-		DH.mappingSetValue(7.0, 7.00, 10.0, 15.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+		DH.mappingSetValue(6.0, 6.00, 8.00, 10.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 		bool cornerFlag(false);
@@ -131,13 +131,13 @@ int main()
 			{
 
 			}
-			//else if (detectColorSign.isRedStop(distortedFrame, 7)) //빨간색 표지판 감지
-			//{
-			//	cout << "A red stop sign was detected." << '\n';
-			//	frame = distortedFrame;
-			//
-			//	DCmotor.stop();
-			//}
+			else if (detectColorSign.isRedStop(distortedFrame, 7)) //빨간색 표지판 감지
+			{
+				cout << "A red stop sign was detected." << '\n';
+				frame = distortedFrame;
+			
+				DCmotor.stop();
+			}
 			else if (cornerFlag) //코너 flag on일때, 조향하지 않고 꺾은채 유지.
 			{
 				remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
