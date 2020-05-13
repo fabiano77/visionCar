@@ -223,14 +223,11 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			if (headingAngle < -70) {
 				steering = -5;
 			}
-			else if (headingAngle <= -50) {
-				steering = -10;
-			}
 			else if (headingAngle <= -30) {
-				steering = -15;
+				steering = -20;
 			}
 			else {
-				steering = -20;
+				steering = -10;
 			}
 			steering *= weight;
 		}
@@ -238,14 +235,11 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			if (headingAngle > 70) {
 				steering = 5;
 			}
-			else if (headingAngle >= 50) {
-				steering = 10;
-			}
 			else if (headingAngle >= 30) {
-				steering = 15;
+				steering = 20;
 			}
 			else {
-				steering = 20;
+				steering = 10;
 			}
 			steering *= weight;
 		}
@@ -332,7 +326,7 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 	cvtColor(filterImg, grayImg, COLOR_BGR2GRAY);
 	imgBlur(grayImg, blurImg, 1);
 	imgBlur(blurImg, edgeImg, 2);
-	Point pt[4] = { Point(0,height * 2 / 5),Point(width,height * 2 / 5),Point(width,height * 6 / 7),Point(0,height * 6 / 7) };
+	Point pt[4] = { Point(0,height * 1 / 2),Point(width,height * 1 / 2),Point(width,height),Point(0,height) };
 	//roi point 설정
 
 	regionOfInterest(edgeImg, roiImg, pt);
