@@ -588,7 +588,7 @@ double Steer::getSteering() {
 		else if (RightAngle[currentPos] != 0 && setRightFlag > 0) { setRightFlag--; }
 		else if (LeftAngle[currentPos] != 0 && setLeftFlag > 0) { setLeftFlag--; }
 
-		if (abs(currentHeading) > 10) { returnVal = -currentHeading / 4.0; }//오차범위 이내일 경우직진시 헤딩방향 반대로 가게
+		if (abs(currentHeading) > 10) { returnVal = -currentHeading / 2.0; }//오차범위 이내일 경우직진시 헤딩방향 반대로 가게
 		else returnVal = 0;
 		cout << "직진";
 	}
@@ -596,7 +596,7 @@ double Steer::getSteering() {
 		returnVal = steering[prevIdx(currentPos)];
 		cout << "라인 미탐지,이전각 유지";
 	}
-	else {
+	else { //조건은 angleThreshold 값보다 큰 각이 인지될때
 		turnFlag = 0;
 		//직진이 아닌거 같을 때 연산 방식
 		if (RightAngle[currentPos] == 0) {
@@ -611,7 +611,7 @@ double Steer::getSteering() {
 		}
 		else if (RightAngle[currentPos] != 0 && setRightFlag > 0) { setRightFlag--; }
 		else if (LeftAngle[currentPos] != 0 && setLeftFlag > 0) { setLeftFlag--; }
-		returnVal = -currentHeading / 4.0;
+		returnVal = -currentHeading / 2.0;
 		cout << "방향각 조정중";
 	}
 
@@ -807,8 +807,10 @@ void drivingAngle_MS(Mat& inputImg, vector<Vec4i> lines, double& steering,Steer&
 		lp1.y = cvRound(fitLeft[1] * (+s) + fitLeft[3]);
 		lp0.x = cvRound(fitLeft[0] * (-s) + fitLeft[2]);
 		lp0.y = cvRound(fitLeft[1] * (-s) + fitLeft[3]);
-
-		dydxLeft = double(-fitLeft[1]) / double(fitLeft[0]);
+		if (dydxLeft < 0) { dydxLeft = 999; }//각이 너무 기울어져서 반대로 가는경우 최대치로 설정
+		else {
+			dydxLeft = double(-fitLeft[1]) / double(fitLeft[0]);
+		}
 	}
 	else { dydxLeft = 0; }//한쪽라인 인식 안되는 예외 처리 부분
 
@@ -818,8 +820,10 @@ void drivingAngle_MS(Mat& inputImg, vector<Vec4i> lines, double& steering,Steer&
 		rp1.y = cvRound(fitRight[1] * s + fitRight[3]);//[1]은 방향벡터 dy
 		rp0.x = cvRound(fitRight[0] * (-s) + fitRight[2]);
 		rp0.y = cvRound(fitRight[1] * (-s) + fitRight[3]);
-
-		dydxRight = double(-fitRight[1]) / double(fitRight[0]);
+		if (dydxRight > 0) { dydxRight = -999; }
+		else {
+			dydxRight = double(-fitRight[1]) / double(fitRight[0]);
+		}
 	}
 	else { dydxRight = 0; } // 한쪽라인 인식 안되는 예외 처리 부분
 
