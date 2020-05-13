@@ -611,7 +611,7 @@ double Steer::getSteering() {
 		}
 		else if (RightAngle[currentPos] != 0 && setRightFlag > 0) { setRightFlag--; }
 		else if (LeftAngle[currentPos] != 0 && setLeftFlag > 0) { setLeftFlag--; }
-		returnVal = -currentHeading / 15.0;
+		returnVal = -currentHeading / 7;
 		cout << "방향각 조정중";
 	}
 
@@ -683,6 +683,7 @@ void imgProcessing(Mat& src, Mat& dst, int processingCode) {
 	}
 
 }
+
 void drivingAngle_MS(Mat& inputImg, vector<Vec4i> lines, double& steering,Steer& test) {
 	Vec4f params;
 	Point pt1, pt2;
