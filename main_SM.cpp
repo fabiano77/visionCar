@@ -60,11 +60,11 @@ int main()
 
 	else if (mode == 5) // SangMin's code
 	{
-		cam_tilt.setRatio(7);
+		cam_tilt.setRatio(5);
 		Size videoSize = Size(640, 480);
 		Mat map1, map2, disCoeffs;
 		Mat cameraMatrix = Mat(3, 3, CV_32FC1);
-		int numBoards = 5;
+		int numBoards = 7;
 		DoCalib(disCoeffs, cameraMatrix, numBoards);
 		initUndistortRectifyMap(cameraMatrix, disCoeffs, Mat(), cameraMatrix, videoSize, CV_32FC1, map1, map2);
 
