@@ -110,10 +110,39 @@ int main()
 
 		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
+		cout << "corner value select : ";
+		cin >> mode;
+
+		switch (mode)
+		{
+		case 1:		//기존
+			DH.mappingSetSection(0, 0.10, 0.50, 0.77, 0.81, 1.00);
+			DH.mappingSetValue(6.0, 6.00, 8.00, 10.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+			break;
+		case 2:		//중간 0값
+			DH.mappingSetSection(0, 0.10, 0.30, 0.75, 0.80, 1.00);
+			DH.mappingSetValue(6.0, 6.00, 0.00, 0.00, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+			break;
+		case 3:		//중간 음수
+			DH.mappingSetSection(0, 0.10, 0.30, 0.70, 0.80, 1.00);
+			DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+			break;
+		case 4:		//중간 음수
+			DH.mappingSetSection(0, 0.10, 0.30, 0.75, 0.80, 1.00);
+			DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+			break;
+		case 7:		//코너플래그 활성화
+			DH.mappingSetSection(0, 0.40, 0.50, 0.75, 0.80, 1.00);
+			DH.mappingSetValue(5.0, 5.00, 8.00, 10.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+			break;
+		default:
+
+			break;
+		}
 		//DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
 		//DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
-		DH.mappingSetSection(0, 0.10, 0.50, 0.77, 0.81, 1.00);
-		DH.mappingSetValue(6.0, 6.00, 8.00, 10.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+
+
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 		bool cornerFlag(false);
@@ -135,24 +164,43 @@ int main()
 			{
 				cout << "A red stop sign was detected." << '\n';
 				frame = distortedFrame;
-			
+
 				DCmotor.stop();
 			}
-			else if (cornerFlag) //코너 flag on일때, 조향하지 않고 꺾은채 유지.
-			{
-				remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
-				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
-				if (steerVal >= 30 && steerVal <= 70) cornerFlag = false;	//코너 flag 해제
+			//else if (mode == 7 && cornerFlag) //코너 flag on일때, 조향하지 않고 꺾은채 유지.
+			//{
+			//	remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
+			//	DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+			//	if (steerVal >= 30 && steerVal <= 70) cornerFlag = false;	//코너 flag 해제
 
-				DCmotor.go(30);
-			}
+			//	DCmotor.go(30);
+			//}
 			else //정상주행
 			{
 				remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
-				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
-				//if (steerVal == 100 || steerVal == 0) cornerFlag = true;
+				DH.driving(frame, steerVal, speedVal, 38.0, 0.0, cornerFlag);
 
-				steering.setRatio(steerVal);
+				if (cornerFlag = true)
+				{
+					if (steerVal >= 44 && steerVal <= 56) cornerFlag = false;
+					steering.setRatio(steerVal);
+				}
+				else	//기본 false
+				{
+					if (mode == 7 && (steerVal >= 75 || steerVal <= 25)) cornerFlag = true;
+					if (steerVal >= 56)
+					{
+						steering.setRatio(56);
+					}
+					else if (steerVal >= 44)
+					{
+						steering.setRatio(44);
+					}
+					else
+					{
+						steering.setRatio(steerVal);
+					}
+				}
 				DCmotor.go(speedVal);
 			}
 
