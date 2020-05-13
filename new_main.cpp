@@ -178,7 +178,7 @@ int main()
 			else //정상주행
 			{
 				remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
-				DH.driving(frame, steerVal, speedVal, 38.0, 0.0, cornerFlag);
+				DH.driving(frame, steerVal, speedVal, 38.0, 0.0);
 
 				if (cornerFlag = true)
 				{
