@@ -35,7 +35,7 @@ int main()
 	//mode selection---------------------------------------------
 	cout << "[visionCar] program start" << endl << endl;
 	cout << "mode 5 : SangMin's code" << endl;
-	cout << "mode 6 : SangMin's code" << endl << endl;
+	cout << "mode 6 : time Check" << endl << endl;
 	cout << "select mode : ";
 	int mode;
 	cin >> mode;
@@ -58,9 +58,33 @@ int main()
 	}
 	//end test mode
 
+	else if (mode == 4) {
+		CheckStart cs;
+		Size videoSize = Size(640, 480);
+		Mat map1, map2, disCoeffs;
+		Mat cameraMatrix = Mat(3, 3, CV_32FC1);
+		int numBoards = 7;
+		DoCalib(disCoeffs, cameraMatrix, numBoards);
+		initUndistortRectifyMap(cameraMatrix, disCoeffs, Mat(), cameraMatrix, videoSize, CV_32FC1, map1, map2);
+
+		Mat distortedFrame;
+		cout << "[calibration complete]" << endl;
+
+		while (1) {
+			videocap >> frame;
+			remap(frame, distortedFrame, map1, map2, INTER_LINEAR);
+			bool check = cs.isStart(distortedFrame, 75);
+			if (!check)
+				cs.GetFlag();
+			imshow("Live", distortedFrame);			
+			int key = waitKey(15);	//33
+			if (key == 27) break;	//프로그램 종료 ESC키.
+		}	
+	}
+
 	else if (mode == 5) // SangMin's code
 	{
-		cam_tilt.setRatio(0);
+		cam_tilt.setRatio(10);
 		Size videoSize = Size(640, 480);
 		Mat map1, map2, disCoeffs;
 		Mat cameraMatrix = Mat(3, 3, CV_32FC1);

@@ -7,6 +7,76 @@
 using namespace cv;
 using namespace std;
 
+CheckStart::CheckStart() {
+	lower_white = Scalar(246,246,246);
+	upper_white = Scalar(255,255,255);
+	flag_start = -1;
+}
+
+bool CheckStart::isWhite(Mat& frame, double percent) {
+
+	bool returnVal;
+	Mat frame_white;
+
+	cvtColor(frame, frame_hsv, COLOR_BGR2HSV);
+	inRange(frame_hsv, lower_white, upper_white, frame_white);
+
+	int whitePixel(0);
+	for (int i = 0; i < frame_white.cols; i += 10)				// 10픽셀마다 하나씩 검사함 속도를 위해
+	{
+		for (int j = 0; j < frame_white.rows; j += 10)
+		{
+			if (frame_white.at<uchar>(j, i))	whitePixel++;		// 노란색이 나오는 픽셀 개수 계산
+		}
+	}
+	//640 x 480 이므로 64x24 = 1536 픽셀만 검사.
+	//전체픽셀 640 x 480 = 307,200
+	//연산픽셀 64 x 48 = 3072
+
+	double whiteRatio = ((double)whitePixel / ((frame.cols / 10) * (frame.rows / 10)));	//검출된 픽셀수를 전체 픽셀수로 나눈 비율
+	whiteRatio *= 100;
+
+	if (whiteRatio > percent)
+	{		
+		returnVal = true;
+	}
+	else
+	{
+		returnVal = false;
+	}
+
+	/*
+	if (print)
+	{
+		putText(frame_yellow, "yellow Pixel : " + to_string(yellowRatio) + '%', Point(30, 30), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 0, 0), 2);
+		imshow("frame_yellow", frame_yellow);
+	}
+	*/
+
+	return returnVal;
+}
+
+bool CheckStart::isStart(Mat& frame, double percent) {
+	if (iswhite(frame, percent)) { // 흰색 카드가 검출될 때
+		flag_start = 10; // 10 frame 이후 출발
+	}
+	else { // 흰색 카드가 검출이 안될 때
+		if(flag_start > 0) // 흰색 카드가 검출 된 후 사라졌을 때
+			flag_start--;
+	}
+	if (flag_start == 0) {
+		putText(frame, "go!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+		return true;
+	}
+	else
+		return false;
+}
+
+void CheckStart::GetFlag() {
+	cout << flag_start << endl << endl;
+}
+
+
 void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int Mode) {
 	Vec4f params;
 	Point pt1, pt2;
@@ -317,6 +387,7 @@ void imgBlur(Mat& src, Mat& dst, int processingCode) {
 	}
 
 }
+
 bool extractLines(Mat& src, vector<Vec4i>& lines) {
 	Mat filterImg;
 	Mat grayImg, blurImg, edgeImg, roiImg, dstImg;

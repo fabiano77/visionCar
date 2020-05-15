@@ -8,6 +8,19 @@
 using namespace cv;
 using namespace std;
 
+class CheckStart {
+public:
+	CheckStart();
+	bool isWhite(Mat& frame, double percent);
+	bool isStart(Mat& frame, double percent);
+	void GetFlag();
+private:
+	int flag_start;
+	Scalar lower_white;
+	Scalar upper_white;
+	Mat frame_hsv;
+};
+
 //for drivingAngle
 // 라인 검출기능과 각도 반환을 통해서 조작 가능하다
 void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int Mode);
