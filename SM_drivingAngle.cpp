@@ -70,7 +70,7 @@ bool CheckStart::isBlack(Mat& frame, double percent) {
 }
 
 bool CheckStart::isStart(Mat& frame, double percent) {
-	if (iswhite(frame, percent)) { // 흰색 카드가 검출될 때
+	if (isWhite(frame, percent)) { // 흰색 카드가 검출될 때
 		flag_start = 10; // 10 frame 이후 출발
 	}
 	else { // 흰색 카드가 검출이 안될 때
