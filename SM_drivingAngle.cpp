@@ -10,7 +10,10 @@ using namespace std;
 CheckStart::CheckStart() {
 	lower_white = Scalar(246,246,246);
 	upper_white = Scalar(255,255,255);
+	lower_black = Scalar(0, 0, 0);
+	upper_black = Scalar(98, 98, 98);
 	flag_start = -1;
+	flag_tunnel = -1;
 }
 
 bool CheckStart::isWhite(Mat& frame, double percent) {
@@ -26,32 +29,42 @@ bool CheckStart::isWhite(Mat& frame, double percent) {
 	{
 		for (int j = 0; j < frame_white.rows; j += 10)
 		{
-			if (frame_white.at<uchar>(j, i))	whitePixel++;		// 노란색이 나오는 픽셀 개수 계산
+			if (frame_white.at<uchar>(j, i))	whitePixel++;		// 흰색이 나오는 픽셀 개수 계산
 		}
 	}
-	//640 x 480 이므로 64x24 = 1536 픽셀만 검사.
-	//전체픽셀 640 x 480 = 307,200
-	//연산픽셀 64 x 48 = 3072
 
 	double whiteRatio = ((double)whitePixel / ((frame.cols / 10) * (frame.rows / 10)));	//검출된 픽셀수를 전체 픽셀수로 나눈 비율
 	whiteRatio *= 100;
 
-	if (whiteRatio > percent)
-	{		
-		returnVal = true;
-	}
-	else
+	if (whiteRatio > percent)	{	returnVal = true;	}
+	else	{	returnVal = false;	}
+
+	return returnVal;
+}
+
+bool CheckStart::isBlack(Mat& frame, double percent) {
+
+	bool returnVal;
+	Mat frame_black;
+
+	cvtColor(frame, frame_hsv, COLOR_BGR2HSV);
+	inRange(frame_hsv, lower_black, upper_black, frame_black);
+
+	int blackPixel(0);
+	for (int i = 0; i < frame_black.cols; i += 10)				// 10픽셀마다 하나씩 검사함 속도를 위해
 	{
-		returnVal = false;
+		for (int j = 0; j < frame_black.rows; j += 10)
+		{
+			if (frame_black.at<uchar>(j, i))	blackPixel++;		// 검은색이 나오는 픽셀 개수 계산
+		}
 	}
 
-	/*
-	if (print)
-	{
-		putText(frame_yellow, "yellow Pixel : " + to_string(yellowRatio) + '%', Point(30, 30), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 0, 0), 2);
-		imshow("frame_yellow", frame_yellow);
-	}
-	*/
+
+	double blackRatio = ((double)blackPixel / ((frame.cols / 10) * (frame.rows / 10)));	//검출된 픽셀수를 전체 픽셀수로 나눈 비율
+	blackRatio *= 100;
+
+	if (blackRatio > percent) { returnVal = true; }
+	else { returnVal = false; }
 
 	return returnVal;
 }
@@ -65,17 +78,39 @@ bool CheckStart::isStart(Mat& frame, double percent) {
 			flag_start--;
 	}
 	if (flag_start == 0) {
-		putText(frame, "go!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+		putText(frame, "Go!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
 		return true;
 	}
 	else
 		return false;
 }
 
-void CheckStart::GetFlag() {
+bool CheckStart::isTunnel(Mat& frame, double percent) {
+	if (isBlack(frame, percent)) {
+		if(flag_tunnel < 10) // 최대 임계값 10 frame
+			flag_tunnel++;
+	}
+	else {
+		if (flag_tunnel > 0)
+			flag_tunnel--;
+	}
+
+	if (flag_tunnel >= 5) { // 최소 임계값 5 frame, 임계값 범위 내에 있을 시 터널이라고 인식
+		putText(frame, "Tunnel!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void CheckStart::GetFlag_start() {
 	cout << flag_start << endl << endl;
 }
 
+void CheckStart::GetFlag_tunnel() {
+	cout << flag_tunnel << endl << endl;
+}
 
 void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int Mode) {
 	Vec4f params;

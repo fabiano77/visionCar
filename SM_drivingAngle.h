@@ -12,12 +12,30 @@ class CheckStart {
 public:
 	CheckStart();
 	bool isWhite(Mat& frame, double percent);
+	//PreCondition   :: 흰색이 몇퍼센트 이상 존재해야 할 지에 대해 percent로 입력
+	//PostCondition  :: none
+	//Return         :: White가 percent보다 많이 검출되면 true
+	bool isBlack(Mat& frame, double percent);
+	//PreCondition   :: 검은색이 몇퍼센트 이상 존재해야 할 지에 대해 percent로 입력
+	//PostCondition  :: none
+	//Return         :: Black이 percent보다 많이 검출되면 true
 	bool isStart(Mat& frame, double percent);
-	void GetFlag();
+	//PreCondition   :: isWhite(frame, percent)가 동작
+	//PostCondition  :: DCmoter.go 동작함. Go!라는 문자가 화면에 출력됨
+	//Return         :: isWhite가 true에서 false로 된 후 일정 frame 이상 유지되면 true
+	bool isTunnel(Mat& frame, double percent);
+	//PreCondition   :: isBlack(frame, percent)가 동작
+	//PostCondition  :: 터널에서 차선을 검출할 함수 동작함. Tunnel!라는 문자가 화면에 출력됨
+	//Return         :: isBlack이 true로 된 후 일정 frame 이상 유지되면 true
+	void GetFlag_start();
+	void GetFlag_tunnel();
 private:
 	int flag_start;
+	int flag_tunnel;
 	Scalar lower_white;
 	Scalar upper_white;
+	Scalar lower_black;
+	Scalar upper_black;
 	Mat frame_hsv;
 };
 
