@@ -119,9 +119,13 @@ int main()
 			delayMicroseconds(10);
 			digitalWrite(TRIG, 0);
 
-			while (digitalRead(ECHO) == 0) start = micros();
-			while (digitalRead(ECHO) == 1) stop = micros();
+			while (digitalRead(ECHO) == 0);
+			start = micros();
+			while (digitalRead(ECHO) == 1);
+			stop = micros();
+
 			distance = (stop - start) / 58;
+			cout << "start = " << start << ", stop = " << stop << "\n";
 			cout << "Distance = " << distance << "cm \n";
 			delay(300);
 		}
