@@ -92,6 +92,9 @@ int main()
 				steering.setRatio(50 + steering_After); //바퀴 조향
 				//cout << "조향각 : " << 50 + steering_After << endl;	
 			}
+			else {
+				imshow("Live", frame);
+			}
 			//waitKey(15);	
 			int key = waitKey(15);	//33
 			if (key == 27) break;	//프로그램 종료 ESC키.			
