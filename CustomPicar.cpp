@@ -140,7 +140,7 @@ void Wheel::backward(double speed)
 
 UltraSonic::UltraSonic(int trigerPin, int echoPin)
 {
-	TRIGPIN = trigetPin;
+	TRIGPIN = trigerPin;
 	ECHOPIN = echoPin;
 
 	if (wiringPiSetup() == -1)

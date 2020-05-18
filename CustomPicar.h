@@ -75,7 +75,7 @@ private:
 class UltraSonic
 {
 public:
-	UltraSonic(int trigerPin, int echoPin;
+	UltraSonic(int trigerPin, int echoPin);
 	double distance();
 private:
 	int TRIGPIN;
