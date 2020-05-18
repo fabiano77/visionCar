@@ -58,30 +58,6 @@ int main()
 	}
 	//end test mode
 
-	else if (mode == 4) {
-		CheckStart cs;
-		Size videoSize = Size(640, 480);
-		Mat map1, map2, disCoeffs;
-		Mat cameraMatrix = Mat(3, 3, CV_32FC1);
-		int numBoards = 7;
-		DoCalib(disCoeffs, cameraMatrix, numBoards);
-		initUndistortRectifyMap(cameraMatrix, disCoeffs, Mat(), cameraMatrix, videoSize, CV_32FC1, map1, map2);
-
-		Mat distortedFrame;
-		cout << "[calibration complete]" << endl;
-
-		while (1) {
-			videocap >> frame;
-			remap(frame, distortedFrame, map1, map2, INTER_LINEAR);
-			bool check = cs.isStart(distortedFrame, 75);
-			if (!check)
-				cs.GetFlag();
-			imshow("Live", distortedFrame);			
-			int key = waitKey(15);	//33
-			if (key == 27) break;	//프로그램 종료 ESC키.
-		}	
-	}
-
 	else if (mode == 5) // SangMin's code
 	{
 		cam_tilt.setRatio(10);
@@ -99,17 +75,14 @@ int main()
 		double speedVal(35.0);	//초기 속도(0~100)
 		double steering_After, steering_Before = 0;
 
-		int Mode;
-		cout << "select Mode(1,2) : ";
-		cin >> Mode;
-		cout << "Mode : " << Mode << endl << endl;
+		int flag = 0;
 		while (1) {
 			videocap >> frame;
 			remap(frame, distortedFrame, map1, map2, INTER_LINEAR);
 			imshow("Live", distortedFrame);
 
 			bool Check = extractLines(distortedFrame, exLines);
-			drivingAngle_SM(distortedFrame, exLines, steering_After, steering_Before, Mode);
+			drivingAngle_SM(distortedFrame, exLines, steering_After, steering_Before, flag);
 			steering.setRatio(50 + steering_After); //바퀴 조향
 			//cout << "조향각 : " << 50 + steering_After << endl;
 			DCmotor.go(speedVal);			
