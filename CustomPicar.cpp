@@ -90,6 +90,7 @@ Wheel::Wheel(PCA9685 pca_, int leftPin, int rightPin)
 	if (wiringPiSetup() == -1)
 	{
 		cout << "wiringPiSetup FAIL!!" << '\n';
+		exit(1);
 	}
 
 	pinMode(0, OUTPUT);	//BCM_17,
