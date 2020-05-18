@@ -72,6 +72,17 @@ private:
 	double rate;
 };
 
+class UltraSonic
+{
+public:
+	UltraSonic(int trigerPin, int echoPin, bool printFlag_);
+	double distance();
+private:
+	int TRIGPIN;
+	int ECHOPIN;
+	bool printFlag;
+};
+
 class ManualMode
 {
 public:

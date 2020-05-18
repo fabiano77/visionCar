@@ -82,6 +82,7 @@ void Servo::operator--(int)
 	if (val < minVal) val = minVal;
 	setValue(val);
 }
+
 Wheel::Wheel()
 {
 }
@@ -136,6 +137,41 @@ void Wheel::backward(double speed)
 	board.set_pwm(left, 0, val);
 	board.set_pwm(right, 0, val);
 }
+
+UltraSonic::UltraSonic(int trigerPin, int echoPin, bool printFlag_)
+{
+	TRIGPIN = trigetPin;
+	ECHOPIN = echoPin;
+	printFlag = printFlag_;
+
+	if (wiringPiSetup() == -1)
+	{
+		cout << "wiringPiSetup FAIL!!" << '\n';
+		exit(1);
+	}
+	pinMode(TRIGPIN, OUTPUT);
+	pinMode(ECHOPIN, INPUT);
+}
+
+double UltraSonic::distance()
+{
+	double distance, start, stop;
+
+	digitalWrite(TRIGPIN, 0);
+	delayMicroseconds(2);
+	digitalWrite(TRIGPIN, 1);
+	delayMicroseconds(20);
+	digitalWrite(TRIGPIN, 0);
+
+	while (digitalRead(ECHOPIN) == 0);
+	start = micros();
+	while (digitalRead(ECHOPIN) == 1);
+	stop = micros();
+
+	distance = (stop - start) / 58;
+	return distance;
+}
+
 
 ManualMode::ManualMode(PCA9685 pca_, double spd)
 {

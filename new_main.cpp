@@ -11,9 +11,6 @@
 
 //cpp를 추가해보는 것은 어떠한가
 
-#define TRIG 28
-#define ECHO 27
-
 using namespace std;
 using namespace auto_car;
 using namespace cv;
@@ -106,28 +103,10 @@ int main()
 
 	else if (mode == 3)//ultra sonic test mode
 	{
-		double distance, start, stop;
-
-		wiringPiSetup();
-		pinMode(TRIG, OUTPUT);
-		pinMode(ECHO, INPUT);
-
+		UltraSonic rightSonic;
 		while (true)
 		{
-			digitalWrite(TRIG, 0);
-			digitalWrite(TRIG, 1);
-			delayMicroseconds(10);
-			digitalWrite(TRIG, 0);
-
-			while (digitalRead(ECHO) == 0);
-			start = micros();
-			while (digitalRead(ECHO) == 1);
-			stop = micros();
-
-			distance = (stop - start) / 58;
-			cout << "start = " << start << ", stop = " << stop << "\n";
-			cout << "Distance = " << distance << "cm \n";
-			delay(300);
+			cout << "distance = " << rightSonic.distance() << '\n';
 		}
 	}
 	//end manual mode
@@ -147,7 +126,7 @@ int main()
 
 		DetectColorSign detectColorSign(true);	//색깔 표지판 감지 클래스
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
-		CheckStart cs;
+		//CheckStart cs;
 		cout << "corner value select : ";
 		cin >> mode;
 
