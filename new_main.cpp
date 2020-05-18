@@ -37,6 +37,8 @@ int main()
 
 	//mode selection---------------------------------------------
 	cout << "[visionCar] program start" << endl;
+	cout << "mode 2 : manual code" << endl << endl;
+	cout << "mode 3 : backward test code" << endl << endl;
 	cout << "mode 4 : daehee's code" << endl << endl;
 	cout << "select mode : ";
 	int mode;
@@ -92,6 +94,20 @@ int main()
 			imshow("frame", frame);
 			int key = waitKey(3);	//if you not press, return -1
 			Manual.input(key);		//movement by keyboard
+		}
+	}
+	//end manual mode
+
+	else if (mode == 3)//backward test mode
+	{
+		uint16_t on, off;
+		for (on = 0; on < 65536; on += 100)
+		{
+			for (off = 0; off < 65536; off += 100)
+			{
+				pca.set_pwm(4, on, off);
+				cout << "on = " << on << ", off =" << off << '\n';
+			}
 		}
 	}
 	//end manual mode
@@ -157,7 +173,7 @@ int main()
 			videocap >> distortedFrame;
 
 			//if (waitingFlag)
-			if(false)
+			if (false)
 			{
 				waitingFlag = !cs.isStart(distortedFrame, 90);
 				frame = distortedFrame;
