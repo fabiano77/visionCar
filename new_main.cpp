@@ -113,28 +113,14 @@ int main()
 		digitalWrite(2, 0);
 
 		DCmotor.go();
-		waitKey(1500);
-		DCmotor.stop();
-
-		digitalWrite(0, 1);
-		digitalWrite(2, 0);
-
-		DCmotor.go();
-		waitKey(1500);
-		DCmotor.stop();
-
-		digitalWrite(0, 0);
-		digitalWrite(2, 1);
-
-		DCmotor.go();
-		waitKey(1500);
+		waitKey(3000);
 		DCmotor.stop();
 
 		digitalWrite(0, 1);
 		digitalWrite(2, 1);
 
 		DCmotor.go();
-		waitKey(1500);
+		waitKey(3000);
 		DCmotor.stop();
 
 
