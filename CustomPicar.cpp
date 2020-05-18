@@ -87,6 +87,15 @@ Wheel::Wheel()
 }
 Wheel::Wheel(PCA9685 pca_, int leftPin, int rightPin)
 {
+	if (wiringPiSetup() == -1)
+	{
+		return -1;
+	}
+
+	pinMode(0, OUTPUT);	//BCM_17,
+	pinMode(2, OUTPUT);	//BCM_27,
+
+	backwardFlag = false;
 	board = pca_;
 	left = leftPin;
 	right = rightPin;
@@ -97,6 +106,11 @@ Wheel::Wheel(PCA9685 pca_, int leftPin, int rightPin)
 }
 void Wheel::go(double speed)
 {
+	if (backwardFlag)
+	{
+		digitalWrite(0, 0);
+		digitalWrite(2, 0);
+	}
 	if (speed > 100) speed = 100;
 	if (speed < 0) speed = 0;
 	uint16_t val = length * (speed / 100);
@@ -107,6 +121,19 @@ void Wheel::stop()
 {
 	board.set_pwm(left, 0, 0);
 	board.set_pwm(right, 0, 0);
+}
+void Wheel::backward(double speed)
+{
+	if (!backwardFlag)
+	{
+		digitalWrite(0, 1);
+		digitalWrite(2, 1);
+	}
+	if (speed > 100) speed = 100;
+	if (speed < 0) speed = 0;
+	uint16_t val = length * (speed / 100);
+	board.set_pwm(left, 0, val);
+	board.set_pwm(right, 0, val);
 }
 
 ManualMode::ManualMode(PCA9685 pca_, double spd)
@@ -162,11 +189,11 @@ void ManualMode::input(int key_)
 void ManualMode::guide()
 {
 	cout << "---------------------[key setting]------------------" << endl;
-	cout << "    w      : go & speed up  |   i      : up" << endl;
-	cout << "  a   d    : left, right    | j   l    : left, right" << endl;
-	cout << "    s      : stop           |   k      : down" << endl;
-	cout << "  (move)                    | (cam)" << endl;
-	cout << "   '0' is exit.             |" << endl;
+	cout << "    w      : go & speed up    |   i      : up" << endl;
+	cout << "  a s d    : left, stop,right | j   l    : left, right" << endl;
+	cout << "    x      : backward         |   k      : down" << endl;
+	cout << "  (move)                      | (cam)" << endl;
+	cout << "   '0' is exit.               |" << endl;
 	cout << "----------------------------------------------------" << endl;
 }
 

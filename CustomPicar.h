@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
+#include <wiringPi.h>
 #include "PCA9685.h"
 
 namespace auto_car
@@ -59,8 +60,10 @@ public:
 	Wheel(PCA9685 pca_, int leftPin, int rightPin);		//초기 설정은 만질 일 없음.
 	void go(double speed = 40);		//양쪽 뒷 바퀴 속도를 %로 설정하는 함수. 기본인자로 40%.
 	void stop();				//말그대로 스톱.
+	void backward(double speed = 40);
 private:
 	PCA9685 board;
+	bool backwardFlag;
 	int left;
 	int right;
 	uint16_t maxVal;
