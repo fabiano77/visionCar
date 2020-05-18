@@ -11,6 +11,9 @@
 
 //cpp를 추가해보는 것은 어떠한가
 
+#define TRIG 28
+#define ECHO 27
+
 using namespace std;
 using namespace auto_car;
 using namespace cv;
@@ -39,7 +42,7 @@ int main()
 	//mode selection---------------------------------------------
 	cout << "[visionCar] program start" << endl;
 	cout << "mode 2 : manual code" << endl << endl;
-	cout << "mode 3 : backward test code" << endl << endl;
+	cout << "mode 3 : ultra sonic test code" << endl << endl;
 	cout << "mode 4 : daehee's code" << endl << endl;
 	cout << "select mode : ";
 	int mode;
@@ -59,6 +62,8 @@ int main()
 		cam_pan.resetCenter();			//카메라 정렬
 		DCmotor.go();					//dc모터 시작
 		waitKey(1500);					//wait 1.5sec
+		DCmotor.backward();
+		waitKey(1000);					//wait 1.5sec
 		DCmotor.stop();					//dc모터 멈춤
 	}
 	//end test mode----------------------------------------------
@@ -99,12 +104,27 @@ int main()
 	}
 	//end manual mode
 
-	else if (mode == 3)//backward test mode
+	else if (mode == 3)//ultra sonic test mode
 	{
-		DCmotor.go();					//dc모터 시작
-		waitKey(1500);					//wait 1.5sec
-		DCmotor.backward();
-		waitKey(1500);					//wait 1.5sec
+		double distance, start, stop;
+
+		wiringPiSetup();
+		pinMode(TRIG, OUTPUT);
+		pinMode(ECHO, INPUT);
+
+		while (true)
+		{
+			digitalWrite(TRIG, 0);
+			digitalWrite(TRIG, 1);
+			delayMicroseconds(10);
+			digitalWrite(TRIG, 0);
+
+			while (digitalRead(ECHO) == 0) start = micros();
+			while (digitalRead(ECHO) == 1) stop = micros();
+			distance = (stop - start) / 58;
+			cout << "Distance = " << distance << "cm \n";
+			delay(300);
+		}
 	}
 	//end manual mode
 
