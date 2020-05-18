@@ -227,9 +227,6 @@ int main()
 
 			imshow("frame", frame);
 			if (waitKey(1) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
-
-			tm.stop();		//시간측정 끝
-			cout << tm.getTimeMilli() << "[ms]" << '\n';
 		}
 	}
 	//end daehee's code
