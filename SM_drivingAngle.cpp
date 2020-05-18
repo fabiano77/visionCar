@@ -274,16 +274,16 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 
 		// 범위를 지정해서 해당 범위마다 일정한 조향각을 설정해둠.(헤딩각이 해당 범위에 들어오면 조향각이 설정됨)
 		// 차선의 개수에 따라 조향각의 방향을 잡아줌.
-	if (flag == 11) {
-		cout << "flag 11 !" << endl;
+	if ((flag == 111)||(flag == 121)) {
+		cout << "flag " << flag << " !" << endl;
 		steering = steering_Before;
 		if (headingAngle <= 0) {
 			flag = 0;
 			steering = 0;
 		}
 	}
-	else if (flag == 12) {
-		cout << "flag 12 !" << endl;
+	else if ((flag == 112) || (flag == 122)) {
+		cout << "flag " << flag << " !" << endl;
 		steering = steering_Before;
 		if (headingAngle >= 0) {
 			flag = 0;
@@ -330,47 +330,48 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			// steering 각 조절
 			if (abs(headingAngle) <= 20) {
 				steering = 0;
+				flag = 0;
 			}
-			else if (abs(headingAngle) <= 40) {
-				steering = 10;
+			else if (headingAngle >= 20) {
+				steering = -10;
+				flag = 111;
 			}
 			else {
-				steering = 20;
+				steering = 10;
+				flag == 112;
 			}
-
 			// steering 방향 조절 : 기본적으로 heading 방향과 반대 방향임
-			if (headingAngle > 0) {
-				steering = -steering;
-			}
+		
 			// 위에는 기본적인 경우
 			//////////////////////////////////////////////////////
-			// 아래는 special case
-			// 한 쪽 차선에 붙어있을 경우, 곡선 차선이 나올 경우
-			flag = 0;
-
-			// 한 쪽 차선에 붙어 있을 경우 heading 방향이 steering 방향이 됨
-			if (abs(rp1.y - rp0.y) > abs(lp1.y - lp0.y)) {// 오른쪽 차선에 붙어있을 경우 
-				if (headingAngle <= 0) {
-					steering = -steering;
-					flag = 11;
-				}
-			}
-			else {// 왼쪽 차선에 붙어있을 경우
-				if (headingAngle >= 0) {
-					steering = -steering;
-					flag = 12;
-				}
-			}
+			// 아래는 special case -> 한 쪽 차선에 붙어있을 경우, 곡선 차선이 나올 경우
 
 			// 곡선
-			if (flag == 0) {
-				if (rp1.x < width * 2 / 7) { // 오른쪽 차선이 곡선으로 나올 때 (좌회전)
-					steering = -steering;
-					flag = 21;
+			if ((abs(rp1.y - rp0.y) < height * 1 / 6) && (abs(lp1.y - lp0.y) > height * 1 / 6)) { // 오른쪽 차선이 곡선으로 나올 때 (좌회전)
+				steering = -steering;
+				flag = 21;
+			}
+			else if ((abs(rp1.y - rp0.y) > height * 1 / 6) && (abs(lp1.y - lp0.y) < height * 1 / 6)) { // 왼쪽 차선이 곡선으로 나올 때 (우회전)
+				steering = -steering;
+				flag = 22;
+			}
+			else {
+
+			}
+
+			// 한 쪽 차선에 붙어 있을 경우 heading 방향이 steering 방향이 됨
+			if ((flag != 21) || (flag != 22)) {
+				if (abs(rp1.y - rp0.y) > abs(lp1.y - lp0.y)) {// 오른쪽 차선에 붙어있을 경우 
+					if (headingAngle <= 0) {
+						steering = -steering;
+						flag = 121;
+					}
 				}
-				if (lp1.x > width * 5 / 7) { // 왼쪽 차선이 곡선으로 나올 때 (우회전)
-					steering = -steering;
-					flag = 22;
+				else {// 왼쪽 차선에 붙어있을 경우
+					if (headingAngle >= 0) {
+						steering = -steering;
+						flag = 122;
+					}
 				}
 			}
 			steering *= weight;
