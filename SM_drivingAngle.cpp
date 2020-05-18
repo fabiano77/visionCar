@@ -274,14 +274,21 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 
 		// 범위를 지정해서 해당 범위마다 일정한 조향각을 설정해둠.(헤딩각이 해당 범위에 들어오면 조향각이 설정됨)
 		// 차선의 개수에 따라 조향각의 방향을 잡아줌.
-	if (flag == 1) {
+	if (flag == 11) {
 		steering = steering_Before;
-		if (headingAngle == 0) {
+		if (headingAngle <= 0) {
 			flag = 0;
 			steering = 0;
 		}
 	}
-	else if (flag == 2) {
+	else if (flag == 12) {
+		steering = steering_Before;
+		if (headingAngle >= 0) {
+			flag = 0;
+			steering = 0;
+		}
+	}
+	else if (flag == 21) {
 		steering = steering_Before;
 		if (abs(headingAngle)<30) {
 			steering = -10;
@@ -289,7 +296,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			flag = 0;
 		}
 	}
-	else if (flag == 3) {
+	else if (flag == 22) {
 		steering = steering_Before;
 		if (abs(headingAngle) < 30) {
 			steering = 10;
@@ -324,24 +331,24 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			if (abs(rp1.y - rp0.y) > abs(lp1.y - lp0.y)) {// 오른쪽 차선에 붙어있을 경우 
 				if (headingAngle < 0) {
 					steering = -steering;
-					flag = 1;
+					flag = 11;
 				}
 			}
 			else {// 왼쪽 차선에 붙어있을 경우
 				if (headingAngle > 0) {
 					steering = -steering;
-					flag = 1;
+					flag = 12;
 				}
 			}
 
 			// 곡선
 			if (rp1.x < width * 3 / 5) { // 오른쪽 차선이 곡선으로 나올 때 (좌회전)
 				steering = -steering;
-				flag = 2;
+				flag = 21;
 			}
 			if (lp1.x > width * 2 / 5) { // 왼쪽 차선이 곡선으로 나올 때 (우회전)
 				steering = -steering;
-				flag = 3;
+				flag = 22;
 			}
 			steering *= weight;
 		}
@@ -358,7 +365,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			}
 			else if (headingAngle <= -30) {
 				steering = -10;
-				flag = 1;
+				flag = 11;
 			}
 			else {
 				steering = -20;
@@ -374,7 +381,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			}
 			else if (headingAngle >= 30) {
 				steering = 10;
-				flag = 1;
+				flag = 12;
 			}
 			else {
 				steering = 20;
