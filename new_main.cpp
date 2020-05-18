@@ -103,7 +103,7 @@ int main()
 
 	else if (mode == 3)//ultra sonic test mode
 	{
-		UltraSonic rightSonic(28, 27, true);
+		UltraSonic rightSonic(28, 27);
 
 		while (true)
 		{
