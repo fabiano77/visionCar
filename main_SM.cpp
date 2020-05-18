@@ -77,12 +77,17 @@ int main()
 		double steering_After, steering_Before = 0;
 
 		int flag = 0;
-		bool go_start;
-		
+		bool waiting(true);
+
 		while (1) {
 			videocap >> frame;
-			go_start = cs.isStart(frame, 90);
-			if (go_start) {
+
+			if (waiting)
+			{
+				waiting = !cs.isStart(frame, 90);
+				imshow("Live", frame);
+			}
+			else {
 				DCmotor.go(speedVal);
 				remap(frame, distortedFrame, map1, map2, INTER_LINEAR);
 				imshow("Live", distortedFrame);
@@ -91,9 +96,6 @@ int main()
 				drivingAngle_SM(distortedFrame, exLines, steering_After, steering_Before, flag);
 				steering.setRatio(50 + steering_After); //바퀴 조향
 				//cout << "조향각 : " << 50 + steering_After << endl;	
-			}
-			else {
-				imshow("Live", frame);
 			}
 			//waitKey(15);	
 			int key = waitKey(15);	//33

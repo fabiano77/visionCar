@@ -5,6 +5,7 @@
 #include "CustomPicar.h"
 #include "Driving_DH.h"
 #include "DetectColorSign.h"
+#include "SM_drivingAngle.h"
 #include "Calibration.h"
 
 //cpp를 추가해보는 것은 어떠한가
@@ -108,8 +109,9 @@ int main()
 		cout << "[calibration complete]" << endl;
 		//calibration done
 
-		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
+		DetectColorSign detectColorSign(true);	//색깔 표지판 감지 클래스
 		Driving_DH DH(true, 1.00);	//printFlag, sLevel
+		CheckStart cs;
 		cout << "corner value select : ";
 		cin >> mode;
 
@@ -146,35 +148,54 @@ int main()
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 		bool cornerFlag(false);
+		bool waitingFlag(true);
 
 		cam_pan.setRatio(52);	//카메라 좌우 보정 50->52 : 살짝 우측으로 보정
 
 		while (true)
 		{
-			TickMeter tm;	//시간 측정 클래스
-			tm.start();		//시간 측정 시작
-
 			videocap >> distortedFrame;
 
-			if (false) //event 체크
+			if (waitingFlag)
 			{
-
+				waitingFlag = !cs.isStart(distortedFrame, 90);
 			}
-			else if (detectColorSign.isRedStop(distortedFrame, 7)) //빨간색 표지판 감지
+			else if (detectColorSign.isRedStop(distortedFrame, 2.5)) //빨간색 표지판 감지
 			{
 				cout << "A red stop sign was detected." << '\n';
 				frame = distortedFrame;
 
 				DCmotor.stop();
 			}
-			//else if (mode == 7 && cornerFlag) //코너 flag on일때, 조향하지 않고 꺾은채 유지.
-			//{
-			//	remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
-			//	DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
-			//	if (steerVal >= 30 && steerVal <= 70) cornerFlag = false;	//코너 flag 해제
+			else if (detectColorSign.isYellow(distortedFrame,2.5)) //노란색 표지판 감지
+			{
+				cout << "A yellow sign was detected." << '\n';
+				frame = distortedFrame;
 
-			//	DCmotor.go(30);
-			//}
+				DCmotor.stop();
+			}
+			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 2.5)== 1) //초록색 표지판 감지
+			{
+				cout << "<----- sign was detected." << '\n';
+				frame = distortedFrame;
+
+				DCmotor.stop();
+			}
+			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 2.5)== 2) //초록색 표지판 감지
+			{
+				cout << "-----> sign was detected." << '\n';
+				frame = distortedFrame;
+
+				DCmotor.stop();
+			}
+			else if (mode == 7 && cornerFlag) //코너 flag on일때, 조향하지 않고 꺾은채 유지.
+			{
+				remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
+				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+				if (steerVal >= 30 && steerVal <= 70) cornerFlag = false;	//코너 flag 해제
+
+				DCmotor.go(30);
+			}
 			else //정상주행
 			{
 				remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
