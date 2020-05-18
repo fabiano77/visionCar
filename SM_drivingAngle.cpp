@@ -444,7 +444,7 @@ bool extractLines(Mat& src, vector<Vec4i>& lines) {
 	cvtColor(filterImg, grayImg, COLOR_BGR2GRAY);
 	imgBlur(grayImg, blurImg, 1);
 	imgBlur(blurImg, edgeImg, 2);
-	Point pt[4] = { Point(0,height * 1 / 4),Point(width,height * 1 / 4),Point(width,height*3/4),Point(0,height*3/4) };
+	Point pt[4] = { Point(0,height * 1 / 2),Point(width,height * 1 / 2),Point(width,height),Point(0,height) };
 	//roi point 설정
 
 	regionOfInterest(edgeImg, roiImg, pt);
