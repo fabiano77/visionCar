@@ -7,6 +7,7 @@
 #include "DetectColorSign.h"
 #include "SM_drivingAngle.h"
 #include "Calibration.h"
+#include <wiringPi.h>//GPIO사용
 
 //cpp를 추가해보는 것은 어떠한가
 
@@ -100,15 +101,38 @@ int main()
 
 	else if (mode == 3)//backward test mode
 	{
-		uint16_t on, off;
-		for (on = 0; on < 65536-200; on += 100)
-		{
-			for (off = 0; off < 65536-200; off += 100)
-			{
-				pca.set_pwm(4, on, off);
-				cout << "on = " << on << ", off =" << off << '\n';
-			}
-		}
+		pinMode(0, OUTPUT);	//BCM_17,
+		pinMode(2, OUTPUT);	//BCM_27,
+
+		digitalWrite(0, 0);
+		digitalWrite(2, 0);
+
+		DCmotor.go();
+		waitKey(1500);
+		DCmotor.stop();
+
+		digitalWrite(0, 1);
+		digitalWrite(2, 0);
+
+		DCmotor.go();
+		waitKey(1500);
+		DCmotor.stop();
+
+		digitalWrite(0, 0);
+		digitalWrite(2, 1);
+
+		DCmotor.go();
+		waitKey(1500);
+		DCmotor.stop();
+
+		digitalWrite(0, 1);
+		digitalWrite(2, 1);
+
+		DCmotor.go();
+		waitKey(1500);
+		DCmotor.stop();
+
+
 	}
 	//end manual mode
 
