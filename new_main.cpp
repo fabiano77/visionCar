@@ -86,15 +86,15 @@ int main()
 
 		ManualMode Manual(pca, 40);	//ManualMode class & basic speed rate
 		Manual.guide();				//cout the key guide 
+		int key(-1);
 		while (key != 27)			//if not ESC
 		{
-			int key(-1);
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 			DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
 
 			imshow("frame", frame);
-			key = waitKey(50);		//if you not press, return -1
+			key = waitKey(20);		//if you not press, return -1
 			if (key != -1) Manual.input(key);		//movement by keyboard
 			rewind(stdin);
 		}
