@@ -156,7 +156,8 @@ int main()
 		{
 			videocap >> distortedFrame;
 
-			if (waitingFlag)
+			//if (waitingFlag)
+			if(false)
 			{
 				waitingFlag = !cs.isStart(distortedFrame, 90);
 				frame = distortedFrame;
