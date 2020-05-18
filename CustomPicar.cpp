@@ -165,6 +165,9 @@ void ManualMode::input(int key_)
 		cout << "@current speed : " << speed << endl;
 		if (speed < 100)speed += 4;
 		break;
+	case 'x':	//go backward
+		M_DCmotor.backward();
+		break;
 	case 'j':	//cam left
 		M_cam_pan++;
 		break;
