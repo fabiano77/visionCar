@@ -363,13 +363,15 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			}
 
 			// 곡선
-			if (rp1.x < width * 2 / 5) { // 오른쪽 차선이 곡선으로 나올 때 (좌회전)
-				steering = -steering;
-				flag = 21;
-			}
-			if (lp1.x > width * 3 / 5) { // 왼쪽 차선이 곡선으로 나올 때 (우회전)
-				steering = -steering;
-				flag = 22;
+			if (flag == 0) {
+				if (rp1.x < width * 2 / 7) { // 오른쪽 차선이 곡선으로 나올 때 (좌회전)
+					steering = -steering;
+					flag = 21;
+				}
+				if (lp1.x > width * 5 / 7) { // 왼쪽 차선이 곡선으로 나올 때 (우회전)
+					steering = -steering;
+					flag = 22;
+				}
 			}
 			steering *= weight;
 		}
