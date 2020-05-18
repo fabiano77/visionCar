@@ -103,7 +103,8 @@ int main()
 
 	else if (mode == 3)//ultra sonic test mode
 	{
-		UltraSonic rightSonic;
+		UltraSonic rightSonic(28, 27, true);
+
 		while (true)
 		{
 			cout << "distance = " << rightSonic.distance() << '\n';
@@ -174,8 +175,8 @@ int main()
 			//if (waitingFlag)
 			if (false)
 			{
-				waitingFlag = !cs.isStart(distortedFrame, 90);
-				frame = distortedFrame;
+				//waitingFlag = !cs.isStart(distortedFrame, 90);
+				//frame = distortedFrame;
 			}
 			else if (detectColorSign.priorityStop(distortedFrame, 1.5))
 			{

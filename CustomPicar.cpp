@@ -138,11 +138,10 @@ void Wheel::backward(double speed)
 	board.set_pwm(right, 0, val);
 }
 
-UltraSonic::UltraSonic(int trigerPin, int echoPin, bool printFlag_)
+UltraSonic::UltraSonic(int trigerPin, int echoPin)
 {
 	TRIGPIN = trigetPin;
 	ECHOPIN = echoPin;
-	printFlag = printFlag_;
 
 	if (wiringPiSetup() == -1)
 	{

@@ -75,12 +75,11 @@ private:
 class UltraSonic
 {
 public:
-	UltraSonic(int trigerPin, int echoPin, bool printFlag_);
+	UltraSonic(int trigerPin, int echoPin;
 	double distance();
 private:
 	int TRIGPIN;
 	int ECHOPIN;
-	bool printFlag;
 };
 
 class ManualMode
