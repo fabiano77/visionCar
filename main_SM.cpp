@@ -68,28 +68,33 @@ int main()
 		int numBoards = 7;
 		DoCalib(disCoeffs, cameraMatrix, numBoards);
 		initUndistortRectifyMap(cameraMatrix, disCoeffs, Mat(), cameraMatrix, videoSize, CV_32FC1, map1, map2);
-
+		CheckStart cs;
 		Mat distortedFrame;
 		vector<Vec4i> exLines;
 		cout << "[calibration complete]" << endl;
 
-		double speedVal(35.0);	//초기 속도(0~100)
+		double speedVal(25.0);	//초기 속도(0~100)
 		double steering_After, steering_Before = 0;
 
 		int flag = 0;
+		bool go_start;
+		
 		while (1) {
 			videocap >> frame;
-			remap(frame, distortedFrame, map1, map2, INTER_LINEAR);
-			imshow("Live", distortedFrame);
+			go_start = cs.isStart(frame, 90);
+			if (go_start) {
+				DCmotor.go(speedVal);
+				remap(frame, distortedFrame, map1, map2, INTER_LINEAR);
+				imshow("Live", distortedFrame);
 
-			bool Check = extractLines(distortedFrame, exLines);
-			drivingAngle_SM(distortedFrame, exLines, steering_After, steering_Before, flag);
-			steering.setRatio(50 + steering_After); //바퀴 조향
-			//cout << "조향각 : " << 50 + steering_After << endl;
-			DCmotor.go(speedVal);			
+				bool Check = extractLines(distortedFrame, exLines);
+				drivingAngle_SM(distortedFrame, exLines, steering_After, steering_Before, flag);
+				steering.setRatio(50 + steering_After); //바퀴 조향
+				//cout << "조향각 : " << 50 + steering_After << endl;	
+			}
 			//waitKey(15);	
 			int key = waitKey(15);	//33
-			if (key == 27) break;	//프로그램 종료 ESC키.
+			if (key == 27) break;	//프로그램 종료 ESC키.			
 		}
 	}
 	//end SangMin's code

@@ -27,11 +27,12 @@ public:
 	//PreCondition   :: isBlack(frame, percent)가 동작
 	//PostCondition  :: 터널에서 차선을 검출할 함수 동작함. Tunnel!라는 문자가 화면에 출력됨
 	//Return         :: isBlack이 true로 된 후 일정 frame 이상 유지되면 true
-	void GetFlag_start();
-	void GetFlag_tunnel();
+	int GetFlag_start();
+	int GetFlag_tunnel();
 private:
 	int flag_start;
 	int flag_tunnel;
+	int check_start;
 	Scalar lower_white;
 	Scalar upper_white;
 	Scalar lower_black;

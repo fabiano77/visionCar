@@ -14,6 +14,7 @@ CheckStart::CheckStart() {
 	upper_black = Scalar(0, 0, 30);
 	flag_start = -1;
 	flag_tunnel = -1;
+	check_start = -1;
 }
 
 bool CheckStart::isWhite(Mat& frame, double percent) {
@@ -79,10 +80,19 @@ bool CheckStart::isStart(Mat& frame, double percent) {
 	}
 	if (flag_start == 0) {
 		putText(frame, "Go!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+		if (check_start != 0) {
+			check_start = 0;
+		}
 		return true;
 	}
-	else
-		return false;
+	else {
+		if (check_start == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }
 
 bool CheckStart::isTunnel(Mat& frame, double percent) {
@@ -104,12 +114,12 @@ bool CheckStart::isTunnel(Mat& frame, double percent) {
 	}
 }
 
-void CheckStart::GetFlag_start() {
-	cout << flag_start << endl << endl;
+int CheckStart::GetFlag_start() {
+	return flag_start;
 }
 
-void CheckStart::GetFlag_tunnel() {
-	cout << flag_tunnel << endl << endl;
+int CheckStart::GetFlag_tunnel() {
+	return  flag_tunnel;
 }
 
 void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int& flag) {
