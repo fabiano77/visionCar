@@ -262,7 +262,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	////////////////////////////////////////////////////////////////////
 	// 수정된 부분
 	////////////////////////////////////////////////////////////////////
-	double angleThreshold = 2.5;// 절대값 2.5도 이하는 0으로만들기
+	double angleThreshold = 3;// 절대값 2.5도 이하는 0으로만들기
 	if (abs(atan(dydxLeft) + atan(dydxRight)) <= (angleThreshold * CV_PI / 180)) {
 		headingAngle = 0;
 	}
@@ -293,7 +293,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	else if (flag == 21) {
 		cout << "flag 21 !" << endl;
 		steering = steering_Before;
-		if (abs(headingAngle)<30) {
+		if (headingAngle > -20) {
 			steering = -10;
 			steering *= weight;
 			flag = 0;
@@ -302,7 +302,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	else if (flag == 22) {
 		cout << "flag 22 !" << endl;
 		steering = steering_Before;
-		if (abs(headingAngle) < 30) {
+		if (headingAngle < 20) {
 			steering = 10;
 			steering *= weight;
 			flag = 0;
@@ -328,10 +328,10 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		cout << "flag 0 !" << endl;
 		if ((right_index != 0) && (left_index != 0)) { // 차선이 두 개일 때
 			// steering 각 조절
-			if (headingAngle == 0) {
+			if (abs(headingAngle) <= 20) {
 				steering = 0;
 			}
-			else if (abs(headingAngle) <= 20) {
+			else if (abs(headingAngle) <= 40) {
 				steering = 10;
 			}
 			else {
@@ -350,24 +350,24 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 
 			// 한 쪽 차선에 붙어 있을 경우 heading 방향이 steering 방향이 됨
 			if (abs(rp1.y - rp0.y) > abs(lp1.y - lp0.y)) {// 오른쪽 차선에 붙어있을 경우 
-				if (headingAngle < 0) {
+				if (headingAngle <= 0) {
 					steering = -steering;
 					flag = 11;
 				}
 			}
 			else {// 왼쪽 차선에 붙어있을 경우
-				if (headingAngle > 0) {
+				if (headingAngle >= 0) {
 					steering = -steering;
 					flag = 12;
 				}
 			}
 
 			// 곡선
-			if (rp1.x < width * 3 / 5) { // 오른쪽 차선이 곡선으로 나올 때 (좌회전)
+			if (rp1.x < width * 2 / 5) { // 오른쪽 차선이 곡선으로 나올 때 (좌회전)
 				steering = -steering;
 				flag = 21;
 			}
-			if (lp1.x > width * 2 / 5) { // 왼쪽 차선이 곡선으로 나올 때 (우회전)
+			if (lp1.x > width * 3 / 5) { // 왼쪽 차선이 곡선으로 나올 때 (우회전)
 				steering = -steering;
 				flag = 22;
 			}
