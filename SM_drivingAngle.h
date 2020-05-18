@@ -41,7 +41,7 @@ private:
 
 //for drivingAngle
 // 라인 검출기능과 각도 반환을 통해서 조작 가능하다
-void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int Mode);
+void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int& flag);
 
 void regionOfInterest(Mat& src, Mat& dst, Point* points);//roi 지정
 //precondition : point that you want to roi(3 or 4 points recommended
