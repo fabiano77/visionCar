@@ -101,9 +101,9 @@ int main()
 	else if (mode == 3)//backward test mode
 	{
 		uint16_t on, off;
-		for (on = 0; on < 65536; on += 100)
+		for (on = 0; on < 65536-200; on += 100)
 		{
-			for (off = 0; off < 65536; off += 100)
+			for (off = 0; off < 65536-200; off += 100)
 			{
 				pca.set_pwm(4, on, off);
 				cout << "on = " << on << ", off =" << off << '\n';
