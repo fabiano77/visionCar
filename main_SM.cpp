@@ -111,10 +111,7 @@ int main()
 		double speedVal(35.0);	//초기 속도(0~100)
 		double steering_After, steering_Before = 0;
 
-		int Mode;
-		cout << "select Mode(1,2) : ";
-		cin >> Mode;
-		cout << "Mode : " << Mode << endl;
+		int flag = 0;
 		while (1) {
 			//TickMeter tm;	//시간 측정 클래스
 			//tm.start();
@@ -140,7 +137,7 @@ int main()
 
 			TickMeter tm4;
 			tm4.start();
-			drivingAngle_SM(distortedFrame, exLines, steering_After, steering_Before, Mode);
+			drivingAngle_SM(distortedFrame, exLines, steering_After, steering_Before, flag);
 			tm4.stop();
 
 			TickMeter tm5;

@@ -328,11 +328,11 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		cout << "flag 0 !" << endl;
 		if ((right_index != 0) && (left_index != 0)) { // 차선이 두 개일 때
 			// steering 각 조절
-			if (abs(headingAngle) <= 20) {
+			if (abs(headingAngle) <= 15) {
 				steering = 0;
 				flag = 0;
 			}
-			else if (headingAngle >= 20) {
+			else if (headingAngle >= 15) {
 				steering = -10;
 				flag = 111;
 			}
