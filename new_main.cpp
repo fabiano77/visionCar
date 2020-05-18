@@ -94,8 +94,8 @@ int main()
 			DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
 
 			imshow("frame", frame);
-			key = waitKey(50);	//if you not press, return -1
-			Manual.input(key);		//movement by keyboard
+			key = waitKey(50);		//if you not press, return -1
+			if(key != -1) Manual.input(key);		//movement by keyboard
 			rewind(stdin);
 		}
 	}
