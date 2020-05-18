@@ -275,6 +275,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		// 범위를 지정해서 해당 범위마다 일정한 조향각을 설정해둠.(헤딩각이 해당 범위에 들어오면 조향각이 설정됨)
 		// 차선의 개수에 따라 조향각의 방향을 잡아줌.
 	if (flag == 11) {
+		cout << "flag 11 !" << endl;
 		steering = steering_Before;
 		if (headingAngle <= 0) {
 			flag = 0;
@@ -282,6 +283,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		}
 	}
 	else if (flag == 12) {
+		cout << "flag 12 !" << endl;
 		steering = steering_Before;
 		if (headingAngle >= 0) {
 			flag = 0;
@@ -289,6 +291,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		}
 	}
 	else if (flag == 21) {
+		cout << "flag 21 !" << endl;
 		steering = steering_Before;
 		if (abs(headingAngle)<30) {
 			steering = -10;
@@ -297,6 +300,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		}
 	}
 	else if (flag == 22) {
+		cout << "flag 22 !" << endl;
 		steering = steering_Before;
 		if (abs(headingAngle) < 30) {
 			steering = 10;
@@ -304,7 +308,24 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			flag = 0;
 		}
 	}
+	else if (flag == 31) {
+		cout << "flag 31 !" << endl;
+		steering = steering_Before;
+		if (headingAngle >= 0) {
+			flag = 0;
+			steering = 0;
+		}
+	}
+	else if (flag == 32) {
+		cout << "flag 32 !" << endl;
+		steering = steering_Before;
+		if (headingAngle <= 0) {
+			flag = 0;
+			steering = 0;
+		}
+	}
 	else {
+		cout << "flag 0 !" << endl;
 		if ((right_index != 0) && (left_index != 0)) { // 차선이 두 개일 때
 			// steering 각 조절
 			if (headingAngle == 0) {
@@ -365,7 +386,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			}
 			else if (headingAngle <= -30) {
 				steering = -10;
-				flag = 11;
+				flag = 31;
 			}
 			else {
 				steering = -20;
@@ -381,7 +402,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			}
 			else if (headingAngle >= 30) {
 				steering = 10;
-				flag = 12;
+				flag = 32;
 			}
 			else {
 				steering = 20;

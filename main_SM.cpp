@@ -61,6 +61,7 @@ int main()
 	else if (mode == 5) // SangMin's code
 	{
 		cam_tilt.setRatio(10);
+		cam_pan.setRatio(52);
 		Size videoSize = Size(640, 480);
 		Mat map1, map2, disCoeffs;
 		Mat cameraMatrix = Mat(3, 3, CV_32FC1);
