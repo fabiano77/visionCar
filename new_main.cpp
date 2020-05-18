@@ -161,30 +161,37 @@ int main()
 				waitingFlag = !cs.isStart(distortedFrame, 90);
 				frame = distortedFrame;
 			}
-			else if (detectColorSign.isRedStop(distortedFrame, 2.5)) //빨간색 표지판 감지
+			else if (detectColorSign.priorityStop(distortedFrame, 1.5))
+			{
+				cout << "A priority stop signal was detected." << '\n';
+				frame = distortedFrame;
+
+				DCmotor.stop();
+			}
+			else if (detectColorSign.isRedStop(distortedFrame, 1.5)) //빨간색 표지판 감지
 			{
 				cout << "A red stop sign was detected." << '\n';
 				frame = distortedFrame;
 
 				DCmotor.stop();
 			}
-			else if (detectColorSign.isYellow(distortedFrame,2.5)) //노란색 표지판 감지
+			else if (detectColorSign.isYellow(distortedFrame, 1.5)) //노란색 표지판 감지
 			{
 				cout << "A yellow sign was detected." << '\n';
 				frame = distortedFrame;
 
 				DCmotor.stop();
 			}
-			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 2.5)== 1) //초록색 표지판 감지
+			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 1.0) == 1) //초록색 표지판 감지
 			{
-				cout << "<----- sign was detected." << '\n';
+				cout << "<----- signal was detected." << '\n';
 				frame = distortedFrame;
 
 				DCmotor.stop();
 			}
-			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 2.5)== 2) //초록색 표지판 감지
+			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 1.5) == 2) //초록색 표지판 감지
 			{
-				cout << "-----> sign was detected." << '\n';
+				cout << "-----> signal was detected." << '\n';
 				frame = distortedFrame;
 
 				DCmotor.stop();
