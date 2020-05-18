@@ -101,6 +101,11 @@ int main()
 
 	else if (mode == 3)//backward test mode
 	{
+		if (wiringPiSetup() == -1)
+		{
+			return -1;
+		}
+
 		pinMode(0, OUTPUT);	//BCM_17,
 		pinMode(2, OUTPUT);	//BCM_27,
 
