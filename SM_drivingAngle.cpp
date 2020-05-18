@@ -8,8 +8,8 @@ using namespace cv;
 using namespace std;
 
 CheckStart::CheckStart() {
-	lower_white = Scalar(0,0,60);
-	upper_white = Scalar(0,0,100);
+	lower_white = Scalar(15,100,100);
+	upper_white = Scalar(45,255,255);
 	lower_black = Scalar(0, 0, 0);
 	upper_black = Scalar(0, 0, 30);
 	flag_start = -1;
