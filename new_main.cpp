@@ -159,6 +159,7 @@ int main()
 			if (waitingFlag)
 			{
 				waitingFlag = !cs.isStart(distortedFrame, 90);
+				frame = distortedFrame;
 			}
 			else if (detectColorSign.isRedStop(distortedFrame, 2.5)) //빨간색 표지판 감지
 			{
