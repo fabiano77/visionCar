@@ -110,6 +110,7 @@ void Wheel::go(double speed)
 {
 	if (backwardFlag)
 	{
+		backwardFlag = false;
 		digitalWrite(0, 0);
 		digitalWrite(2, 0);
 	}
@@ -128,6 +129,7 @@ void Wheel::backward(double speed)
 {
 	if (!backwardFlag)
 	{
+		backwardFlag = true;
 		digitalWrite(0, 1);
 		digitalWrite(2, 1);
 	}
