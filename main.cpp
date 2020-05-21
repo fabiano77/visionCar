@@ -92,7 +92,7 @@ int main()
 		double speedVal(40.0);
 
 		//ManualMode class & basic speed rate
-		ManualMode Manual(pca, 20);
+		ManualMode Manual(pca, 25);
 		Manual.guide();
 
 		//메인루프
