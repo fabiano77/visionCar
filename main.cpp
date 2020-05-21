@@ -54,7 +54,7 @@ int main()
 	cout << "Mode 7 : Overtaking(민수)" << endl;
 	cout << "Mode 8 : Tunnel" << endl << endl;
 
-	cout << "select mode : ";
+	cout << "Select mode : ";
 	int mode;
 	cin >> mode;
 
@@ -145,7 +145,7 @@ int main()
 			}
 
 			imshow("frame", frame);
-			if (waitKey(1) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
+			if (waitKey(33) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 		}
 	}
 	//End Signal detection mode
@@ -263,7 +263,7 @@ int main()
 			DCmotor.stop();			//정지
 
 			imshow("frame", frame);
-			if (waitKey(1) == 27) break;	//프로그램 종료 ESC키.
+			if (waitKey(33) == 27) break;	//프로그램 종료 ESC키.
 		}
 	}
 	//End Parking mode
@@ -288,7 +288,7 @@ int main()
 			DCmotor.stop();			//정지
 
 			imshow("frame", frame);
-			if (waitKey(1) == 27) break;	//프로그램 종료 ESC키.
+			if (waitKey(33) == 27) break;	//프로그램 종료 ESC키.
 		}
 	}
 	//End Rotary mode
@@ -313,7 +313,7 @@ int main()
 			DCmotor.stop();			//정지
 
 			imshow("frame", frame);
-			if (waitKey(1) == 27) break;	//프로그램 종료 ESC키.
+			if (waitKey(33) == 27) break;	//프로그램 종료 ESC키.
 		}
 	}
 	//End Overtaking mode
@@ -339,7 +339,7 @@ int main()
 			DCmotor.stop();			//정지
 
 			imshow("frame", frame);
-			if (waitKey(1) == 27) break;	//프로그램 종료 ESC키.
+			if (waitKey(33) == 27) break;	//프로그램 종료 ESC키.
 		}
 	}
 	//End Tunnel mode
