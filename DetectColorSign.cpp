@@ -62,6 +62,7 @@ bool DetectColorSign::priorityStop(Mat& frame, double percent)
 			putText(frame_red, "red Pixel : " + to_string(m_redRatio) + '%', Point(30, 30), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 0, 0), 2);
 			putText(frame_red, "Line Count : " + to_string(lines.size()), Point(30, 60), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
 			putText(frame_red, "Priority STOP signal!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+			namedWindow("frame_red", WINDOW_NORMAL);
 			imshow("frame_red", frame_red);
 			resizeWindow("frame_red", 320, 240);
 			moveWindow("frame_red", 50, 50);
@@ -116,6 +117,7 @@ bool DetectColorSign::isRedStop(Mat& frame, double percent)
 	if (print)
 	{
 		putText(frame_red, "red Pixel : " + to_string(redRatio) + '%', Point(30, 30), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 0, 0), 2);
+		namedWindow("frame_red", WINDOW_NORMAL);
 		imshow("frame_red", frame_red);
 		resizeWindow("frame_red", 320, 240);
 		moveWindow("frame_red", 50, 50);
@@ -162,6 +164,7 @@ bool DetectColorSign::isYellow(Mat& frame, double percent)
 	if (print)
 	{
 		putText(frame_yellow, "yellow Pixel : " + to_string(yellowRatio) + '%', Point(30, 30), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 0, 0), 2);
+		namedWindow("frame_yellow", WINDOW_NORMAL);
 		imshow("frame_yellow", frame_yellow);
 		resizeWindow("frame_yellow", 320, 240);
 		moveWindow("frame_yellow", 50, 50+320);
@@ -225,6 +228,7 @@ int DetectColorSign::isGreenTurnSignal(Mat& frame, double percent)
 		{
 			line(frame_green, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(255), 2);
 		}
+		namedWindow("frame_green", WINDOW_NORMAL);
 		imshow("frame_green", frame_green);
 		resizeWindow("frame_green", 320, 240);
 		moveWindow("frame_green", 50, 50+320+320);
