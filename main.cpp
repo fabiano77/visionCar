@@ -25,10 +25,10 @@ int main()
 	VideoCapture videocap(0);	//camera obj
 	if (!videocap.isOpened())
 	{
-		cerr << "video capture fail!" << endl;
+		cerr << endl << "video capture fail!" << endl;
 		return -1;
 	}
-	cout << "[Videocapture loading complete]" << endl << endl;
+	cout << "[VideoCapture loading complete]" << endl << endl;
 
 	//Calibration setting-----------------------------------------
 	Size videoSize = Size(640, 480);
