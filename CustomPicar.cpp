@@ -75,12 +75,16 @@ void Servo::operator++(int)
 	uint16_t val = value + (length * (rate / 100));
 	if (val > maxVal) val = maxVal;
 	setValue(val);
+	
+	cout << " @pin :" << pin << ", setRatio = " << (val - minVal) / length << endl;
 }
 void Servo::operator--(int)
 {
 	uint16_t val = value - (length * (rate / 100));
 	if (val < minVal) val = minVal;
 	setValue(val);
+
+	cout << " @pin :" << pin << ", setRatio = " << (val - minVal) / length << endl;
 }
 
 Wheel::Wheel()
@@ -195,16 +199,12 @@ void ManualMode::input(int key_)
 		break;
 	case 's':	//stop
 		M_DCmotor.stop();
-		speed = 40;
-		cout << "@stop!" << endl;
 		break;
 	case 'w':	//go and speed up
 		M_DCmotor.go(speed);
-		cout << "@current speed : " << speed << endl;
-		if (speed < 100)speed += 4;
 		break;
 	case 'x':	//go backward
-		M_DCmotor.backward();
+		M_DCmotor.backward(speed);
 		break;
 	case 'j':	//cam left
 		M_cam_pan++;
