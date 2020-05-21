@@ -58,6 +58,10 @@ void Servo::setValue(uint16_t set_val)
 		usleep(term);
 	}
 }
+void Servo::set(uint16_t set_val)
+{
+	board.set_pwm(pin, 0, value);
+}
 void Servo::setRatio(double ratio)
 {
 	uint16_t val = minVal + length * (ratio / 100);
