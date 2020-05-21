@@ -60,7 +60,18 @@ void Servo::setValue(uint16_t set_val)
 }
 void Servo::set(uint16_t set_val)
 {
-	board.set_pwm(pin, 0, value);
+	while (value < set_val)
+	{
+		value += 1;
+		board.set_pwm(pin, 0, value);
+		usleep(term);
+	}
+	while (value > set_val)
+	{
+		value -= 1;
+		board.set_pwm(pin, 0, value);
+		usleep(term);
+	}
 }
 void Servo::setRatio(double ratio)
 {

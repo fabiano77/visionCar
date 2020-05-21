@@ -149,7 +149,7 @@ int main()
 			namedWindow("frame", WINDOW_NORMAL);
 			imshow("frame", frame);
 			resizeWindow("frame", 480, 360);
-			moveWindow("frame", 320, 60+240);
+			moveWindow("frame", 320, 80+240);
 			if (waitKey(33) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 		}
 	}
