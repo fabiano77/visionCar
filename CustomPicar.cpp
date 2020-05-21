@@ -218,6 +218,18 @@ void ManualMode::input(int key_)
 	case 'k':	//cam down
 		M_cam_tilt--;
 		break;
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+		speed = key_ * 10;
+		cout << "current speed = " << speed << endl;
+		break;
 	case -1:
 		cout << "wait input & camera out" << endl;
 		break;
@@ -235,6 +247,8 @@ void ManualMode::guide()
 	cout << "    x      : backward         |   k      : down" << endl;
 	cout << "  (move)                      | (cam)" << endl;
 	cout << "   '0' is exit.               |" << endl;
+	cout << "----------------------------------------------------" << endl;
+	cout << "		1, 2, 3, 4, 5, 6, 7, 8, 9 = speed setting" << endl;
 	cout << "----------------------------------------------------" << endl;
 }
 
