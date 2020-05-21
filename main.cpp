@@ -12,12 +12,12 @@ int main()
 {
 	//Board, Servo, DCmotor configuration-------------------------
 	PCA9685 pca{};
-	pca.set_pwm_freq(60.0);
-	Servo steering(pca, Steering);
-	Servo cam_tilt(pca, Tilt);
-	Servo cam_pan(pca, Pan);
-	Wheel DCmotor(pca, LeftWheel, RightWheel);
-	allServoReset(pca);				// 3 Servo motor center reset
+	//pca.set_pwm_freq(60.0);
+	//Servo steering(pca, Steering);
+	//Servo cam_tilt(pca, Tilt);
+	//Servo cam_pan(pca, Pan);
+	//Wheel DCmotor(pca, LeftWheel, RightWheel);
+	//allServoReset(pca);				// 3 Servo motor center reset
 	UltraSonic firstSonic(28, 27);	// 초음파센서 객체
 	cout << "[Sensor and motor setting complete]" << endl << endl;
 
@@ -104,7 +104,10 @@ int main()
 
 			DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
 
+			namedWindow("frame", WINDOW_NORMAL);
 			imshow("frame", frame);
+			resizeWindow("frame", 480, 360);
+			moveWindow("frame", 0, 0);
 
 			key = waitKey(33);//if you not press, return -1
 			if (key != -1) Manual.input(key);//movement by keyboard
@@ -146,7 +149,7 @@ int main()
 			namedWindow("frame", WINDOW_NORMAL);
 			imshow("frame", frame);
 			resizeWindow("frame", 480, 360);
-			moveWindow("frame", 320, 50+240);
+			moveWindow("frame", 320, 60+240);
 			if (waitKey(33) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 		}
 	}
@@ -239,7 +242,11 @@ int main()
 				DCmotor.go(speedVal);
 			}
 
+			namedWindow("frame", WINDOW_NORMAL);
 			imshow("frame", frame);
+			resizeWindow("frame", 480, 360);
+			moveWindow("frame", 0, 0);
+
 			if (waitKey(1) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 		}
 	}
