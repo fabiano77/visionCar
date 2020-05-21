@@ -353,7 +353,13 @@ int main()
 	}
 	//End Tunnel mode
 
-
+	int a;
+	while (true)
+	{
+		cout << "put" << endl;
+		cin >> a;
+		steering.set(a);
+	}
 
 	cout << "-------------[program finished]-------------" << endl << endl;
 	allServoReset(pca);
