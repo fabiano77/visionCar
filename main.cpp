@@ -19,6 +19,7 @@ int main()
 	Wheel DCmotor(pca, LeftWheel, RightWheel);
 	allServoReset(pca);				// 3 Servo motor center reset
 	UltraSonic firstSonic(28, 27);	// 초음파센서 객체
+	cout << "[Sensor and motor setting complete]" << endl << endl;
 
 	//OpenCV setting----------------------------------------------
 	VideoCapture videocap(0);	//camera obj
@@ -27,7 +28,7 @@ int main()
 		cerr << "video capture fail!" << endl;
 		return -1;
 	}
-	cout << "Camera test is complete" << endl << endl;
+	cout << "[Videocapture loading complete]" << endl << endl;
 
 	//Calibration setting-----------------------------------------
 	Size videoSize = Size(640, 480);
@@ -38,10 +39,11 @@ int main()
 	initUndistortRectifyMap(cameraMatrix, distCoeffs, Mat(), cameraMatrix, videoSize, CV_32FC1, map1, map2);
 	Mat distortedFrame;
 	Mat frame;
-	cout << "[calibration complete]" << endl;
+	cout << "[calibration complete]" << endl << endl;
 
 	//mode selection----------------------------------------------
-	cout << "[visionCar] program start" << endl;
+	cout << "[visionCar] program start" << endl << endl;
+
 	cout << "Test 1 : Basic test" << endl;
 	cout << "Test 2 : Manual test" << endl << endl;
 
@@ -119,6 +121,7 @@ int main()
 		while (true)
 		{
 			videocap >> distortedFrame;
+			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 
 			if (detectColorSign.priorityStop(distortedFrame, 1.5))
 			{
