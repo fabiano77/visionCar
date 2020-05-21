@@ -65,7 +65,7 @@ bool DetectColorSign::priorityStop(Mat& frame, double percent)
 			namedWindow("frame_red", WINDOW_NORMAL);
 			imshow("frame_red", frame_red);
 			resizeWindow("frame_red", 320, 240);
-			moveWindow("frame_red", 0, 0);
+			moveWindow("frame_red", 0, 40);
 		}
 	}
 	else returnVal = false;
@@ -120,7 +120,7 @@ bool DetectColorSign::isRedStop(Mat& frame, double percent)
 		namedWindow("frame_red", WINDOW_NORMAL);
 		imshow("frame_red", frame_red);
 		resizeWindow("frame_red", 320, 240);
-		moveWindow("frame_red", 0, 0);
+		moveWindow("frame_red", 0, 40);
 	}
 
 	return returnVal;
@@ -167,7 +167,7 @@ bool DetectColorSign::isYellow(Mat& frame, double percent)
 		namedWindow("frame_yellow", WINDOW_NORMAL);
 		imshow("frame_yellow", frame_yellow);
 		resizeWindow("frame_yellow", 320, 240);
-		moveWindow("frame_yellow", 0+320, 0);
+		moveWindow("frame_yellow", 0+320, 40);
 	}
 
 	return returnVal;
@@ -231,7 +231,7 @@ int DetectColorSign::isGreenTurnSignal(Mat& frame, double percent)
 		namedWindow("frame_green", WINDOW_NORMAL);
 		imshow("frame_green", frame_green);
 		resizeWindow("frame_green", 320, 240);
-		moveWindow("frame_green", 0+320+320, 0);
+		moveWindow("frame_green", 0+320+320, 40);
 	}
 
 	return returnVal;

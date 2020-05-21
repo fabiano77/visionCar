@@ -143,8 +143,10 @@ int main()
 			{
 				cout << "-----> signal was detected." << '\n';
 			}
-
+			namedWindow("frame", WINDOW_NORMAL);
 			imshow("frame", frame);
+			resizeWindow("frame", 480, 360);
+			moveWindow("frame", 320, 50+240);
 			if (waitKey(33) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 		}
 	}
