@@ -296,7 +296,11 @@ int main()
 			DCmotor.backward();		//dc모터 후진 argument로 속도전달가능
 			DCmotor.stop();			//정지
 
+			namedWindow("frame", WINDOW_NORMAL);
 			imshow("frame", frame);
+			resizeWindow("frame", 480, 360);
+			moveWindow("frame", 0, 0);
+
 			if (waitKey(33) == 27) break;	//프로그램 종료 ESC키.
 		}
 	}
