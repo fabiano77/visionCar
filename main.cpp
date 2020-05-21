@@ -1,220 +1,349 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/core/matx.hpp>
 #include "CustomPicar.h"
-#include "CV_drivingAngle.h"
 #include "Driving_DH.h"
 #include "DetectColorSign.h"
-
-//cpp를 추가해보는 것은 어떠한가
-
+#include "Calibration.h"
 using namespace std;
 using namespace auto_car;
 using namespace cv;
 
 int main()
 {
-	//board, servoMotor configuration-----------------------------
+	//Board, Servo, DCmotor configuration-------------------------
 	PCA9685 pca{};
 	pca.set_pwm_freq(60.0);
 	Servo steering(pca, Steering);
 	Servo cam_tilt(pca, Tilt);
 	Servo cam_pan(pca, Pan);
 	Wheel DCmotor(pca, LeftWheel, RightWheel);
-	allServoReset(pca);			// 3 Servo motor center reset
+	allServoReset(pca);				// 3 Servo motor center reset
+	UltraSonic firstSonic(28, 27);	// 초음파센서 객체
 
 	//OpenCV setting----------------------------------------------
-	Mat frame;					//standard Mat obj
 	VideoCapture videocap(0);	//camera obj
-	if (!videocap.isOpened()) {
+	if (!videocap.isOpened())
+	{
 		cerr << "video capture fail!" << endl;
 		return -1;
 	}
 	cout << "Camera test is complete" << endl << endl;
 
-	//mode selection---------------------------------------------
-	cout << "[visionCar] program start" << endl << endl;
-	cout << "mode 1 : test mode" << endl;
-	cout << "mode 2 : manual mode" << endl;
-	cout << "mode 3 : calb & angle mode" << endl;
-	cout << "mode 4 : daehee's code" << endl;
-	cout << "mode 5 : who's code?" << endl;
-	cout << "mode 6 : who's code?" << endl;
-	cout << "mode 7 : who's code?" << endl << endl;
+	//Calibration setting-----------------------------------------
+	Size videoSize = Size(640, 480);
+	Mat map1, map2, distCoeffs;
+	Mat cameraMatrix = Mat(3, 3, CV_32FC1);
+	int numBoards = 5;
+	DoCalib(distCoeffs, cameraMatrix, numBoards);
+	initUndistortRectifyMap(cameraMatrix, distCoeffs, Mat(), cameraMatrix, videoSize, CV_32FC1, map1, map2);
+	Mat distortedFrame;
+	Mat frame;
+	cout << "[calibration complete]" << endl;
+
+	//mode selection----------------------------------------------
+	cout << "[visionCar] program start" << endl;
+	cout << "Test 1 : Basic test" << endl;
+	cout << "Test 2 : Manual test" << endl << endl;
+
+	cout << "Mode 3 : Signal detection(대희)" << endl;
+	cout << "Mode 4 : Driving(대희)" << endl;
+	cout << "Mode 5 : Parking(석준)" << endl;
+	cout << "Mode 6 : Rotary(상민)" << endl;
+	cout << "Mode 7 : Overtaking(민수)" << endl;
+	cout << "Mode 8 : Tunnel" << endl << endl;
+
 	cout << "select mode : ";
 	int mode;
 	cin >> mode;
 
-	//start mode------------------------------------------------
-	if (mode == 1)//test mode
+	if (mode == 1)//Test 1 : Basic test------------------------------------------------------
 	{
 		steering.setRatio(100);			//바퀴 우측
 		steering.setRatio(0);			//바퀴 좌측
-		steering.resetCenter();			//바퀴 정렬
+		steering.resetCenter();			//바퀴 좌우정렬
+
 		cam_tilt.setRatio(100);			//카메라 상향
 		cam_tilt.setRatio(0);			//카메라 하향
-		cam_tilt.resetCenter();			//카메라 정렬
+		cam_tilt.resetCenter();			//카메라 상하정렬
+
 		cam_pan.setRatio(100);			//카메라 우향
 		cam_pan.setRatio(0);			//카메라 좌향
-		cam_pan.resetCenter();			//카메라 정렬
-		DCmotor.go();					//dc모터 시작
+		cam_pan.resetCenter();			//카메라 좌우정렬
+
+		DCmotor.go();					//dc모터 전진
 		waitKey(1500);					//wait 1.5sec
+
+		DCmotor.backward();				//dc모터 후진
+		waitKey(1500);					//wait 1.5sec
+
 		DCmotor.stop();					//dc모터 멈춤
 	}
-	//end test mode
+	//End basic test
 
-
-	else if (mode == 2)//manual mode
+	else if (mode == 2)//Test 2 : Manual test------------------------------------------------
 	{
-		ManualMode Manual(pca, 40);	//ManualMode class & basic speed rate
-		Manual.guide();				//cout the key guide 
+		//Self-driving class configuration
+		Driving_DH DH(true, 1.00);
+		DH.mappingSetSection(0, 0.10, 0.40, 0.75, 0.79, 1.00);
+		DH.mappingSetValue(8.0, 8.00, 15.0, 20.0, 50.0, 50.0);
+		double steerVal(50.0);
+		double speedVal(40.0);
+
+		//ManualMode class & basic speed rate
+		ManualMode Manual(pca, 40);
+		Manual.guide();
+
+		//메인루프
 		int key(-1);
-		while (key != 27)			//if not ESC
+		while (key != 27)//if not ESC
 		{
-			videocap >> frame;
-			imshow("Live camera", frame);
-			int key = waitKey(delay);	//if you not press, return -1
-			Manual.input(key);		//movement by keyboard
+			videocap >> distortedFrame;
+			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
+
+			DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+
+			imshow("frame", frame);
+
+			key = waitKey(20);//if you not press, return -1
+			if (key != -1) Manual.input(key);//movement by keyboard
+			rewind(stdin);
 		}
 	}
-	//end manual mode
+	//End manual test
 
-
-	else if (mode == 3) {
-		Mat intrinsic;
-		Mat disCoeff;
-		if (calibImage(videocap, intrinsic, disCoeff)) {
-			cout << "Calibration Success!" << endl;
-		}
-		else {
-			cout << "Calibration Failed!" << endl;
-		}
-		Mat undistortImg;
-		vector<Vec4i> exLines;
-		double steeringAngle;
-		while (1) {
-			videocap >> frame;
-			undistort(frame, undistortImg, intrinsic, disCoeff);
-			imshow("Live", undistortImg);
-
-			bool Check = extractLines(undistortImg, exLines);
-			drivingAngle(undistortImg, exLines, steeringAngle);
-			waitKey(15);
-		}
-	}
-	//end calb mode
-
-
-	else if (mode == 4)	//daehee's code
+	else if (mode == 3)//Mode 3 : Signal detection(대희) ------------------------------------
 	{
-		/*
-		~code processing calibration~
-		*/
-		//Mat undistortFrame;
-
-		Driving_DH DH(true, 1.00);	//printFlag, sLevel
-									//sLevel : 직선구간 민감도(높을수록 많이 꺾임)
-		DH.mappingSetSection(0, 0.10, 0.40, 0.70, 0.77, 1.00);
-		DH.mappingSetValue(0.0, 0.00, 10.0, 25.0, 50.0, 50.0);
-		//DH.mappingSetValue(10, 10.0, 15.0, 25.0, 50.0, 50.0);
-		//코너구간 조향수준 맵핑값 세팅
-
-		DetectColorSign detectColorSign(false);	//색깔 표지판 감지 클래스
-
-		double steerVal(50.0);	//초기 각도(50이 중심)
-		double speedVal(40.0);	//초기 속도(0~100)
+		//color detecting class ganerate
+		DetectColorSign detectColorSign(true);
 
 		while (true)
 		{
-			videocap >> frame;
-			//undistort(frame, undistortFrame, intrinsic, disCoeff);
+			videocap >> distortedFrame;
 
-			if (false) //event 체크
+			if (detectColorSign.priorityStop(distortedFrame, 1.5))
+			{
+				cout << "A priority stop signal was detected." << '\n';
+			}
+			else if (detectColorSign.isRedStop(distortedFrame, 1.5)) //빨간색 표지판 감지
+			{
+				cout << "A red stop sign was detected." << '\n';
+			}
+			else if (detectColorSign.isYellow(distortedFrame, 1.5)) //노란색 표지판 감지
+			{
+				cout << "A yellow sign was detected." << '\n';
+			}
+			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 1.0) == 1) //초록색 표지판 감지
+			{
+				cout << "<----- signal was detected." << '\n';
+			}
+			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 1.5) == 2) //초록색 표지판 감지
+			{
+				cout << "-----> signal was detected." << '\n';
+			}
+
+			imshow("frame", frame);
+			if (waitKey(1) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
+		}
+	}
+	//End Signal detection mode
+
+	else if (mode == 4)	//Mode 4 : Driving(대희) --------------------------------------------
+	{
+		//Self-driving class configuration
+		Driving_DH DH(true, 1.00);
+		cout << "corner value select : ";
+		cin >> mode;
+		switch (mode)
+		{
+		case 1:		//기존
+			DH.mappingSetSection(0, 0.10, 0.50, 0.77, 0.81, 1.00);
+			DH.mappingSetValue(6.0, 6.00, 8.00, 10.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+			break;
+		case 2:		//중간 0값
+			DH.mappingSetSection(0, 0.10, 0.30, 0.75, 0.80, 1.00);
+			DH.mappingSetValue(6.0, 6.00, 0.00, 0.00, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+			break;
+		case 3:		//중간 음수
+			DH.mappingSetSection(0, 0.10, 0.30, 0.70, 0.80, 1.00);
+			DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+			break;
+		case 4:		//중간 음수
+			DH.mappingSetSection(0, 0.10, 0.30, 0.75, 0.80, 1.00);
+			DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+			break;
+		case 7:		//코너플래그 활성화
+			DH.mappingSetSection(0, 0.40, 0.50, 0.75, 0.80, 1.00);
+			DH.mappingSetValue(5.0, 5.00, 8.00, 10.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+			break;
+		default:
+
+			break;
+		}
+		//DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
+		//DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+		double steerVal(50.0);	//초기 각도(50이 중심)
+		double speedVal(40.0);	//초기 속도(0~100)
+		bool cornerFlag(false);
+		bool waitingFlag(true);
+
+		//카메라 좌우 보정 50->52 : 살짝 우측으로 보정
+		cam_pan.setRatio(52);
+
+		//메인동작 루프
+		while (true)
+		{
+			videocap >> distortedFrame;
+			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
+
+			if (false)
 			{
 
 			}
-			else if (detectColorSign.isRedStop(frame, 10)) //빨간색 표지판 감지
+			else if (mode == 7 && cornerFlag) //코너 flag on일때, 조향하지 않고 꺾은채 유지.
 			{
-				while (detectColorSign.isRedStop(frame, 10))
-				{
-					DCmotor.stop();	//멈춘다.
-				}
-			}
-			else if (false)	//기타 event 체크
-			{
+				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+				if (steerVal >= 30 && steerVal <= 70) cornerFlag = false;	//코너 flag 해제
 
+				DCmotor.go(30);
 			}
 			else //정상주행
 			{
-				//DH.driving(undistortFrame, steerVal, speedVal, 40.0, 2.0);
-				DH.driving(frame, steerVal, speedVal, 30.0, 0.0);
+				DH.driving(frame, steerVal, speedVal, 38.0, 0.0);
 
-				steering.setRatio(steerVal);			//바퀴 조향
+				if (cornerFlag = true)
+				{
+					if (steerVal >= 44 && steerVal <= 56) cornerFlag = false;
+					steering.setRatio(steerVal);
+				}
+				else	//기본 false
+				{
+					if (mode == 7 && (steerVal >= 75 || steerVal <= 25)) cornerFlag = true;
+					if (steerVal >= 56)
+					{
+						steering.setRatio(56);
+					}
+					else if (steerVal >= 44)
+					{
+						steering.setRatio(44);
+					}
+					else
+					{
+						steering.setRatio(steerVal);
+					}
+				}
 				DCmotor.go(speedVal);
-
-				cout << "steer : " << steerVal << ", speed : " << speedVal << endl;
-
-				//imshow("frame", undistortFrame);
-				imshow("frame", frame);
-				waitKey(10);//33
 			}
+
+			imshow("frame", frame);
+			if (waitKey(1) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 		}
 	}
-	//end daehee's code
+	//End Driving mode
 
 
-	else if (mode == 5) // SangMin's code
+	else if (mode == 5)//Mode 5 : Parking(석준) ---------------------------------------------
 	{
-		Mat intrinsic;
-		Mat disCoeff;
-		if (calibImage(videocap, intrinsic, disCoeff)) {
-			cout << "Calibration Success!" << endl;
-		}
-		else {
-			cout << "Calibration Failed!" << endl;
-		}
-		Mat undistortImg;
-		vector<Vec4i> exLines;
+		double Distance;	//거리값
 
-		double speedVal(40.0);	//초기 속도(0~100)
-		double steering_After, steering_Before = 0;
-		
-		int Mode;
-		cout << "select Mode : ";
-		cin >> Mode;
-		cout << "Mode : " << Mode << endl;
-		while (1) {
-			videocap >> frame;
-			undistort(frame, undistortImg, intrinsic, disCoeff);
-			imshow("Live", undistortImg);
+		while (true)
+		{
+			videocap >> distortedFrame;
+			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);	//캘리된 영상 frame
 
-			bool Check = extractLines(undistortImg, exLines);
-			drivingAngle_SM(undistortImg, exLines, steering_After, steering_Before, Mode);
-			steering.setRatio(50 + steering_After); //바퀴 조향
-			cout << "조향각 : " << 50 + steering_After << endl;			
-			DCmotor.go(speedVal);
-			waitKey(15);
-			
+			Distance = firstSonic.distance();	//초음파 거리측정.
+
+			cout << "distance = " << Distance << endl;	//거리출력
+
+			steering.setRatio(50);	//바퀴조향
+			DCmotor.go();			//dc모터 전진
+			DCmotor.backward();		//dc모터 후진
+			DCmotor.stop();			//정지
+
+			imshow("frame", frame);
+			if (waitKey(1) == 27) break;	//프로그램 종료 ESC키.
 		}
 	}
-	//end SangMin's code
+	//End Parking mode
 
-	else if (mode == 6)
+
+	else if (mode == 6)//Mode 6 : Rotary(상민) ----------------------------------------------
 	{
-		//write your code
+		double Distance;	//거리값
+
+		while (true)
+		{
+			videocap >> distortedFrame;
+			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);	//캘리된 영상 frame
+
+			Distance = firstSonic.distance();	//초음파 거리측정.
+
+			cout << "distance = " << Distance << endl;	//거리출력
+
+			steering.setRatio(50);	//바퀴조향
+			DCmotor.go();			//dc모터 전진
+			DCmotor.backward();		//dc모터 후진
+			DCmotor.stop();			//정지
+
+			imshow("frame", frame);
+			if (waitKey(1) == 27) break;	//프로그램 종료 ESC키.
+		}
 	}
+	//End Rotary mode
 
 
-	else if (mode == 7)
+	else if (mode == 7)//Mode 7 : Overtaking(민수) ------------------------------------------
 	{
-		//write your code
+		double Distance;	//거리값
+
+		while (true)
+		{
+			videocap >> distortedFrame;
+			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);	//캘리된 영상 frame
+
+			Distance = firstSonic.distance();	//초음파 거리측정.
+
+			cout << "distance = " << Distance << endl;	//거리출력
+
+			steering.setRatio(50);	//바퀴조향
+			DCmotor.go();			//dc모터 전진
+			DCmotor.backward();		//dc모터 후진
+			DCmotor.stop();			//정지
+
+			imshow("frame", frame);
+			if (waitKey(1) == 27) break;	//프로그램 종료 ESC키.
+		}
 	}
+	//End Overtaking mode
 
-	else cout << "invalid mode selection" << endl;
 
-	cout << "program finished" << endl;
-	allServoReset(pca);	// 3 Servo motor center reset
+
+	else if (mode == 8)//Mode 8 : Tunnel ----------------------------------------------------
+	{
+		double Distance;	//거리값
+
+		while (true)
+		{
+			videocap >> distortedFrame;
+			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);	//캘리된 영상 frame
+
+			Distance = firstSonic.distance();	//초음파 거리측정.
+
+			cout << "distance = " << Distance << endl;	//거리출력
+
+			steering.setRatio(50);	//바퀴조향
+			DCmotor.go();			//dc모터 전진
+			DCmotor.backward();		//dc모터 후진
+			DCmotor.stop();			//정지
+
+			imshow("frame", frame);
+			if (waitKey(1) == 27) break;	//프로그램 종료 ESC키.
+		}
+	}
+	//End Tunnel mode
+
+
+
+	cout << "-------------[program finished]-------------" << endl << endl;
+	allServoReset(pca);
 	return 0;
-	//끝
 }
