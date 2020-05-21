@@ -106,7 +106,7 @@ int main()
 
 			imshow("frame", frame);
 
-			key = waitKey(20);//if you not press, return -1
+			key = waitKey(33);//if you not press, return -1
 			if (key != -1) Manual.input(key);//movement by keyboard
 			rewind(stdin);
 		}
