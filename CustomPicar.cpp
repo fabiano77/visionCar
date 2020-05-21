@@ -227,7 +227,7 @@ void ManualMode::input(int key_)
 	case '7':
 	case '8':
 	case '9':
-		speed = key_ * 10;
+		speed = (key_ - '0') * 10;
 		cout << "current speed = " << speed << endl;
 		break;
 	case -1:
