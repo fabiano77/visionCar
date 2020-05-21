@@ -92,7 +92,7 @@ int main()
 		double speedVal(40.0);
 
 		//ManualMode class & basic speed rate
-		ManualMode Manual(pca, 40);
+		ManualMode Manual(pca, 20);
 		Manual.guide();
 
 		//메인루프
@@ -267,8 +267,8 @@ int main()
 			cout << "distance = " << Distance << endl;	//거리출력
 
 			steering.setRatio(50);	//바퀴조향
-			DCmotor.go();			//dc모터 전진
-			DCmotor.backward();		//dc모터 후진
+			DCmotor.go();			//dc모터 전진 argument로 속도전달가능
+			DCmotor.backward();		//dc모터 후진 argument로 속도전달가능
 			DCmotor.stop();			//정지
 
 			imshow("frame", frame);
@@ -292,8 +292,8 @@ int main()
 			cout << "distance = " << Distance << endl;	//거리출력
 
 			steering.setRatio(50);	//바퀴조향
-			DCmotor.go();			//dc모터 전진
-			DCmotor.backward();		//dc모터 후진
+			DCmotor.go();			//dc모터 전진 argument로 속도전달가능
+			DCmotor.backward();		//dc모터 후진 argument로 속도전달가능
 			DCmotor.stop();			//정지
 
 			imshow("frame", frame);
@@ -317,8 +317,8 @@ int main()
 			cout << "distance = " << Distance << endl;	//거리출력
 
 			steering.setRatio(50);	//바퀴조향
-			DCmotor.go();			//dc모터 전진
-			DCmotor.backward();		//dc모터 후진
+			DCmotor.go();			//dc모터 전진 argument로 속도전달가능
+			DCmotor.backward();		//dc모터 후진 argument로 속도전달가능
 			DCmotor.stop();			//정지
 
 			imshow("frame", frame);
@@ -343,8 +343,8 @@ int main()
 			cout << "distance = " << Distance << endl;	//거리출력
 
 			steering.setRatio(50);	//바퀴조향
-			DCmotor.go();			//dc모터 전진
-			DCmotor.backward();		//dc모터 후진
+			DCmotor.go();			//dc모터 전진 argument로 속도전달가능
+			DCmotor.backward();		//dc모터 후진 argument로 속도전달가능
 			DCmotor.stop();			//정지
 
 			imshow("frame", frame);
@@ -352,14 +352,6 @@ int main()
 		}
 	}
 	//End Tunnel mode
-
-	int a;
-	while (true)
-	{
-		cout << "put" << endl;
-		cin >> a;
-		steering.set(a);
-	}
 
 	cout << "-------------[program finished]-------------" << endl << endl;
 	allServoReset(pca);
