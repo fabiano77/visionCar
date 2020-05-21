@@ -76,7 +76,7 @@ void Servo::operator++(int)
 	if (val > maxVal) val = maxVal;
 	setValue(val);
 	
-	cout << " @pin :" << pin << ", setRatio = " << (val - minVal) / length << endl;
+	cout << " @pin :" << pin << ", setRatio = " << ((val - minVal)*100.0) / length << endl;
 }
 void Servo::operator--(int)
 {
@@ -84,7 +84,7 @@ void Servo::operator--(int)
 	if (val < minVal) val = minVal;
 	setValue(val);
 
-	cout << " @pin :" << pin << ", setRatio = " << (val - minVal) / length << endl;
+	cout << " @pin :" << pin << ", setRatio = " << ((val - minVal) * 100.0) / length << endl;
 }
 
 Wheel::Wheel()
