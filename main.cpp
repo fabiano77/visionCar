@@ -110,7 +110,8 @@ int main()
 			moveWindow("frame", 320, 80 + 240);
 
 			key = waitKey(33);//if you not press, return -1
-			if (key != -1) Manual.input(key);//movement by keyboard
+			if (key == 27) break;
+			else if (key != -1) Manual.input(key);//movement by keyboard
 			rewind(stdin);
 		}
 	}
@@ -251,6 +252,34 @@ int main()
 			if (key == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 			else if (key == 'w') DCmotor.go(35);
 			else if (key == 'x') DCmotor.backward(42);
+			else if (key == 's') DCmotor.stop();
+			else if (key == '0')
+			{
+				//ManualMode class & basic speed rate
+				ManualMode Manual(pca, 25);
+				Manual.guide();
+
+				//메인루프
+				int key(-1);
+				while (key != 27)//if not ESC
+				{
+					videocap >> distortedFrame;
+					remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
+
+					DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+
+					namedWindow("frame", WINDOW_NORMAL);
+					imshow("frame", frame);
+					resizeWindow("frame", 480, 360);
+					moveWindow("frame", 320, 80 + 240);
+
+					key = waitKey(33);//if you not press, return -1
+					if (key == 27) break;
+					else if (key == '0') break;
+					else if (key != -1) Manual.input(key);//movement by keyboard
+					rewind(stdin);
+				}
+			}
 		}
 	}
 	//End Driving mode
