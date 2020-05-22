@@ -140,7 +140,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	if (print)
 	{
 		namedWindow("frame_yellow", WINDOW_NORMAL);
-		imshow("frame_yellow", frame_red);
+		imshow("frame_yellow", frame_yellow);
 		resizeWindow("frame_yellow", 320, 240);
 		moveWindow("frame_yellow", 0, 40);
 
