@@ -19,7 +19,11 @@ int HLP_maxLineGap = 500;	//260
 //createTrackbar("H_maxGap", "trackbar", &HLP_maxLineGap, 500, on_trackbar);
 //namedWindow("trackbar", WINDOW_NORMAL);
 
-Scalar lower_yellow(14, 40, 90);
+int h = 14;
+int s = 40;
+int v = 90;
+
+Scalar lower_yellow(h, s, v);
 Scalar upper_yellow(46, 255, 255);
 
 Scalar color[7]{
@@ -132,6 +136,9 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	frame_yellow = Mat();
 	//frame_edge;
 
+	createTrackbar("h", "trackbar", &h, 500, on_trackbar);
+	createTrackbar("s", "trackbar", &s, 500, on_trackbar);
+	createTrackbar("v", "trackbar", &v, 500, on_trackbar);
 	createTrackbar("threshold1", "trackbar", &threshold_1, 500, on_trackbar);
 	createTrackbar("threshold2", "trackbar", &threshold_2, 500, on_trackbar);
 	createTrackbar("H_thresh", "trackbar", &HLP_threshold, 500, on_trackbar);
