@@ -107,7 +107,7 @@ int main()
 			namedWindow("frame", WINDOW_NORMAL);
 			imshow("frame", frame);
 			resizeWindow("frame", 480, 360);
-			moveWindow("frame", 0, 0);
+			moveWindow("frame", 320, 80 + 240);
 
 			key = waitKey(33);//if you not press, return -1
 			if (key != -1) Manual.input(key);//movement by keyboard
@@ -247,7 +247,7 @@ int main()
 			resizeWindow("frame", 480, 360);
 			moveWindow("frame", 320, 80 + 240);
 
-			if (waitKey(1) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
+			if (waitKey(10) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 		}
 	}
 	//End Driving mode

@@ -7,11 +7,11 @@ int straightSteer = 7;		// 44~56
 int straightLower = 50 - straightSteer;
 int straightUpper = 50 + straightSteer;
 
-//int threshold_1 = 118;		//215 //340
-//int threshold_2 = 242;		//330 //500
-//int HLP_threshold = 100;	//105
-//int HLP_minLineLength = 120;//115
-//int HLP_maxLineGap = 500;	//260
+int threshold_1 = 118;		//215 //340
+int threshold_2 = 242;		//330 //500
+int HLP_threshold = 100;	//105
+int HLP_minLineLength = 120;//115
+int HLP_maxLineGap = 500;	//260
 //createTrackbar("threshold1", "trackbar", &threshold_1, 500, on_trackbar);
 //createTrackbar("threshold2", "trackbar", &threshold_2, 500, on_trackbar);
 //createTrackbar("H_thresh", "trackbar", &HLP_threshold, 500, on_trackbar);
@@ -132,11 +132,19 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	frame_yellow = Mat();
 	//frame_edge;
 
+	createTrackbar("threshold1", "trackbar", &threshold_1, 500, on_trackbar);
+	createTrackbar("threshold2", "trackbar", &threshold_2, 500, on_trackbar);
+	createTrackbar("H_thresh", "trackbar", &HLP_threshold, 500, on_trackbar);
+	createTrackbar("H_minLen", "trackbar", &HLP_minLineLength, 500, on_trackbar);
+	createTrackbar("H_maxGap", "trackbar", &HLP_maxLineGap, 500, on_trackbar);
+	namedWindow("trackbar", WINDOW_NORMAL);
+
 	frame_ROI = frame & frame_ROI_Line;	//영상 ROI를 축소한다.
 	cvtColor(frame_ROI, frame_hsv, COLOR_BGR2HSV);	//노란색 추출 위해 HSV변환
 	inRange(frame_hsv, lower_yellow, upper_yellow, yellowThreshold);	//노란색 추출하여 1채널 Mat객체 yellowThreshold생성
 	bitwise_and(frame_ROI, frame_ROI, frame_yellow, yellowThreshold);	//yellowThreshold객체로 원본 frame 필터링.
-	Canny(frame_yellow, frame_edge, 118, 242);	//노란색만 남은 frame의 윤곽을 1채널 Mat객체로 추출
+	Canny(frame_yellow, frame_edge, threshold_1, threshold_2);	//노란색만 남은 frame의 윤곽을 1채널 Mat객체로 추출
+
 	if (print)
 	{
 		namedWindow("frame_yellow", WINDOW_NORMAL);
@@ -151,8 +159,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	}
 
 	vector<Vec4i> lines;		//검출될 직선이 저장될 객체
-	HoughLinesP(frame_edge, lines, 1, CV_PI / 180, 100, 120, 500);
-	//HoughLinesP(frame_edge, lines, 1, CV_PI / 180, HLP_threshold, HLP_minLineLength, HLP_maxLineGap);
+	HoughLinesP(frame_edge, lines, 1, CV_PI / 180, HLP_threshold, HLP_minLineLength, HLP_maxLineGap);
 
 	lowest = Point(0, 0);					//직선의 최하단 점 좌표(최하단 = y좌표최대값)
 	lowestLine = Vec4i(0, 0, 0, 0);		//최하단 직선
