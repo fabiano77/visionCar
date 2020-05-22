@@ -137,8 +137,8 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	frame_yellow = Mat();
 	//frame_edge;
 
-	createTrackbar("h", "trackbar", &h1, 30, on_trackbar);
-	createTrackbar("h", "trackbar", &h2, 60, on_trackbar);
+	createTrackbar("h1", "trackbar", &h1, 30, on_trackbar);
+	createTrackbar("h2", "trackbar", &h2, 60, on_trackbar);
 	createTrackbar("s", "trackbar", &s, 255, on_trackbar);
 	createTrackbar("v", "trackbar", &v, 255, on_trackbar);
 	createTrackbar("threshold1", "trackbar", &threshold_1, 500, on_trackbar);
