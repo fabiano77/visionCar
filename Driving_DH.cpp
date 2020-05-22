@@ -2,6 +2,7 @@
 
 const bool PRINT(true);				// 영상에 출력 표시 on&off
 const bool PRINT_RESULT(true);			// 결과직선 표시 on&off
+const bool IMAGE_DEBUG(false);
 double STRAIGHT_LEVEL(1.00);	// 직선 구간에서의 가중치 커지면 각도 쎄게틈
 int straightSteer = 7;		// 44~56
 int straightLower = 50 - straightSteer;
@@ -9,20 +10,14 @@ int straightUpper = 50 + straightSteer;
 
 int threshold_1 = 118;		//215 //340
 int threshold_2 = 242;		//330 //500
-int HLP_threshold = 100;	//105
+int HLP_threshold = 80;	//105
 int HLP_minLineLength = 120;//115
 int HLP_maxLineGap = 500;	//260
-//createTrackbar("threshold1", "trackbar", &threshold_1, 500, on_trackbar);
-//createTrackbar("threshold2", "trackbar", &threshold_2, 500, on_trackbar);
-//createTrackbar("H_thresh", "trackbar", &HLP_threshold, 500, on_trackbar);
-//createTrackbar("H_minLen", "trackbar", &HLP_minLineLength, 500, on_trackbar);
-//createTrackbar("H_maxGap", "trackbar", &HLP_maxLineGap, 500, on_trackbar);
-//namedWindow("trackbar", WINDOW_NORMAL);
 
 int h1 = 14;
 int h2 = 46;
-int s = 40;
-int v = 90;
+int s = 0;		//40
+int v = 220;	//90
 
 Scalar lower_yellow(h1, s, v);
 Scalar upper_yellow(h2, 255, 255);
@@ -137,25 +132,25 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	frame_yellow = Mat();
 	//frame_edge;
 
-	createTrackbar("h1", "trackbar", &h1, 30, on_trackbar);
-	createTrackbar("h2", "trackbar", &h2, 60, on_trackbar);
-	createTrackbar("s", "trackbar", &s, 255, on_trackbar);
-	createTrackbar("v", "trackbar", &v, 255, on_trackbar);
-	createTrackbar("threshold1", "trackbar", &threshold_1, 500, on_trackbar);
-	createTrackbar("threshold2", "trackbar", &threshold_2, 500, on_trackbar);
-	createTrackbar("H_thresh", "trackbar", &HLP_threshold, 500, on_trackbar);
-	createTrackbar("H_minLen", "trackbar", &HLP_minLineLength, 500, on_trackbar);
-	createTrackbar("H_maxGap", "trackbar", &HLP_maxLineGap, 500, on_trackbar);
-	namedWindow("trackbar", WINDOW_NORMAL);
-
 	frame_ROI = frame & frame_ROI_Line;	//영상 ROI를 축소한다.
 	cvtColor(frame_ROI, frame_hsv, COLOR_BGR2HSV);	//노란색 추출 위해 HSV변환
 	inRange(frame_hsv, Scalar(h1, s, v), Scalar(h2, 255, 255), yellowThreshold);	//노란색 추출하여 1채널 Mat객체 yellowThreshold생성
 	bitwise_and(frame_ROI, frame_ROI, frame_yellow, yellowThreshold);	//yellowThreshold객체로 원본 frame 필터링.
 	Canny(frame_yellow, frame_edge, threshold_1, threshold_2);	//노란색만 남은 frame의 윤곽을 1채널 Mat객체로 추출
 
-	if (print)
+	if (IMAGE_DEBUG)
 	{
+		createTrackbar("h1", "trackbar", &h1, 30, on_trackbar);
+		createTrackbar("h2", "trackbar", &h2, 60, on_trackbar);
+		createTrackbar("s", "trackbar", &s, 255, on_trackbar);
+		createTrackbar("v", "trackbar", &v, 255, on_trackbar);
+		createTrackbar("threshold1", "trackbar", &threshold_1, 500, on_trackbar);
+		createTrackbar("threshold2", "trackbar", &threshold_2, 500, on_trackbar);
+		createTrackbar("H_thresh", "trackbar", &HLP_threshold, 500, on_trackbar);
+		createTrackbar("H_minLen", "trackbar", &HLP_minLineLength, 500, on_trackbar);
+		createTrackbar("H_maxGap", "trackbar", &HLP_maxLineGap, 500, on_trackbar);
+		namedWindow("trackbar", WINDOW_NORMAL);
+
 		namedWindow("frame_yellow", WINDOW_NORMAL);
 		imshow("frame_yellow", frame_yellow);
 		resizeWindow("frame_yellow", 320, 240);

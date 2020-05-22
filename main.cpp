@@ -247,7 +247,10 @@ int main()
 			resizeWindow("frame", 480, 360);
 			moveWindow("frame", 320, 80 + 240);
 
-			if (waitKey(10) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
+			int key = waitKey(10);
+			if (key == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
+			else if (key == 'w') DCmotor.go(35);
+			else if (key == 'x') DCmotor.backward(42);
 		}
 	}
 	//End Driving mode
