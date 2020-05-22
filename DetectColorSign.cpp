@@ -4,13 +4,13 @@
 //namedWindow("trackbar", WINDOW_NORMAL);
 //circle(distortedFrame, Point(imageSize.width * 0.5, imageSize.height * 0.3), circleSize, Scalar(0, 0, 255), -1, LINE_AA);
 
-int HLP_threshold = 75;
-int HLP_minLineLength = 15;
-int HLP_maxLineGap = 5;
+int DCS_HLP_threshold = 75;
+int DCS_HLP_minLineLength = 15;
+int DCS_HLP_maxLineGap = 5;
 
-int HLP_threshold_2 = 30;
-int HLP_minLineLength_2 = 15;
-int HLP_maxLineGap_2 = 5;
+int DCS_HLP_threshold_2 = 30;
+int DCS_HLP_minLineLength_2 = 15;
+int DCS_HLP_maxLineGap_2 = 5;
 
 int H_minDist = 20;
 int H_param1 = 50;
@@ -51,7 +51,7 @@ bool DetectColorSign::priorityStop(Mat& frame, double percent)
 		Canny(frame_red, frame_edge, 118, 242);	//빨간색만 남은 frame의 윤곽을 1채널 Mat객체로 추출
 
 		vector<Vec4i> lines;		//검출될 직선이 저장될 객체
-		HoughLinesP(frame_edge, lines, 1, CV_PI / 180, HLP_threshold, HLP_minLineLength, HLP_maxLineGap);
+		HoughLinesP(frame_edge, lines, 1, CV_PI / 180, DCS_HLP_threshold, DCS_HLP_minLineLength, DCS_HLP_maxLineGap);
 
 
 		if (lines.size() >= 2) returnVal = true;
@@ -200,7 +200,7 @@ int DetectColorSign::isGreenTurnSignal(Mat& frame, double percent)
 	greenRatio *= 100;
 
 	vector<Vec4i> lines;		//검출될 직선이 저장될 객체
-	HoughLinesP(frame_edge, lines, 1, CV_PI / 180, HLP_threshold_2, HLP_minLineLength_2, HLP_maxLineGap_2);
+	HoughLinesP(frame_edge, lines, 1, CV_PI / 180, DCS_HLP_threshold_2, DCS_HLP_minLineLength_2, DCS_HLP_maxLineGap_2);
 
 	if (greenRatio > percent)
 	{
