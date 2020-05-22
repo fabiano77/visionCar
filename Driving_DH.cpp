@@ -19,12 +19,13 @@ int HLP_maxLineGap = 500;	//260
 //createTrackbar("H_maxGap", "trackbar", &HLP_maxLineGap, 500, on_trackbar);
 //namedWindow("trackbar", WINDOW_NORMAL);
 
-int h = 14;
+int h1 = 14;
+int h2 = 46;
 int s = 40;
 int v = 90;
 
-Scalar lower_yellow(h, s, v);
-Scalar upper_yellow(46, 255, 255);
+Scalar lower_yellow(h1, s, v);
+Scalar upper_yellow(h2, 255, 255);
 
 Scalar color[7]{
 	Scalar(255,0,0),
@@ -136,9 +137,10 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	frame_yellow = Mat();
 	//frame_edge;
 
-	createTrackbar("h", "trackbar", &h, 500, on_trackbar);
-	createTrackbar("s", "trackbar", &s, 500, on_trackbar);
-	createTrackbar("v", "trackbar", &v, 500, on_trackbar);
+	createTrackbar("h", "trackbar", &h1, 30, on_trackbar);
+	createTrackbar("h", "trackbar", &h2, 60, on_trackbar);
+	createTrackbar("s", "trackbar", &s, 255, on_trackbar);
+	createTrackbar("v", "trackbar", &v, 255, on_trackbar);
 	createTrackbar("threshold1", "trackbar", &threshold_1, 500, on_trackbar);
 	createTrackbar("threshold2", "trackbar", &threshold_2, 500, on_trackbar);
 	createTrackbar("H_thresh", "trackbar", &HLP_threshold, 500, on_trackbar);
@@ -148,7 +150,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 
 	frame_ROI = frame & frame_ROI_Line;	//영상 ROI를 축소한다.
 	cvtColor(frame_ROI, frame_hsv, COLOR_BGR2HSV);	//노란색 추출 위해 HSV변환
-	inRange(frame_hsv, lower_yellow, upper_yellow, yellowThreshold);	//노란색 추출하여 1채널 Mat객체 yellowThreshold생성
+	inRange(frame_hsv, Scalar(h1, s, v), Scalar(h2, 255, 255), yellowThreshold);	//노란색 추출하여 1채널 Mat객체 yellowThreshold생성
 	bitwise_and(frame_ROI, frame_ROI, frame_yellow, yellowThreshold);	//yellowThreshold객체로 원본 frame 필터링.
 	Canny(frame_yellow, frame_edge, threshold_1, threshold_2);	//노란색만 남은 frame의 윤곽을 1채널 Mat객체로 추출
 
