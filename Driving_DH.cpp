@@ -137,6 +137,18 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	inRange(frame_hsv, lower_yellow, upper_yellow, yellowThreshold);	//노란색 추출하여 1채널 Mat객체 yellowThreshold생성
 	bitwise_and(frame_ROI, frame_ROI, frame_yellow, yellowThreshold);	//yellowThreshold객체로 원본 frame 필터링.
 	Canny(frame_yellow, frame_edge, 118, 242);	//노란색만 남은 frame의 윤곽을 1채널 Mat객체로 추출
+	if (print)
+	{
+		namedWindow("frame_yellow", WINDOW_NORMAL);
+		imshow("frame_yellow", frame_red);
+		resizeWindow("frame_yellow", 320, 240);
+		moveWindow("frame_yellow", 0, 40);
+
+		namedWindow("frame_edge", WINDOW_NORMAL);
+		imshow("frame_edge", frame_edge);
+		resizeWindow("frame_edge", 320, 240);
+		moveWindow("frame_edge", 320, 40);
+	}
 
 	vector<Vec4i> lines;		//검출될 직선이 저장될 객체
 	HoughLinesP(frame_edge, lines, 1, CV_PI / 180, 100, 120, 500);

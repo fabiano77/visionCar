@@ -194,8 +194,8 @@ int main()
 		bool cornerFlag(false);
 		bool waitingFlag(true);
 
-		//카메라 좌우 보정 50->52 : 살짝 우측으로 보정
-		cam_pan.setRatio(52);
+		//카메라 좌우 보정 50
+		cam_pan.setRatio(50);
 
 		//메인동작 루프
 		while (true)
@@ -239,13 +239,13 @@ int main()
 						steering.setRatio(steerVal);
 					}
 				}
-				DCmotor.go(speedVal);
+				//DCmotor.go(speedVal);
 			}
 
 			namedWindow("frame", WINDOW_NORMAL);
 			imshow("frame", frame);
 			resizeWindow("frame", 480, 360);
-			moveWindow("frame", 0, 0);
+			moveWindow("frame", 320, 80 + 240);
 
 			if (waitKey(1) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 		}
@@ -357,7 +357,7 @@ int main()
 	}
 	//End Tunnel mode
 
-	cout << "-------------[program finished]-------------" << endl << endl;
 	allServoReset(pca);
+	cout << "-------------[program finished]-------------" << endl << endl;
 	return 0;
 }
