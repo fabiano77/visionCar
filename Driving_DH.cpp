@@ -267,7 +267,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 				putText(frame, "LEFT(" + to_string((int)steerVal) + "%)", RoiCenter, FONT_HERSHEY_COMPLEX, 1, mint, 2);
 			}
 		}
-		else(lines.size() > 1)	//직선 2개 - 직진
+		else if (lines.size() > 1)	//직선 2개 - 직진
 		{
 			//lineExtend(leftLine, 2);
 			//lineExtend(rightLine, 2);
