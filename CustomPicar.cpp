@@ -26,7 +26,7 @@ Servo::Servo(PCA9685 pca_, int motorPin, int timeTerm, bool printFlag)
 	{
 		minVal = 300;
 		maxVal = 650;
-		centerVal = 350;
+		centerVal = 321;	//350 에서변경 5/23
 	}
 	else
 	{
