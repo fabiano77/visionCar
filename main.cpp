@@ -173,12 +173,8 @@ int main()
 			DH.mappingSetValue(6.0, 6.00, 0.00, 0.00, 40.0, 40.0);	//코너구간 조향수준 맵핑값 세팅
 			break;
 		case 2:		//중간 음수값
-			DH.mappingSetSection(0, 0.05, 0.15, 0.48, 0.55, 1.00);
-			DH.mappingSetValue(6.0, 6.00, -5.0, 0.00, 40.0, 40.0);	//코너구간 조향수준 맵핑값 세팅
-			break;
-		case 7:		//코너플래그 활성화
-			DH.mappingSetSection(0, 0.40, 0.50, 0.75, 0.80, 1.00);
-			DH.mappingSetValue(5.0, 5.00, 8.00, 10.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+			DH.mappingSetSection(0, 0.05, 0.20, 0.48, 0.55, 1.00);
+			DH.mappingSetValue(6.0, 6.00, 0.00, -6.0, 40.0, 40.0);	//코너구간 조향수준 맵핑값 세팅
 			break;
 		default:
 
