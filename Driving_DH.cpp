@@ -10,8 +10,8 @@ int straightUpper = 50 + straightSteer;
 
 int threshold_1 = 118;		//215 //340
 int threshold_2 = 242;		//330 //500
-int HLP_threshold = 80;	//105
-int HLP_minLineLength = 120;//115
+int HLP_threshold = 75;	//105
+int HLP_minLineLength = 75;//115
 int HLP_maxLineGap = 500;	//260
 
 int h1 = 14;
