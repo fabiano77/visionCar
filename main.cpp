@@ -86,13 +86,6 @@ int main()
 
 	else if (mode == 2)//Test 2 : Manual test------------------------------------------------
 	{
-		//Self-driving class configuration
-		Driving_DH DH(true, 1.00);
-		DH.mappingSetSection(0, 0.10, 0.40, 0.75, 0.79, 1.00);
-		DH.mappingSetValue(8.0, 8.00, 15.0, 20.0, 50.0, 50.0);
-		double steerVal(50.0);
-		double speedVal(40.0);
-
 		//ManualMode class & basic speed rate
 		ManualMode Manual(pca, 25);
 		Manual.guide();
@@ -103,8 +96,6 @@ int main()
 		{
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
-
-			DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
 
 			namedWindow("frame", WINDOW_NORMAL);
 			imshow("frame", frame);
@@ -164,8 +155,8 @@ int main()
 	{
 		//Self-driving class configuration
 		Driving_DH DH(true, 1.00);
-		DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.43);
-		DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
+		DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
+		DH.mappingSetValue(7.0, 7.00, 0.00, -4.0, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 
@@ -195,8 +186,8 @@ int main()
 				else if (cornerFlag && steerVal >= 44 && steerVal <= 66)
 				{
 					cornerFlag = false;
-					DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.43);
-					DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 0.00, 40.0);
+					DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
+					DH.mappingSetValue(7.0, 7.00, 0.00, -4.0, 0.00, 40.0);
 					cout << "cornerFlag OFF" << '\n';
 				}
 
