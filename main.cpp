@@ -185,11 +185,11 @@ int main()
 			{
 				DH.driving(frame, steerVal, speedVal, speedVal, 0.0);
 
-				if (steerVal == 90 || steerVal == 10)
+				if (!cornerFlag && (steerVal == 90 || steerVal == 10))
 				{
 					cornerFlag = true;
-					DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.47);
-					DH.mappingSetValue(6.0, 6.00, 10.0, 20.0, 30.0, 40.0);
+					DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.35, 0.47);
+					DH.mappingSetValue(6.0, 6.00, 10.0, 15.0, 40.0, 40.0);
 					cout << "cornerFlag ON" << '\n';
 				}
 				else if (cornerFlag && steerVal >= 44 && steerVal <= 56)
