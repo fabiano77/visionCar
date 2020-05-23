@@ -192,7 +192,7 @@ int main()
 					DH.mappingSetValue(6.0, 6.00, 10.0, 15.0, 40.0, 40.0);
 					cout << "cornerFlag ON" << '\n';
 				}
-				else if (cornerFlag && steerVal >= 40 && steerVal <= 60)
+				else if (cornerFlag && steerVal >= 44 && steerVal <= 66)
 				{
 					cornerFlag = false;
 					DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.43);
