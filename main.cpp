@@ -119,6 +119,7 @@ int main()
 	}
 	//End manual test
 
+
 	else if (mode == 3)//Mode 3 : Signal detection(대희) ------------------------------------
 	{
 		//color detecting class ganerate
@@ -158,6 +159,7 @@ int main()
 	}
 	//End Signal detection mode
 
+
 	else if (mode == 4)	//Mode 4 : Driving(대희) --------------------------------------------
 	{
 		//Self-driving class configuration
@@ -167,16 +169,12 @@ int main()
 		switch (mode)
 		{
 		case 1:		//기존
-			DH.mappingSetSection(0, 0.10, 0.25, 0.40, 0.50, 1.00);
+			DH.mappingSetSection(0, 0.05, 0.15, 0.40, 0.50, 1.00);
 			DH.mappingSetValue(6.0, 6.00, 0.00, 10.0, 40.0, 40.0);	//코너구간 조향수준 맵핑값 세팅
 			break;
-		case 2:		//중간 0값
-			DH.mappingSetSection(0, 0.10, 0.20, 0.40, 0.50, 1.00);
-			DH.mappingSetValue(6.0, 6.00, 0.00, 10.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
-			break;
-		case 4:		//중간 음수
-			DH.mappingSetSection(0, 0.10, 0.20, 0.40, 0.50, 1.00);
-			DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+		case 2:		//중간 음수값
+			DH.mappingSetSection(0, 0.05, 0.15, 0.40, 0.50, 1.00);
+			DH.mappingSetValue(6.0, 6.00, -5.0, 10.0, 40.0, 40.0);	//코너구간 조향수준 맵핑값 세팅
 			break;
 		case 7:		//코너플래그 활성화
 			DH.mappingSetSection(0, 0.40, 0.50, 0.75, 0.80, 1.00);
