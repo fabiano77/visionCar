@@ -167,8 +167,8 @@ int main()
 		switch (mode)
 		{
 		case 1:		//기존
-			DH.mappingSetSection(0, 0.10, 0.20, 0.40, 0.50, 1.00);
-			DH.mappingSetValue(6.0, 6.00, 8.00, 10.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+			DH.mappingSetSection(0, 0.10, 0.25, 0.40, 0.50, 1.00);
+			DH.mappingSetValue(6.0, 6.00, 0.00, 10.0, 40.0, 40.0);	//코너구간 조향수준 맵핑값 세팅
 			break;
 		case 2:		//중간 0값
 			DH.mappingSetSection(0, 0.10, 0.20, 0.40, 0.50, 1.00);
@@ -254,7 +254,7 @@ int main()
 			else if (key == '0')
 			{
 				//ManualMode class & basic speed rate
-				ManualMode Manual(pca, 25);
+				ManualMode Manual(pca, 30);
 				Manual.guide();
 
 				//메인루프
