@@ -181,7 +181,7 @@ int main()
 		}
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
-		bool cornerFlag(false);
+		bool passSteer(false);
 
 		//메인동작 루프
 		while (true)
@@ -196,8 +196,19 @@ int main()
 			else //정상주행
 			{
 				DH.driving(frame, steerVal, speedVal, speedVal, 0.0);
-				steering.setRatio(steerVal);
-				if (steerVal == 90 || steerVal == 10) usleep(200000);
+				if (passSteer)
+				{
+					passSteer = false;
+				}
+				else if (steerVal == 90 || steerVal == 10)
+				{
+					passSteer = true;
+					steering.setRatio(steerVal);
+				}
+				else
+				{
+					steering.setRatio(steerVal);
+				}
 				//DCmotor.go(speedVal);
 			}
 
