@@ -173,19 +173,16 @@ int main()
 			DH.mappingSetValue(6.0, 6.00, 0.00, 0.00, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
 			break;
 		case 2:		//중간 음수값
-			DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.45, 0.52);
+			DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.47);
 			DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
 			break;
 		default:
 			
 			break;
 		}
-		//DH.mappingSetSection(0, 0.10, 0.40, 0.73, 0.79, 1.00);
-		//DH.mappingSetValue(8.0, 8.00, 15.0, 22.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 		bool cornerFlag(false);
-		bool waitingFlag(true);
 
 		//카메라 좌우 보정 50
 		cam_pan.setRatio(50);
@@ -200,16 +197,9 @@ int main()
 			{
 
 			}
-			else if (mode == 7 && cornerFlag) //코너 flag on일때, 조향하지 않고 꺾은채 유지.
-			{
-				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
-				if (steerVal >= 30 && steerVal <= 70) cornerFlag = false;	//코너 flag 해제
-
-				DCmotor.go(30);
-			}
 			else //정상주행
 			{
-				DH.driving(frame, steerVal, speedVal, 38.0, 0.0);
+				DH.driving(frame, steerVal, speedVal, speedVal, 0.0);
 
 				if (cornerFlag = true)
 				{
