@@ -169,12 +169,12 @@ int main()
 		switch (mode)
 		{
 		case 1:		//기존
-			DH.mappingSetSection(0, 0.05, 0.15, 0.48, 0.55, 1.00);
-			DH.mappingSetValue(6.0, 6.00, 0.00, 0.00, 40.0, 40.0);	//코너구간 조향수준 맵핑값 세팅
+			DH.mappingSetSection(0, 0.05, 0.20, 0.30, 0.48, 0.55);
+			DH.mappingSetValue(6.0, 6.00, 0.00, 0.00, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
 			break;
 		case 2:		//중간 음수값
-			DH.mappingSetSection(0, 0.05, 0.20, 0.48, 0.55, 1.00);
-			DH.mappingSetValue(6.0, 6.00, 0.00, -6.0, 40.0, 40.0);	//코너구간 조향수준 맵핑값 세팅
+			DH.mappingSetSection(0, 0.05, 0.20, 0.30, 0.48, 0.55);
+			DH.mappingSetValue(6.0, 6.00, 0.00, -6.0, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
 			break;
 		default:
 
