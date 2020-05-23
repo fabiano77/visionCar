@@ -167,19 +167,15 @@ int main()
 		switch (mode)
 		{
 		case 1:		//기존
-			DH.mappingSetSection(0, 0.10, 0.50, 0.77, 0.81, 1.00);
+			DH.mappingSetSection(0, 0.10, 0.20, 0.40, 0.50, 1.00);
 			DH.mappingSetValue(6.0, 6.00, 8.00, 10.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
 			break;
 		case 2:		//중간 0값
-			DH.mappingSetSection(0, 0.10, 0.30, 0.75, 0.80, 1.00);
-			DH.mappingSetValue(6.0, 6.00, 0.00, 0.00, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
-			break;
-		case 3:		//중간 음수
-			DH.mappingSetSection(0, 0.10, 0.30, 0.70, 0.80, 1.00);
-			DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
+			DH.mappingSetSection(0, 0.10, 0.20, 0.40, 0.50, 1.00);
+			DH.mappingSetValue(6.0, 6.00, 0.00, 10.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
 			break;
 		case 4:		//중간 음수
-			DH.mappingSetSection(0, 0.10, 0.30, 0.75, 0.80, 1.00);
+			DH.mappingSetSection(0, 0.10, 0.20, 0.40, 0.50, 1.00);
 			DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 50.0, 50.0);	//코너구간 조향수준 맵핑값 세팅
 			break;
 		case 7:		//코너플래그 활성화
