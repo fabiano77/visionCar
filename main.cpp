@@ -192,7 +192,7 @@ int main()
 					DH.mappingSetValue(6.0, 6.00, 10.0, 15.0, 40.0, 40.0);
 					cout << "cornerFlag ON" << '\n';
 				}
-				else if (cornerFlag && steerVal >= 44 && steerVal <= 56)
+				else if (cornerFlag && steerVal >= 40 && steerVal <= 60)
 				{
 					cornerFlag = false;
 					DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.47);
@@ -218,7 +218,7 @@ int main()
 			else if (key == '0')
 			{
 				//ManualMode class & basic speed rate
-				ManualMode Manual(pca, 30);
+				ManualMode Manual(pca, 40);
 				Manual.guide();
 
 				//메인루프
