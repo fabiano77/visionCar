@@ -197,6 +197,7 @@ int main()
 					cornerFlag = false;
 					DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.47);
 					DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 0.00, 40.0);
+					cout << "cornerFlag OFF" << '\n';
 				}
 
 				steering.setRatio(steerVal);
