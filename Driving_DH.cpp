@@ -165,7 +165,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	vector<Vec4i> lines;		//검출될 직선이 저장될 객체
 	HoughLinesP(frame_edge, lines, 1, CV_PI / 180, HLP_threshold, HLP_minLineLength, HLP_maxLineGap);
 
-	lowest = Point(0, 0);					//직선의 최하단 점 좌표(최하단 = y좌표최대값)
+	lowest = Point(-1, 0);					//직선의 최하단 점 좌표(최하단 = y좌표최대값)
 	lowestLine = Vec4i(0, 0, 0, 0);		//최하단 직선
 	rightLine = Vec4i(0, 0, 0, 0);		//최우측 직선
 	leftLine = Vec4i(640, 0, 640, 0);		//최좌측 직선
@@ -208,7 +208,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	//for문이 끝나고 나면 각종 특징직선 저장.
 	//cout << "leftSlope = " << leftSlope << ", rightSlope = " << rightSlope << '\n' << '\n';
 
-	if (lowest.x == 0)	//직선 없을 경우
+	if (lowest.x == -1)	//직선 없을 경우
 	{
 		//방금 전의 행동을 유지한다.
 		if (printResult) putText(frame, "none", RoiCenter, FONT_HERSHEY_COMPLEX, 1, Scalar(0, 0, 255), 2);
