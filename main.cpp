@@ -153,7 +153,7 @@ int main()
 			namedWindow("frame", WINDOW_NORMAL);
 			imshow("frame", frame);
 			resizeWindow("frame", 480, 360);
-			moveWindow("frame", 320, 80+240);
+			moveWindow("frame", 320, 80 + 240);
 			if (waitKey(33) == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 		}
 	}
@@ -177,15 +177,11 @@ int main()
 			DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
 			break;
 		default:
-			
 			break;
 		}
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 		bool cornerFlag(false);
-
-		//카메라 좌우 보정 50
-		cam_pan.setRatio(50);
 
 		//메인동작 루프
 		while (true)
@@ -200,28 +196,8 @@ int main()
 			else //정상주행
 			{
 				DH.driving(frame, steerVal, speedVal, speedVal, 0.0);
-
-				if (cornerFlag = true)
-				{
-					if (steerVal >= 44 && steerVal <= 56) cornerFlag = false;
-					steering.setRatio(steerVal);
-				}
-				else	//기본 false
-				{
-					if (mode == 7 && (steerVal >= 75 || steerVal <= 25)) cornerFlag = true;
-					if (steerVal >= 56)
-					{
-						steering.setRatio(56);
-					}
-					else if (steerVal >= 44)
-					{
-						steering.setRatio(44);
-					}
-					else
-					{
-						steering.setRatio(steerVal);
-					}
-				}
+				steering.setRatio(steerVal);
+				if (steerVal == 90 || steerVal == 10) waitKey(200);
 				//DCmotor.go(speedVal);
 			}
 
