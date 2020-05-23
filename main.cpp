@@ -164,7 +164,7 @@ int main()
 	{
 		//Self-driving class configuration
 		Driving_DH DH(true, 1.00);
-		DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.47);
+		DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.43);
 		DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
@@ -188,14 +188,14 @@ int main()
 				if (!cornerFlag && (steerVal == 90 || steerVal == 10))
 				{
 					cornerFlag = true;
-					DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.35, 0.47);
+					DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.35, 0.43);
 					DH.mappingSetValue(6.0, 6.00, 10.0, 15.0, 40.0, 40.0);
 					cout << "cornerFlag ON" << '\n';
 				}
 				else if (cornerFlag && steerVal >= 40 && steerVal <= 60)
 				{
 					cornerFlag = false;
-					DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.47);
+					DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.43);
 					DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 0.00, 40.0);
 					cout << "cornerFlag OFF" << '\n';
 				}
@@ -212,8 +212,8 @@ int main()
 
 			int key = waitKey(10);
 			if (key == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
-			else if (key == 'w') DCmotor.go(35);
-			else if (key == 'x') DCmotor.backward(42);
+			else if (key == 'w') DCmotor.go(37);
+			else if (key == 'x') DCmotor.backward(40);
 			else if (key == 's') DCmotor.stop();
 			else if (key == '0')
 			{
