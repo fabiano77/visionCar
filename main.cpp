@@ -162,6 +162,7 @@ int main()
 
 	else if (mode == 4)	//Mode 4 : Driving(대희) --------------------------------------------
 	{
+		int key;
 		//Self-driving class configuration
 		Driving_DH DH(true, 1.00);
 		cout << "corner value select : ";
@@ -197,7 +198,7 @@ int main()
 			{
 				DH.driving(frame, steerVal, speedVal, speedVal, 0.0);
 				steering.setRatio(steerVal);
-				if (steerVal == 90 || steerVal == 10) waitKey(200);
+				if (steerVal == 90 || steerVal == 10) key = waitKey(300);
 				//DCmotor.go(speedVal);
 			}
 
@@ -206,7 +207,7 @@ int main()
 			resizeWindow("frame", 480, 360);
 			moveWindow("frame", 320, 80 + 240);
 
-			int key = waitKey(10);
+			key = waitKey(10);
 			if (key == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 			else if (key == 'w') DCmotor.go(35);
 			else if (key == 'x') DCmotor.backward(42);
