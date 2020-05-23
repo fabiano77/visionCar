@@ -164,24 +164,12 @@ int main()
 	{
 		//Self-driving class configuration
 		Driving_DH DH(true, 1.00);
-		cout << "corner value select : ";
-		cin >> mode;
-		switch (mode)
-		{
-		case 1:		//기존
-			DH.mappingSetSection(0, 0.05, 0.20, 0.30, 0.48, 0.55);
-			DH.mappingSetValue(6.0, 6.00, 0.00, 0.00, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
-			break;
-		case 2:		//중간 음수값
-			DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.47);
-			DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
-			break;
-		default:
-			break;
-		}
+		DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.47);
+		DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
-		bool passSteer(false);
+
+		bool cornerFlag(false);
 
 		//메인동작 루프
 		while (true)
@@ -196,19 +184,23 @@ int main()
 			else //정상주행
 			{
 				DH.driving(frame, steerVal, speedVal, speedVal, 0.0);
-				if (passSteer)
+
+				if (steerVal == 90 || steerVal == 10)
 				{
-					passSteer = false;
+					cornerFlag = true;
+					DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.47);
+					DH.mappingSetValue(6.0, 6.00, 10.0, 20.0, 30.0, 40.0);
+					cout << "cornerFlag ON" << '\n';
 				}
-				else if (steerVal == 90 || steerVal == 10)
+				else if (cornerFlag && steerVal >= 44 && steerVal <= 56)
 				{
-					passSteer = true;
-					steering.setRatio(steerVal);
+					cornerFlag = false;
+					DH.mappingSetSection(0, 0.07, 0.20, 0.30, 0.42, 0.47);
+					DH.mappingSetValue(6.0, 6.00, 0.00, -4.0, 0.00, 40.0);
 				}
-				else
-				{
-					steering.setRatio(steerVal);
-				}
+
+				steering.setRatio(steerVal);
+
 				//DCmotor.go(speedVal);
 			}
 
