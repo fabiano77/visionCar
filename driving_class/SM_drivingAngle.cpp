@@ -8,10 +8,10 @@ using namespace cv;
 using namespace std;
 
 CheckStart::CheckStart() {
-	lower_white = Scalar(15,100,100);
-	upper_white = Scalar(45,255,255);
+	lower_white = Scalar(200,255,255);
+	upper_white = Scalar(255,255,255);
 	lower_black = Scalar(0, 0, 0);
-	upper_black = Scalar(0, 0, 30);
+	upper_black = Scalar(50, 50, 50);
 	flag_start = -1;
 	flag_tunnel = -1;
 	check_start = -1;
@@ -22,8 +22,8 @@ bool CheckStart::isWhite(Mat& frame, double percent) {
 	bool returnVal;
 	Mat frame_white;
 
-	cvtColor(frame, frame_hsv, COLOR_BGR2HSV);
-	inRange(frame_hsv, lower_white, upper_white, frame_white);
+	//cvtColor(frame, frame_hsv, COLOR_BGR2HSV);
+	inRange(frame, lower_white, upper_white, frame_white);
 
 	int whitePixel(0);
 	for (int i = 0; i < frame_white.cols; i += 10)				// 10픽셀마다 하나씩 검사함 속도를 위해
@@ -48,8 +48,8 @@ bool CheckStart::isBlack(Mat& frame, double percent) {
 	bool returnVal;
 	Mat frame_black;
 
-	cvtColor(frame, frame_hsv, COLOR_BGR2HSV);
-	inRange(frame_hsv, lower_black, upper_black, frame_black);
+	//cvtColor(frame, frame_hsv, COLOR_BGR2HSV);
+	inRange(frame, lower_black, upper_black, frame_black);
 
 	int blackPixel(0);
 	for (int i = 0; i < frame_black.cols; i += 10)				// 10픽셀마다 하나씩 검사함 속도를 위해
@@ -121,6 +121,74 @@ int CheckStart::GetFlag_start() {
 int CheckStart::GetFlag_tunnel() {
 	return  flag_tunnel;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+RoundAbout::RoundAbout() {
+	flag1_start = -1;
+	check1_start = -1;
+	lower1_distance = 30;
+	uper1_distance = 30;
+
+	flag2_start = -1;
+	check2_start = -1;
+	lower2_distance = 15;
+	uper2_distance = 40;
+}
+
+bool RoundAbout::isStop(const double Distance) {
+	if (check1_start == 0) { // 한 번이라도 출발했을 경우 출발을 유지한다.
+		return false;
+	}
+	else {
+		if (flag1_start > 0) 
+		{
+			if (Distance >= uper1_distance) { // 앞의 차량이 일정 거리 이상으로 멀어질 경우
+				if (flag1_start <= 0) { 
+					flag1_start = 0;
+				}
+				flag1_start--; // 1프레임 당 flag값을 감소시켜서 0으로 만든다.
+			}			
+			if (flag1_start == 0) { // flag가 0이 될 경우
+				putText(frame, "Go!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+				if (check1_start != 0) { 
+					check1_start = 0; // 출발했다는 표시
+				}
+				return false; // 출발
+			}
+			else {
+				return true; // 정지
+			}
+		}
+		else // 초기 상황
+		{
+			if (Distance < lower1_distance) { // 앞의 차량이 나타났을 때
+				flag1_start = 15; // 1초당 4프레임정도 처리한다고 가정하면, 4초 뒤에 출발
+			}	
+			return true;
+		}
+	}
+}
+
+bool RoundAbout::isDelay(const double Distance) { // flag가 활성화(0보다 크면)되어있으면 정지
+	if (Distance < lower2_distance) { // 앞의 차량이 나타났을 때
+		flag2_start = 15; // 1초당 4프레임정도 처리한다고 가정하면, 4초 뒤에 출발
+		return true; // 정지
+	}
+	else {
+		if (flag2_start < 0) {
+			return false; // 출발
+		}
+		else {
+			if (Distance >= uper2_distance) { // 앞의 차량이 일정 거리 이상으로 멀어질 경우				
+				flag2_start--; // 1프레임 당 flag값을 감소시켜서 0으로 만든다.
+			}
+			return true;
+		}
+	}
+}
+
+/*
 
 void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int& flag) {
 	Vec4f params;
@@ -524,3 +592,4 @@ void filter_colors(Mat& src, Mat& img_filtered) {
 	yellowImg.copyTo(imgCombined);;//노란색만 검출할때까지 사용
 	imgCombined.copyTo(img_filtered);
 }
+*/

@@ -11,14 +11,7 @@ using namespace std;
 class CheckStart {
 public:
 	CheckStart();
-	bool isWhite(Mat& frame, double percent);
-	//PreCondition   :: 흰색이 몇퍼센트 이상 존재해야 할 지에 대해 percent로 입력
-	//PostCondition  :: none
-	//Return         :: White가 percent보다 많이 검출되면 true
-	bool isBlack(Mat& frame, double percent);
-	//PreCondition   :: 검은색이 몇퍼센트 이상 존재해야 할 지에 대해 percent로 입력
-	//PostCondition  :: none
-	//Return         :: Black이 percent보다 많이 검출되면 true
+
 	bool isStart(Mat& frame, double percent);
 	//PreCondition   :: isWhite(frame, percent)가 동작
 	//PostCondition  :: DCmoter.go 동작함. Go!라는 문자가 화면에 출력됨
@@ -30,6 +23,8 @@ public:
 	int GetFlag_start();
 	int GetFlag_tunnel();
 private:
+	bool isWhite(Mat& frame, double percent);
+	bool isBlack(Mat& frame, double percent);
 	int flag_start;
 	int flag_tunnel;
 	int check_start;
@@ -40,6 +35,22 @@ private:
 	Mat frame_hsv;
 };
 
+class RoundAbout {
+public:
+	RoundAbout();
+	bool isStop(const double Distance);
+	bool isDelay(const double Distance);
+
+private:
+	int flag_start;
+	int check_start;
+	double lower_distance;
+	double uper_distance;
+	double distance_Threshold;
+	bool delay;
+};
+
+/*
 //for drivingAngle
 // 라인 검출기능과 각도 반환을 통해서 조작 가능하다
 void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int& flag);
@@ -58,4 +69,6 @@ void filter_colors(Mat& src, Mat& img_filtered);
 //postcondition : 노란색과 흰색으로 구분되고 나머지는 검정으로 채워 반환된다.
 //threshold 값은 imageProcessing constant에 들어있음
 void imgProcessing(Mat& src, Mat& dst, int processingCode);
+*/
+
 #endif
