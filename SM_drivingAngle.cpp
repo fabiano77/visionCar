@@ -112,6 +112,7 @@ void CheckStart::GetFlag_tunnel() {
 	cout << flag_tunnel << endl << endl;
 }
 
+/*
 void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int Mode) {
 	Vec4f params;
 	Point pt1, pt2;
@@ -377,7 +378,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			}
 			else {
 				steering = steering_Before;
-			}*/
+			}
 		}
 		else {
 			steering = 0;
@@ -470,3 +471,4 @@ void filter_colors(Mat& src, Mat& img_filtered) {
 	yellowImg.copyTo(imgCombined);;//노란색만 검출할때까지 사용
 	imgCombined.copyTo(img_filtered);
 }
+*/
