@@ -470,6 +470,8 @@ int main()
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 		bool shortDistanceFlag = false;	  //너무 가까운지에 대한 판단
 		bool overtakingFlag = false;	  //추월상황 판단
+		int returnFlag = 0;
+		const int MAX_returnFlag = 5; // 아무생각 없이 직진하지 말라는 방지 flag
 		//초음파 센서 하나인 경우
 		while (true)
 		{
@@ -509,9 +511,10 @@ int main()
 				{
 					cout << "좌회전 추월" << endl;
 					steerVal = 10; //먼저 좌회전
+					returnFlag = MAX_returnFlag;
 				}
-				else if (Distance_second < MIN_ULTRASONIC && Distance_first > MAX_ULTRASONIC)
-				{ //추월 상황중 차량을 지나쳐갈 때
+				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC) //추월 상황중 차량을 지나쳐갈 때 and 차량을 지나치고 복귀중 재탐색시
+				{
 					rotaryFlag = true;
 					DH.driving(frame, steerVal, speedVal, speedVal, 0.0, rotaryFlag);
 				}
@@ -519,12 +522,19 @@ int main()
 				{
 					rotaryFlag = false;
 					steerVal = 90;
+					//예비 상황 혹시 차량을 지나쳐가는 루프에 들어오지 못하는 경우 방지
+					if (returnFlag < MAX_returnFlag)
+					{
+						returnFlag++;
+					}
+					if (returnFlag >= MAX_returnFlag)
+					{
+						rotaryFlag = true;
+						DH.driving(frame, steerVal, speedVal, speedVal, 0.0, rotaryFlag);
+					}
 				}
-				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC) //복귀 도중 차량 인접신호
-				{
-					DH.driving(frame, steerVal, speedVal, speedVal, 0.0, rotaryFlag);
-					overtakingFlag = false;
-				}
+
+				//차량 복귀 신호가 문제일 수 도 있음.
 			}
 
 			cout << "distance = " << Distance_first << endl; //거리출력
