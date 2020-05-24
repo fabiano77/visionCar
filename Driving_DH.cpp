@@ -2,25 +2,25 @@
 
 const bool PRINT(true);				// 영상에 출력 표시 on&off
 const bool PRINT_RESULT(true);			// 결과직선 표시 on&off
+const bool IMAGE_DEBUG(true);
 double STRAIGHT_LEVEL(1.00);	// 직선 구간에서의 가중치 커지면 각도 쎄게틈
 int straightSteer = 7;		// 44~56
 int straightLower = 50 - straightSteer;
 int straightUpper = 50 + straightSteer;
 
-//int threshold_1 = 118;		//215 //340
-//int threshold_2 = 242;		//330 //500
-//int HLP_threshold = 100;	//105
-//int HLP_minLineLength = 120;//115
-//int HLP_maxLineGap = 500;	//260
-//createTrackbar("threshold1", "trackbar", &threshold_1, 500, on_trackbar);
-//createTrackbar("threshold2", "trackbar", &threshold_2, 500, on_trackbar);
-//createTrackbar("H_thresh", "trackbar", &HLP_threshold, 500, on_trackbar);
-//createTrackbar("H_minLen", "trackbar", &HLP_minLineLength, 500, on_trackbar);
-//createTrackbar("H_maxGap", "trackbar", &HLP_maxLineGap, 500, on_trackbar);
-//namedWindow("trackbar", WINDOW_NORMAL);
+int threshold_1 = 118;		//215 //340
+int threshold_2 = 242;		//330 //500
+int HLP_threshold = 75;	//105
+int HLP_minLineLength = 75;//115
+int HLP_maxLineGap = 500;	//260
 
-Scalar lower_yellow(14, 40, 90);
-Scalar upper_yellow(46, 255, 255);
+int h1 = 14;
+int h2 = 46;
+int s = 0;		//40
+int v = 220;	//90
+
+Scalar lower_yellow(h1, s, v);
+Scalar upper_yellow(h2, 255, 255);
 
 Scalar color[7]{
 	Scalar(255,0,0),
@@ -49,11 +49,11 @@ void Driving_DH::basicSetting()
 		value[i] = 0;
 	}
 	frame_ROI_Line = Mat(Size(frame_size.width, frame_size.height), CV_8UC3, Scalar(0));
-	rectangle(frame_ROI_Line		//높이 위에서 60%자르고 하단 0%남김
+	rectangle(frame_ROI_Line		//높이 위에서 40%자르고 하단 60%남김
 		, Rect(0
-			, cvRound(frame_size.height * (60.0 / 100.0))//, cvRound(frame_size.height * (65.0 / 100.0))
+			, cvRound(frame_size.height * (40.0 / 100.0))//, cvRound(frame_size.height * (65.0 / 100.0))
 			, frame_size.width
-			, cvRound(frame_size.height * (40.0 / 100.0)))//, cvRound(frame_size.height * (35.0 / 100.0)))
+			, cvRound(frame_size.height * (60.0 / 100.0)))//, cvRound(frame_size.height * (35.0 / 100.0)))
 		, Scalar(255, 255, 255)
 		, FILLED);
 
@@ -134,15 +134,38 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 
 	frame_ROI = frame & frame_ROI_Line;	//영상 ROI를 축소한다.
 	cvtColor(frame_ROI, frame_hsv, COLOR_BGR2HSV);	//노란색 추출 위해 HSV변환
-	inRange(frame_hsv, lower_yellow, upper_yellow, yellowThreshold);	//노란색 추출하여 1채널 Mat객체 yellowThreshold생성
+	inRange(frame_hsv, Scalar(h1, s, v), Scalar(h2, 255, 255), yellowThreshold);	//노란색 추출하여 1채널 Mat객체 yellowThreshold생성
 	bitwise_and(frame_ROI, frame_ROI, frame_yellow, yellowThreshold);	//yellowThreshold객체로 원본 frame 필터링.
-	Canny(frame_yellow, frame_edge, 118, 242);	//노란색만 남은 frame의 윤곽을 1채널 Mat객체로 추출
+	Canny(frame_yellow, frame_edge, threshold_1, threshold_2);	//노란색만 남은 frame의 윤곽을 1채널 Mat객체로 추출
+
+	if (IMAGE_DEBUG)
+	{
+		createTrackbar("h1", "trackbar", &h1, 30, on_trackbar);
+		createTrackbar("h2", "trackbar", &h2, 60, on_trackbar);
+		createTrackbar("s", "trackbar", &s, 255, on_trackbar);
+		createTrackbar("v", "trackbar", &v, 255, on_trackbar);
+		createTrackbar("threshold1", "trackbar", &threshold_1, 500, on_trackbar);
+		createTrackbar("threshold2", "trackbar", &threshold_2, 500, on_trackbar);
+		createTrackbar("H_thresh", "trackbar", &HLP_threshold, 500, on_trackbar);
+		createTrackbar("H_minLen", "trackbar", &HLP_minLineLength, 500, on_trackbar);
+		createTrackbar("H_maxGap", "trackbar", &HLP_maxLineGap, 500, on_trackbar);
+		namedWindow("trackbar", WINDOW_NORMAL);
+
+		namedWindow("frame_yellow", WINDOW_NORMAL);
+		imshow("frame_yellow", frame_yellow);
+		resizeWindow("frame_yellow", 320, 240);
+		moveWindow("frame_yellow", 0, 40);
+
+		namedWindow("frame_edge", WINDOW_NORMAL);
+		imshow("frame_edge", frame_edge);
+		resizeWindow("frame_edge", 320, 240);
+		moveWindow("frame_edge", 320, 40);
+	}
 
 	vector<Vec4i> lines;		//검출될 직선이 저장될 객체
-	HoughLinesP(frame_edge, lines, 1, CV_PI / 180, 100, 120, 500);
-	//HoughLinesP(frame_edge, lines, 1, CV_PI / 180, HLP_threshold, HLP_minLineLength, HLP_maxLineGap);
+	HoughLinesP(frame_edge, lines, 1, CV_PI / 180, HLP_threshold, HLP_minLineLength, HLP_maxLineGap);
 
-	lowest = Point(0, 0);					//직선의 최하단 점 좌표(최하단 = y좌표최대값)
+	lowest = Point(-1, 0);					//직선의 최하단 점 좌표(최하단 = y좌표최대값)
 	lowestLine = Vec4i(0, 0, 0, 0);		//최하단 직선
 	rightLine = Vec4i(0, 0, 0, 0);		//최우측 직선
 	leftLine = Vec4i(640, 0, 640, 0);		//최좌측 직선
@@ -185,7 +208,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	//for문이 끝나고 나면 각종 특징직선 저장.
 	//cout << "leftSlope = " << leftSlope << ", rightSlope = " << rightSlope << '\n' << '\n';
 
-	if (lowest.x == 0)	//직선 없을 경우
+	if (lowest.x == -1)	//직선 없을 경우
 	{
 		//방금 전의 행동을 유지한다.
 		if (printResult) putText(frame, "none", RoiCenter, FONT_HERSHEY_COMPLEX, 1, Scalar(0, 0, 255), 2);
@@ -208,7 +231,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 			}
 
 		}
-		else	//직선 2개 - 직진
+		else if (lines.size() > 1)	//직선 2개 - 직진
 		{
 			//lineExtend(leftLine, 2);
 			//lineExtend(rightLine, 2);
@@ -244,7 +267,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 				putText(frame, "LEFT(" + to_string((int)steerVal) + "%)", RoiCenter, FONT_HERSHEY_COMPLEX, 1, mint, 2);
 			}
 		}
-		else	//직선 2개 - 직진
+		else if (lines.size() > 1)	//직선 2개 - 직진
 		{
 			//lineExtend(leftLine, 2);
 			//lineExtend(rightLine, 2);

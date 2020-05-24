@@ -1,0 +1,19 @@
+﻿################################################################################
+# 이 .gitignore 파일은 Microsoft(R) Visual Studio에서 자동으로 만들어졌습니다.
+################################################################################
+
+/.vs/VSWorkspaceState.json
+/.vs/visionCar/v16/ipch/AutoPCH/ca04def44a4328a5/PCA9685.ipch
+/.vs/visionCar/v16/ipch/AutoPCH/ca04def44a4328a5
+/.vs/visionCar/v16/ipch/AutoPCH/1d3c9fde13b66666/MAIN.ipch
+/.vs/visionCar/v16/ipch/AutoPCH/1d3c9fde13b66666
+/.vs/visionCar/v16/ipch/AutoPCH/15c66778c0551383/SJ_DRIVINGANGLE.ipch
+/.vs/visionCar/v16/ipch/AutoPCH/15c66778c0551383
+/.vs/visionCar/v16/ipch/AutoPCH
+/.vs/visionCar/v16/Browse.VC.opendb
+/.vs/visionCar/v16/Browse.VC.db
+/.vs/visionCar/v16/.suo
+/.vs/visionCar/v16
+/.vs/slnx.sqlite
+/.vs/ProjectSettings.json
+/.vs

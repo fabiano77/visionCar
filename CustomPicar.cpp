@@ -26,7 +26,7 @@ Servo::Servo(PCA9685 pca_, int motorPin, int timeTerm, bool printFlag)
 	{
 		minVal = 300;
 		maxVal = 650;
-		centerVal = 350;
+		centerVal = 321;	//350 에서변경 5/23
 	}
 	else
 	{
@@ -75,18 +75,33 @@ void Servo::operator++(int)
 	uint16_t val = value + (length * (rate / 100));
 	if (val > maxVal) val = maxVal;
 	setValue(val);
+	
+	cout << " @pin :" << pin << ", setRatio = " << ((val - minVal)*100.0) / length << endl;
 }
 void Servo::operator--(int)
 {
 	uint16_t val = value - (length * (rate / 100));
 	if (val < minVal) val = minVal;
 	setValue(val);
+
+	cout << " @pin :" << pin << ", setRatio = " << ((val - minVal) * 100.0) / length << endl;
 }
+
 Wheel::Wheel()
 {
 }
 Wheel::Wheel(PCA9685 pca_, int leftPin, int rightPin)
 {
+	if (wiringPiSetup() == -1)
+	{
+		cout << "wiringPiSetup FAIL!!" << '\n';
+		exit(1);
+	}
+
+	pinMode(0, OUTPUT);	//BCM_17,
+	pinMode(2, OUTPUT);	//BCM_27,
+
+	backwardFlag = false;
 	board = pca_;
 	left = leftPin;
 	right = rightPin;
@@ -97,6 +112,12 @@ Wheel::Wheel(PCA9685 pca_, int leftPin, int rightPin)
 }
 void Wheel::go(double speed)
 {
+	if (backwardFlag)
+	{
+		backwardFlag = false;
+		digitalWrite(0, 0);
+		digitalWrite(2, 0);
+	}
 	if (speed > 100) speed = 100;
 	if (speed < 0) speed = 0;
 	uint16_t val = length * (speed / 100);
@@ -108,6 +129,54 @@ void Wheel::stop()
 	board.set_pwm(left, 0, 0);
 	board.set_pwm(right, 0, 0);
 }
+void Wheel::backward(double speed)
+{
+	if (!backwardFlag)
+	{
+		backwardFlag = true;
+		digitalWrite(0, 1);
+		digitalWrite(2, 1);
+	}
+	if (speed > 100) speed = 100;
+	if (speed < 0) speed = 0;
+	uint16_t val = length * (speed / 100);
+	board.set_pwm(left, 0, val);
+	board.set_pwm(right, 0, val);
+}
+
+UltraSonic::UltraSonic(int trigerPin, int echoPin)
+{
+	TRIGPIN = trigerPin;
+	ECHOPIN = echoPin;
+
+	if (wiringPiSetup() == -1)
+	{
+		cout << "wiringPiSetup FAIL!!" << '\n';
+		exit(1);
+	}
+	pinMode(TRIGPIN, OUTPUT);
+	pinMode(ECHOPIN, INPUT);
+}
+
+double UltraSonic::distance()
+{
+	double distance, start, stop;
+
+	digitalWrite(TRIGPIN, 0);
+	delayMicroseconds(2);
+	digitalWrite(TRIGPIN, 1);
+	delayMicroseconds(20);
+	digitalWrite(TRIGPIN, 0);
+
+	while (digitalRead(ECHOPIN) == 0);
+	start = micros();
+	while (digitalRead(ECHOPIN) == 1);
+	stop = micros();
+
+	distance = (stop - start) / 58;
+	return distance;
+}
+
 
 ManualMode::ManualMode(PCA9685 pca_, double spd)
 {
@@ -130,13 +199,12 @@ void ManualMode::input(int key_)
 		break;
 	case 's':	//stop
 		M_DCmotor.stop();
-		speed = 40;
-		cout << "@stop!" << endl;
 		break;
 	case 'w':	//go and speed up
 		M_DCmotor.go(speed);
-		cout << "@current speed : " << speed << endl;
-		if (speed < 100)speed += 4;
+		break;
+	case 'x':	//go backward
+		M_DCmotor.backward(speed);
 		break;
 	case 'j':	//cam left
 		M_cam_pan++;
@@ -150,6 +218,18 @@ void ManualMode::input(int key_)
 	case 'k':	//cam down
 		M_cam_tilt--;
 		break;
+	case '1':
+	case '2':
+	case '3':
+	case '4':
+	case '5':
+	case '6':
+	case '7':
+	case '8':
+	case '9':
+		speed = (key_ - '0') * 10;
+		cout << "current speed = " << speed << endl;
+		break;
 	case -1:
 		cout << "wait input & camera out" << endl;
 		break;
@@ -162,11 +242,13 @@ void ManualMode::input(int key_)
 void ManualMode::guide()
 {
 	cout << "---------------------[key setting]------------------" << endl;
-	cout << "    w      : go & speed up  |   i      : up" << endl;
-	cout << "  a   d    : left, right    | j   l    : left, right" << endl;
-	cout << "    s      : stop           |   k      : down" << endl;
-	cout << "  (move)                    | (cam)" << endl;
-	cout << "   '0' is exit.             |" << endl;
+	cout << "    w      : go & speed up    |   i      : up" << endl;
+	cout << "  a s d    : left, stop,right | j   l    : left, right" << endl;
+	cout << "    x      : backward         |   k      : down" << endl;
+	cout << "  (move)                      | (cam)" << endl;
+	cout << "   '0' is exit.               |" << endl;
+	cout << "----------------------------------------------------" << endl;
+	cout << "	1, 2, 3, 4, 5, 6, 7, 8, 9 = speed setting" << endl;
 	cout << "----------------------------------------------------" << endl;
 }
 

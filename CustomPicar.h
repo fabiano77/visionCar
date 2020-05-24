@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
+#include <wiringPi.h>
 #include "PCA9685.h"
 
 namespace auto_car
@@ -34,7 +35,7 @@ public:
 						//2번 cam상하 650상 ~ 350중심 ~ 300하
 						//4번 우측바퀴 1000~4000
 						//5번 좌측바퀴 1000~4000
-	
+
 	void setRatio(double ratio);		//서보의 각도를 %비율로 설정하는 함수. 가용범위 0~100 이며 50% 이 중심.
 	void resetCenter();			//서보의 각도를 중심으로 초기화하는 함수. tilt 서보는 50%이 중심이 아님. 약 15%정도
 	void operator++(int);			//서보의 각도를 10% 증가
@@ -59,14 +60,26 @@ public:
 	Wheel(PCA9685 pca_, int leftPin, int rightPin);		//초기 설정은 만질 일 없음.
 	void go(double speed = 40);		//양쪽 뒷 바퀴 속도를 %로 설정하는 함수. 기본인자로 40%.
 	void stop();				//말그대로 스톱.
+	void backward(double speed = 40);
 private:
 	PCA9685 board;
+	bool backwardFlag;
 	int left;
 	int right;
 	uint16_t maxVal;
 	uint16_t minVal;
 	uint16_t length;
 	double rate;
+};
+
+class UltraSonic
+{
+public:
+	UltraSonic(int trigerPin, int echoPin);
+	double distance();
+private:
+	int TRIGPIN;
+	int ECHOPIN;
 };
 
 class ManualMode

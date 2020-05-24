@@ -8,12 +8,13 @@ using namespace cv;
 using namespace std;
 
 CheckStart::CheckStart() {
-	lower_white = Scalar(246,246,246);
-	upper_white = Scalar(255,255,255);
+	lower_white = Scalar(15,100,100);
+	upper_white = Scalar(45,255,255);
 	lower_black = Scalar(0, 0, 0);
-	upper_black = Scalar(98, 98, 98);
+	upper_black = Scalar(0, 0, 30);
 	flag_start = -1;
 	flag_tunnel = -1;
+	check_start = -1;
 }
 
 bool CheckStart::isWhite(Mat& frame, double percent) {
@@ -70,7 +71,7 @@ bool CheckStart::isBlack(Mat& frame, double percent) {
 }
 
 bool CheckStart::isStart(Mat& frame, double percent) {
-	if (iswhite(frame, percent)) { // 흰색 카드가 검출될 때
+	if (isWhite(frame, percent)) { // 흰색 카드가 검출될 때
 		flag_start = 10; // 10 frame 이후 출발
 	}
 	else { // 흰색 카드가 검출이 안될 때
@@ -79,10 +80,19 @@ bool CheckStart::isStart(Mat& frame, double percent) {
 	}
 	if (flag_start == 0) {
 		putText(frame, "Go!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+		if (check_start != 0) {
+			check_start = 0;
+		}
 		return true;
 	}
-	else
-		return false;
+	else {
+		if (check_start == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }
 
 bool CheckStart::isTunnel(Mat& frame, double percent) {
@@ -104,15 +114,15 @@ bool CheckStart::isTunnel(Mat& frame, double percent) {
 	}
 }
 
-void CheckStart::GetFlag_start() {
-	cout << flag_start << endl << endl;
+int CheckStart::GetFlag_start() {
+	return flag_start;
 }
 
-void CheckStart::GetFlag_tunnel() {
-	cout << flag_tunnel << endl << endl;
+int CheckStart::GetFlag_tunnel() {
+	return  flag_tunnel;
 }
 
-void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int Mode) {
+void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int& flag) {
 	Vec4f params;
 	Point pt1, pt2;
 	int x1, y1, x2, y2;
@@ -165,7 +175,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		y2 = line[3];
 
 		float cx = width * 0.5; //x coordinate of center of image
-		if (slope > 0 && x1 > cx&& x2 > cx)
+		if (slope > 0 && x1 > cx && x2 > cx)
 			right_lines.push_back(line);
 		//slope가 0보다 크면 pi/2+a rad에서 온 것이므로 오른쪽일 것
 		else if (slope < 0 && x1 < cx && x2 < cx)
@@ -228,8 +238,8 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	float s = 1000;//값 
 	double dydxLeft, dydxRight;//각 축별 기울기 값
 
-	double left_interP = 0, right_interP = 0;
-	double left_b, right_b;
+	//double left_interP = 0, right_interP = 0;
+	//double left_b, right_b;
 	//방향 벡터 구하는 곳임
 	if (left_index > 0) {
 		fitLine(leftLines, fitLeft, DIST_L2, 0, 0.01, 0.01);
@@ -239,21 +249,21 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		lp0.y = cvRound(fitLeft[1] * (-s) + fitLeft[3]);
 
 		dydxLeft = double(-fitLeft[1]) / double(fitLeft[0]);
-		left_b = dydxLeft * lp1.x - lp1.y; // y = ax + b 에서 b를 구하는 식
-		left_interP = dydxLeft * width / 2 + left_b; // 차선의 방정식에서 x값이 x축 중심일때 y의 값
+		//left_b = dydxLeft * lp1.x - lp1.y; // y = ax + b 에서 b를 구하는 식
+		//left_interP = dydxLeft * width / 2 + left_b; // 차선의 방정식에서 x값이 x축 중심일때 y의 값
 	}
 	else { dydxLeft = 0; }//한쪽라인 인식 안되는 예외 처리 부분
 
 	if (right_index > 0) {
 		fitLine(rightLines, fitRight, DIST_L2, 0, 0.01, 0.01);
 		rp1.x = cvRound(fitRight[0] * s + fitRight[2]);//[0]은 방향 벡터 dx 오른쪽에 있는 좌표
-		rp1.y = cvRound(fitRight[1] * s + fitRight[3]);//[1]은 방향벡터 dy 아래에 있는 좌표
+		rp1.y = cvRound(fitRight[1] * s + fitRight[3]);//[1]은 방향 벡터 dy 아래에 있는 좌표
 		rp0.x = cvRound(fitRight[0] * (-s) + fitRight[2]);
 		rp0.y = cvRound(fitRight[1] * (-s) + fitRight[3]);
 
 		dydxRight = double(-fitRight[1]) / double(fitRight[0]);
-		right_b = dydxRight * rp1.x - rp1.y; // y = ax + b 에서 b를 구하는 식
-		right_interP = dydxRight * width / 2 + right_b; // 라인의 방정식에서 x값이 x축 중심일때 y의 값
+		//right_b = dydxRight * rp1.x - rp1.y; // y = ax + b 에서 b를 구하는 식
+		//right_interP = dydxRight * width / 2 + right_b; // 라인의 방정식에서 x값이 x축 중심일때 y의 값
 	}
 	else { dydxRight = 0; } // 한쪽라인 인식 안되는 예외 처리 부분
 	//값저장
@@ -262,7 +272,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	////////////////////////////////////////////////////////////////////
 	// 수정된 부분
 	////////////////////////////////////////////////////////////////////
-	double angleThreshold = 2.5;// 절대값 2.5도 이하는 0으로만들기
+	double angleThreshold = 3;// 절대값 2.5도 이하는 0으로만들기
 	if (abs(atan(dydxLeft) + atan(dydxRight)) <= (angleThreshold * CV_PI / 180)) {
 		headingAngle = 0;
 	}
@@ -270,50 +280,116 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 		headingAngle = -180 / CV_PI * (atan((dydxLeft)) + atan((dydxRight)));
 	}
 
-	double weight = 1.75; // steering에 가중치를 줘서 조향각을 맞춰줌. Mode1에서 사용
+	double weight = 1.65; // steering에 가중치를 줘서 조향각을 맞춰줌. Mode1에서 사용
 
-	if (Mode == 1) {
 		// 범위를 지정해서 해당 범위마다 일정한 조향각을 설정해둠.(헤딩각이 해당 범위에 들어오면 조향각이 설정됨)
 		// 차선의 개수에 따라 조향각의 방향을 잡아줌.
-
+	if ((flag == 111)||(flag == 121)) {
+		cout << "flag " << flag << " !" << endl;
+		steering = steering_Before;
+		if (headingAngle <= 0) {
+			flag = 0;
+			steering = 0;
+		}
+	}
+	else if ((flag == 112) || (flag == 122)) {
+		cout << "flag " << flag << " !" << endl;
+		steering = steering_Before;
+		if (headingAngle >= 0) {
+			flag = 0;
+			steering = 0;
+		}
+	}
+	else if (flag == 21) {
+		cout << "flag 21 !" << endl;
+		steering = steering_Before;
+		if (headingAngle > -20) {
+			steering = -10;
+			steering *= weight;
+			flag = 0;
+		}
+	}
+	else if (flag == 22) {
+		cout << "flag 22 !" << endl;
+		steering = steering_Before;
+		if (headingAngle < 20) {
+			steering = 10;
+			steering *= weight;
+			flag = 0;
+		}
+	}
+	else if (flag == 31) {
+		cout << "flag 31 !" << endl;
+		steering = steering_Before;
+		if (headingAngle >= 0) {
+			flag = 0;
+			steering = 0;
+		}
+	}
+	else if (flag == 32) {
+		cout << "flag 32 !" << endl;
+		steering = steering_Before;
+		if (headingAngle <= 0) {
+			flag = 0;
+			steering = 0;
+		}
+	}
+	else {
+		cout << "flag 0 !" << endl;
 		if ((right_index != 0) && (left_index != 0)) { // 차선이 두 개일 때
 			// steering 각 조절
-			if (headingAngle == 0) {
+			if (abs(headingAngle) <= 5) {
 				steering = 0;
+				flag = 0;
 			}
-			else if (abs(headingAngle) <= 10) {
+			else if ((headingAngle >= 5)&&((headingAngle <= 20))) {
+				steering = -5;
+				flag = 111;
+			}
+			else if ((headingAngle <= -5) && ((headingAngle >= -20))) {
 				steering = 5;
+				flag = 112;
 			}
-			else if (abs(headingAngle) <= 20) {
-				steering = 10;
-			}
-			else if (abs(headingAngle) <= 30) {
-				steering = 15;
+			else if (headingAngle > 20){
+				steering = -10;
+				flag = 111;
 			}
 			else {
-				steering = 20;
+				steering = 10;
+				flag == 112;
 			}
-
 			// steering 방향 조절 : 기본적으로 heading 방향과 반대 방향임
-			if (headingAngle > 0) {
-				steering = -steering;
-			}
+		
 			// 위에는 기본적인 경우
 			//////////////////////////////////////////////////////
-			// 아래는 special case
-			// 한 쪽 차선에 붙어있을 경우, 곡선 차선이 나올 경우
+			// 아래는 special case -> 한 쪽 차선에 붙어있을 경우, 곡선 차선이 나올 경우
 
-
-			if (abs(rp1.y - rp0.y) > abs(lp1.y - lp0.y)) {// 오른쪽 차선에 붙어있을 경우
-				if (headingAngle < 0) {
-					steering = -steering;
-				}
+			// 곡선
+			if ((abs(rp1.y - rp0.y) < height * 1 / 6) && (abs(lp1.y - lp0.y) > height * 1 / 6)) { // 오른쪽 차선이 곡선으로 나올 때 (좌회전)
+				steering = -steering;
+				flag = 21;
 			}
-			//if(rp0.y > height / 2)
+			else if ((abs(rp1.y - rp0.y) > height * 1 / 6) && (abs(lp1.y - lp0.y) < height * 1 / 6)) { // 왼쪽 차선이 곡선으로 나올 때 (우회전)
+				steering = -steering;
+				flag = 22;
+			}
+			else {
 
-			else {// 왼쪽 차선에 붙어있을 경우
-				if (headingAngle > 0) {
-					steering = -steering;
+			}
+
+			// 한 쪽 차선에 붙어 있을 경우 heading 방향이 steering 방향이 됨
+			if ((flag != 21) || (flag != 22)) {
+				if (abs(rp1.y - rp0.y) > abs(lp1.y - lp0.y)) {// 오른쪽 차선에 붙어있을 경우 
+					if (headingAngle <= 0) {
+						steering = -steering;
+						flag = 121;
+					}
+				}
+				else {// 왼쪽 차선에 붙어있을 경우
+					if (headingAngle >= 0) {
+						steering = -steering;
+						flag = 122;
+					}
 				}
 			}
 			steering *= weight;
@@ -327,62 +403,40 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			// steering 그대로		
 			if (headingAngle < -70) {
 				steering = -5;
+				flag = 0;
 			}
 			else if (headingAngle <= -30) {
-				steering = -20;
+				steering = -10;
+				flag = 31;
 			}
 			else {
-				steering = -10;
+				steering = -20;
+				flag = 0;
 			}
 			steering *= weight;
+			
 		}
 		else if ((right_index == 0) && (left_index != 0)) { // 왼쪽 차선만 보일 때
 			if (headingAngle > 70) {
 				steering = 5;
+				flag = 0;
 			}
 			else if (headingAngle >= 30) {
-				steering = 20;
+				steering = 10;
+				flag = 32;
 			}
 			else {
-				steering = 10;
+				steering = 20;
+				flag = 0;
 			}
 			steering *= weight;
 		}
 		else { // 차선이 없을 때
 			steering = steering_Before;
+			flag = 0;
 		}
 	}
 
-	else if (Mode == 2) 
-	{
-		// 한 쪽 차선에 가까워 졌을 때 각도를 반대로 크게 줘서 헤딩각이 0이 될 때 까지 유지시켜 준다.
-		// 헤딩각이 0이 되면 조향각을 0으로 바꿔준다.
-		if (headingAngle != 0)
-		{
-			if ((left_interP > 0) || (right_interP > 0)) 
-			{ // 한 쪽 라인에 가까워 졌을 때
-			        if (left_interP > right_interP) // 오른쪽 차선에 가까워 졌을 때
-				    steering = -30;
-			        else // 왼쪽 차선에 가까워 졌을 때
-				    steering = 30;
-		        }
-			else{
-				steering = steering_Before;
-			}
-			/*if ((right_index != 0) && (left_index == 0)) {
-				steering = -30;
-			}
-			else if ((right_index == 0) && (left_index != 0)) {
-				steering = -30;
-			}
-			else {
-				steering = steering_Before;
-			}*/
-		}
-		else {
-			steering = 0;
-		}
-	}	
 	// 아주 기본적인 알고리즘 상steering = -headingAngle;
 	//right_index=0일때 오른선 검출X
 	//left_index=0일때 왼선 검출

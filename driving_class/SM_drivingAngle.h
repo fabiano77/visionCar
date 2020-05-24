@@ -27,11 +27,12 @@ public:
 	//PreCondition   :: isBlack(frame, percent)가 동작
 	//PostCondition  :: 터널에서 차선을 검출할 함수 동작함. Tunnel!라는 문자가 화면에 출력됨
 	//Return         :: isBlack이 true로 된 후 일정 frame 이상 유지되면 true
-	void GetFlag_start();
-	void GetFlag_tunnel();
+	int GetFlag_start();
+	int GetFlag_tunnel();
 private:
 	int flag_start;
 	int flag_tunnel;
+	int check_start;
 	Scalar lower_white;
 	Scalar upper_white;
 	Scalar lower_black;
@@ -41,7 +42,7 @@ private:
 
 //for drivingAngle
 // 라인 검출기능과 각도 반환을 통해서 조작 가능하다
-void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int Mode);
+void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, double& steering_Before, int& flag);
 
 void regionOfInterest(Mat& src, Mat& dst, Point* points);//roi 지정
 //precondition : point that you want to roi(3 or 4 points recommended

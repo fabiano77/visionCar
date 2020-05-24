@@ -4,13 +4,13 @@
 //namedWindow("trackbar", WINDOW_NORMAL);
 //circle(distortedFrame, Point(imageSize.width * 0.5, imageSize.height * 0.3), circleSize, Scalar(0, 0, 255), -1, LINE_AA);
 
-int HLP_threshold = 75;
-int HLP_minLineLength = 15;
-int HLP_maxLineGap = 5;
+int DCS_HLP_threshold = 75;
+int DCS_HLP_minLineLength = 15;
+int DCS_HLP_maxLineGap = 5;
 
-int HLP_threshold_2 = 30;
-int HLP_minLineLength_2 = 15;
-int HLP_maxLineGap_2 = 5;
+int DCS_HLP_threshold_2 = 30;
+int DCS_HLP_minLineLength_2 = 15;
+int DCS_HLP_maxLineGap_2 = 5;
 
 int H_minDist = 20;
 int H_param1 = 50;
@@ -51,7 +51,7 @@ bool DetectColorSign::priorityStop(Mat& frame, double percent)
 		Canny(frame_red, frame_edge, 118, 242);	//빨간색만 남은 frame의 윤곽을 1채널 Mat객체로 추출
 
 		vector<Vec4i> lines;		//검출될 직선이 저장될 객체
-		HoughLinesP(frame_edge, lines, 1, CV_PI / 180, HLP_threshold, HLP_minLineLength, HLP_maxLineGap);
+		HoughLinesP(frame_edge, lines, 1, CV_PI / 180, DCS_HLP_threshold, DCS_HLP_minLineLength, DCS_HLP_maxLineGap);
 
 
 		if (lines.size() >= 2) returnVal = true;
@@ -62,7 +62,10 @@ bool DetectColorSign::priorityStop(Mat& frame, double percent)
 			putText(frame_red, "red Pixel : " + to_string(m_redRatio) + '%', Point(30, 30), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 0, 0), 2);
 			putText(frame_red, "Line Count : " + to_string(lines.size()), Point(30, 60), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
 			putText(frame_red, "Priority STOP signal!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+			namedWindow("frame_red", WINDOW_NORMAL);
 			imshow("frame_red", frame_red);
+			resizeWindow("frame_red", 320, 240);
+			moveWindow("frame_red", 0, 40);
 		}
 	}
 	else returnVal = false;
@@ -114,7 +117,10 @@ bool DetectColorSign::isRedStop(Mat& frame, double percent)
 	if (print)
 	{
 		putText(frame_red, "red Pixel : " + to_string(redRatio) + '%', Point(30, 30), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 0, 0), 2);
+		namedWindow("frame_red", WINDOW_NORMAL);
 		imshow("frame_red", frame_red);
+		resizeWindow("frame_red", 320, 240);
+		moveWindow("frame_red", 0, 40);
 	}
 
 	return returnVal;
@@ -158,7 +164,10 @@ bool DetectColorSign::isYellow(Mat& frame, double percent)
 	if (print)
 	{
 		putText(frame_yellow, "yellow Pixel : " + to_string(yellowRatio) + '%', Point(30, 30), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 0, 0), 2);
+		namedWindow("frame_yellow", WINDOW_NORMAL);
 		imshow("frame_yellow", frame_yellow);
+		resizeWindow("frame_yellow", 320, 240);
+		moveWindow("frame_yellow", 0+320, 40);
 	}
 
 	return returnVal;
@@ -191,7 +200,7 @@ int DetectColorSign::isGreenTurnSignal(Mat& frame, double percent)
 	greenRatio *= 100;
 
 	vector<Vec4i> lines;		//검출될 직선이 저장될 객체
-	HoughLinesP(frame_edge, lines, 1, CV_PI / 180, HLP_threshold_2, HLP_minLineLength_2, HLP_maxLineGap_2);
+	HoughLinesP(frame_edge, lines, 1, CV_PI / 180, DCS_HLP_threshold_2, DCS_HLP_minLineLength_2, DCS_HLP_maxLineGap_2);
 
 	if (greenRatio > percent)
 	{
@@ -219,7 +228,10 @@ int DetectColorSign::isGreenTurnSignal(Mat& frame, double percent)
 		{
 			line(frame_green, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(255), 2);
 		}
+		namedWindow("frame_green", WINDOW_NORMAL);
 		imshow("frame_green", frame_green);
+		resizeWindow("frame_green", 320, 240);
+		moveWindow("frame_green", 0+320+320, 40);
 	}
 
 	return returnVal;
