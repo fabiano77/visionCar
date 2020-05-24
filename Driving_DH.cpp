@@ -21,6 +21,8 @@ int v = 220;	//90
 
 Scalar lower_yellow(h1, s, v);
 Scalar upper_yellow(h2, 255, 255);
+Scalar lower_white(200, 255, 255); // bgr white
+Scalar upper_white(255, 255, 255);
 
 Scalar color[7]{
 	Scalar(255,0,0),
@@ -117,14 +119,14 @@ Driving_DH::Driving_DH(const char* filename)
 	*(this) = Driving_DH(name);
 }
 
-void Driving_DH::driving(Mat& frame, double& steerVal, double& speedVal, double basicSpd, double level)
+void Driving_DH::driving(Mat& frame, double& steerVal, double& speedVal, double basicSpd, double level, bool rotaryFlag)
 {
 	speedVal = basicSpd;			//기본 속도
 
-	imgProcess(frame, steerVal);	//steerVal값을 구한다.
+	imgProcess(frame, steerVal, rotaryFlag);	//steerVal값을 구한다.
 }
 
-void Driving_DH::imgProcess(Mat& frame, double& steerVal)
+void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 {
 	//frame_ROI;
 	//frame_hsv;
@@ -133,9 +135,20 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal)
 	//frame_edge;
 
 	frame_ROI = frame & frame_ROI_Line;	//영상 ROI를 축소한다.
+
 	cvtColor(frame_ROI, frame_hsv, COLOR_BGR2HSV);	//노란색 추출 위해 HSV변환
 	inRange(frame_hsv, Scalar(h1, s, v), Scalar(h2, 255, 255), yellowThreshold);	//노란색 추출하여 1채널 Mat객체 yellowThreshold생성
 	bitwise_and(frame_ROI, frame_ROI, frame_yellow, yellowThreshold);	//yellowThreshold객체로 원본 frame 필터링.
+	
+	if (rotaryFlag) {
+		frame_white = Mat();
+
+		inRange(frame, lower_white, upper_white, whiteThreshold);	//흰색 추출하여 1채널 Mat객체 whiteThreshold생성
+		bitwise_and(frame_ROI, frame_ROI, frame_white, whiteThreshold);	  //whiteThreshold객체로 원본 frame 필터링.
+
+		addWeighted(frame_white, 1.0, frame_yellow, 1.0, 0.0, frame_yellow);	//추출한 노란색과 흰색 객체를 합친 frame_yellow생성
+	}
+
 	Canny(frame_yellow, frame_edge, threshold_1, threshold_2);	//노란색만 남은 frame의 윤곽을 1채널 Mat객체로 추출
 
 	if (IMAGE_DEBUG)

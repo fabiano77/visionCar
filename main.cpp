@@ -161,6 +161,7 @@ int main()
 		double speedVal(40.0);	//초기 속도(0~100)
 
 		bool cornerFlag(false);
+		bool rotaryFlag(false);
 
 		//메인동작 루프
 		while (true)
@@ -174,7 +175,7 @@ int main()
 			}
 			else //정상주행
 			{
-				DH.driving(frame, steerVal, speedVal, speedVal, 0.0);
+				DH.driving(frame, steerVal, speedVal, speedVal, 0.0, rotaryFlag);
 
 				if (!cornerFlag && (steerVal == 90 || steerVal == 10))
 				{
