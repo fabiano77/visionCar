@@ -149,7 +149,6 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 		addWeighted(frame_white, 1.0, frame_yellow, 1.0, 0.0, frame_yellow);	//추출한 노란색과 흰색 객체를 합친 frame_yellow생성
 	}
 
-
 	Canny(frame_yellow, frame_edge, threshold_1, threshold_2);	//노란색만 남은 frame의 윤곽을 1채널 Mat객체로 추출
 
 	if (IMAGE_DEBUG)
