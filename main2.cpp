@@ -188,7 +188,6 @@ int main()
 			else //정상주행
 			{
 				DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-				cout << "detectedLineCnt = " << detectedLineCnt << endl;
 
 				if (!cornerFlag && (steerVal == 90 || steerVal == 10))
 				{
@@ -236,8 +235,6 @@ int main()
 					remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 
 					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-					cout << "detectedLineCnt = " << detectedLineCnt << endl;
-
 
 					if (!cornerFlag && (steerVal == 90 || steerVal == 10))
 					{
