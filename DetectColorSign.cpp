@@ -40,6 +40,45 @@ DetectColorSign::DetectColorSign(bool onPrint)
 	print = onPrint;
 }
 
+bool DetectColorSign::detectTunnel(Mat& frame, double percent)
+{
+	bool returnVal;
+	Mat grayFrame;
+	cvtColor(frame, grayFrame, COLOR_RGB2GRAY);
+
+	int pixelCnt(0);
+	int pixelValue(0);
+	for (int i = 0; i < grayFrame.cols; i += 10)				// 10픽셀마다 하나씩 검사함 속도를 위해
+	{
+		for (int j = 0; j < grayFrame.rows; j += 10)
+		{
+			pixelValue += grayFrame.at<uchar>(j, i);
+			pixelCnt++;
+		}
+	}
+	int totalValue = pixelCnt * 255;
+	double brightRate = ((double)pixelValue / totalValue) * 100.0;
+
+	if (brightRate < (100 - percent))
+	{
+		putText(grayFrame, "detect tunnel!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+		returnVal = true;
+	}
+	else returnVal = false;
+
+
+	if (print)
+	{
+		putText(grayFrame, "darkRate : " + to_string(100 - brightRate) + '%', Point(30, 30), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 0, 0), 2);
+		namedWindow("grayFrame", WINDOW_NORMAL);
+		imshow("grayFrame", grayFrame);
+		resizeWindow("grayFrame", 320, 240);
+		moveWindow("grayFrame", 0, 40);
+	}
+
+	return returnVal;
+}
+
 bool DetectColorSign::priorityStop(Mat& frame, double percent)
 {
 	bool returnVal;
@@ -167,7 +206,7 @@ bool DetectColorSign::isYellow(Mat& frame, double percent)
 		namedWindow("frame_yellow", WINDOW_NORMAL);
 		imshow("frame_yellow", frame_yellow);
 		resizeWindow("frame_yellow", 320, 240);
-		moveWindow("frame_yellow", 0+320, 40);
+		moveWindow("frame_yellow", 0 + 320, 40);
 	}
 
 	return returnVal;
@@ -231,7 +270,7 @@ int DetectColorSign::isGreenTurnSignal(Mat& frame, double percent)
 		namedWindow("frame_green", WINDOW_NORMAL);
 		imshow("frame_green", frame_green);
 		resizeWindow("frame_green", 320, 240);
-		moveWindow("frame_green", 0+320+320, 40);
+		moveWindow("frame_green", 0 + 320 + 320, 40);
 	}
 
 	return returnVal;

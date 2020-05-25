@@ -10,6 +10,8 @@ class DetectColorSign
 public:
 	DetectColorSign();
 	DetectColorSign(bool onPrint);
+	bool detectTunnel(Mat& frame, double percent);
+	//return :: 어두운정도가 percent를 넘으면 true반환.
 
 	bool priorityStop(Mat& frame, double percent);
 	//PreCondition :: percent에 붉은색이 몇퍼센트 존재해야 검출할건지 입력
