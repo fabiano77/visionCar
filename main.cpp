@@ -22,7 +22,9 @@ int main()
 	Wheel DCmotor(pca, LeftWheel, RightWheel);
 	allServoReset(pca);				// 3 Servo motor center reset
 	UltraSonic firstSonic(28, 27);	// 초음파센서 객체
-	UltraSonic secondSonic(30, 29); // 초음파센서 객체 2(민수: 우측)
+	UltraSonic secondSonic(26, 25); // 초음파센서 객체 2(민수: 우측) 
+	PicarLED whiteLed(24);
+	whiteLed.on();
 	cout << "[Sensor and motor setting complete]" << endl
 		<< endl;
 
@@ -62,12 +64,13 @@ int main()
 	cout << "Mode 5 : Parking(석준)" << endl;
 	cout << "Mode 6 : Rotary(상민)" << endl;
 	cout << "Mode 7 : Overtaking(민수)" << endl;
-	cout << "Mode 8 : Tunnel" << endl
+	cout << "Mode 8 : Tunnel(대희)" << endl
 		<< endl;
 
 	cout << "Select mode : ";
 	int mode;
 	cin >> mode;
+	whiteLed.off();
 
 	if (mode == 1) //Test 1 : Basic test------------------------------------------------------
 	{
@@ -133,23 +136,32 @@ int main()
 
 			if (detectColorSign.priorityStop(distortedFrame, 1.5))
 			{
+				whiteLed.on();
 				cout << "A priority stop signal was detected." << '\n';
 			}
 			else if (detectColorSign.isRedStop(distortedFrame, 1.5)) //빨간색 표지판 감지
 			{
+				whiteLed.on();
 				cout << "A red stop sign was detected." << '\n';
 			}
 			else if (detectColorSign.isYellow(distortedFrame, 1.5)) //노란색 표지판 감지
 			{
+				whiteLed.on();
 				cout << "A yellow sign was detected." << '\n';
 			}
 			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 1.0) == 1) //초록색 표지판 감지
 			{
+				whiteLed.on();
 				cout << "<----- signal was detected." << '\n';
 			}
 			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 1.5) == 2) //초록색 표지판 감지
 			{
+				whiteLed.on();
 				cout << "-----> signal was detected." << '\n';
+			}
+			else
+			{
+				whiteLed.off();
 			}
 			namedWindow("frame", WINDOW_NORMAL);
 			imshow("frame", frame);
@@ -176,6 +188,7 @@ int main()
 		DH.mappingSet(cornerFlag);		//조향수준 맵핑값 세팅
 
 		bool rotaryFlag(false);
+		bool flicker(false);
 
 		//메인동작 루프
 		while (true)
@@ -210,6 +223,11 @@ int main()
 			imshow("frame", frame);
 			resizeWindow("frame", 480, 360);
 			moveWindow("frame", 320, 80 + 240);
+			if (flicker)
+				whiteLed.on();
+			else
+				whiteLed.off();
+			flicker = !flicker;
 
 			int key = waitKey(10);
 			if (key == 27)
@@ -632,23 +650,42 @@ int main()
 	}
 	//End Overtaking mode
 
-	else if (mode == 8) //Mode 8 : Tunnel ----------------------------------------------------
+	else if (mode == 8) //Mode 8 : Tunnel(대희) ----------------------------------------------------
 	{
-		double Distance; //거리값
+		double leftDistance; //좌측 거리값
+		double rightDistance; //우측 거리값
+		DetectColorSign detectColorSign(true);
+		bool tunnelFlag(false);
 
 		while (true)
 		{
+			leftDistance = firstSonic.distance();	//좌측 거리측정.
+			rightDistance = secondSonic.distance(); //우측 거리측정.
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
+			tunnelFlag = detectColorSign.detectTunnel(frame, 40);
 
-			Distance = firstSonic.distance(); //초음파 거리측정.
-
-			cout << "distance = " << Distance << endl; //거리출력
-
-			steering.setRatio(50); //바퀴조향
-			DCmotor.go();		   //dc모터 전진 argument로 속도전달가능
-			DCmotor.backward();	   //dc모터 후진 argument로 속도전달가능
-			DCmotor.stop();		   //정지
+			if (tunnelFlag)
+			{
+				whiteLed.on();
+				double longDistance = (leftDistance > rightDistance) ? leftDistance : rightDistance;
+				double shortDistance = (leftDistance > rightDistance) ? rightDistance : leftDistance;
+				double angle = (longDistance / shortDistance) - 1;	//대략 0~0.5사이
+				angle *= 100;	//대략0~50사이
+				if (angle > 15) angle = 15;	//최대 15으로 제한.
+				if (leftDistance > rightDistance)
+					angle = 50 + angle;
+				else
+					angle = 50 - angle;
+				steering.setRatio(angle);
+				DCmotor.go(30);
+			}
+			else	//기본주행
+			{
+				whiteLed.off();
+				steering.setRatio(50);
+				DCmotor.go(40);
+			}
 
 			imshow("frame", frame);
 			if (waitKey(33) == 27)
@@ -657,6 +694,7 @@ int main()
 	}
 	//End Tunnel mode
 
+	whiteLed.off();
 	allServoReset(pca);
 	cout << "-------------[program finished]-------------" << endl
 		<< endl;
