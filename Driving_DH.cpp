@@ -403,6 +403,7 @@ void Driving_DH::lineExtend(Vec4i& line, int mode, double& lineSlope)
 {
 	double a, b;	//기울기=a, y절편=b
 	a = ((double)line[3] - line[1]) / ((double)line[2] - line[0]);
+	lineSlope = -a;
 	b = line[1] - a * line[0];
 	if (mode == 0)
 	{
@@ -423,5 +424,4 @@ void Driving_DH::lineExtend(Vec4i& line, int mode, double& lineSlope)
 		if (x1 < x2) line = Vec4i(cvRound(x1), frame_size.height, cvRound(x2), 0);
 		else line = Vec4i(cvRound(x2), 0, cvRound(x1), frame_size.height);
 	}
-	lineSlope = a;
 }
