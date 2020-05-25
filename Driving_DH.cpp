@@ -119,14 +119,12 @@ Driving_DH::Driving_DH(const char* filename)
 	*(this) = Driving_DH(name);
 }
 
-void Driving_DH::driving(Mat& frame, double& steerVal, double& speedVal, double basicSpd, double level, bool rotaryFlag)
+void Driving_DH::driving(Mat& frame, double& steerVal, int resultLineCnt, bool rotaryFlag)
 {
-	speedVal = basicSpd;			//기본 속도
-
-	imgProcess(frame, steerVal, rotaryFlag);	//steerVal값을 구한다.
+	imgProcess(frame, steerVal, resultLineCnt, rotaryFlag);	//steerVal값을 구한다.
 }
 
-void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
+void Driving_DH::imgProcess(Mat& frame, double& steerVal, int resultLineCnt, bool rotaryFlag)
 {
 	//frame_ROI;
 	//frame_hsv;
@@ -228,6 +226,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 
 	if (lowest.x == -1)	//직선 없을 경우
 	{
+		resultLineCnt = 0;
 		//방금 전의 행동을 유지한다.
 		if (printResult) putText(frame, "none", RoiCenter, FONT_HERSHEY_COMPLEX, 1, Scalar(0, 0, 255), 2);
 	}
@@ -236,6 +235,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 
 		if (rightLineSlope > 0)		//rightLine이 우상향일 경우 = 직선1개( / ) - 우회전
 		{
+			resultLineCnt = 1;
 			resultLine = Vec4i(lowest.x, lowest.y, rightLine[2], rightLine[3]);
 			lineExtend(resultLine, 1, resultLineSlope);
 			//판단한 직선 1개를 연장시킨다.
@@ -249,9 +249,9 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 			}
 
 		}
-		else
+		else	//rightLine이 좌상향일경우 = 직선 두개
 		{
-
+			resultLineCnt = 2;
 			int slope = (rightLine[3] - leftLine[1]) / 3; // 우측 하단이 낮으면 양수 -> 낮으면 직선이 더 가깝다
 			steerVal = 50.0 - slope;
 			//주행각을 반환한다
@@ -271,6 +271,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 
 		if (leftLineSlope < 0)	//leftLine이 좌상향일 경우 = 직선1개( ㄱ ) - 좌회전
 		{
+			resultLineCnt = 1;
 			resultLine = Vec4i(leftLine[0], leftLine[1], lowest.x, lowest.y);
 			lineExtend(resultLine, 1, resultLineSlope);
 			//판단한 직선 1개를 연장시킨다.
@@ -283,9 +284,9 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 				putText(frame, "LEFT(" + to_string((int)steerVal) + "%)", RoiCenter, FONT_HERSHEY_COMPLEX, 1, mint, 2);
 			}
 		}
-		else
+		else	//leftLine이 우상향일경우 = 직선 두개
 		{
-
+			resultLineCnt = 2;
 			int slope = (rightLine[3] - leftLine[1]) / 3;
 			steerVal = 50.0 - slope;
 			//주행각을 반환한다

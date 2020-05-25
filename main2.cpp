@@ -175,8 +175,7 @@ int main()
 
 		bool cornerFlag(false);
 		bool rotaryFlag(false);
-		int cornerCnt(0);
-		int straightCnt(0);
+		int detectedLineCnt(-1);
 
 		//메인동작 루프
 		while (true)
@@ -189,16 +188,17 @@ int main()
 			}
 			else //정상주행
 			{
-				DH.driving(frame, steerVal, speedVal, speedVal, 0.0, rotaryFlag);
+				DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 
 				if (!cornerFlag && (steerVal == 90 || steerVal == 10))
 				{
 					cornerFlag = true;
 					DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.75);
-					DH.mappingSetValue(7.0, 7.00, 10.0, 20.0, 30.0, 40.0);
+					DH.mappingSetValue(7.0, 7.00, 10.0, 20.0, 35.0, 40.0);
 					cout << "cornerFlag ON" << '\n';
 				}
-				else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
+				//else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
+				else if (cornerFlag && detectedLineCnt == 2)
 				{
 					cornerFlag = false;
 					DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.75);
@@ -235,16 +235,17 @@ int main()
 					videocap >> distortedFrame;
 					remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 
-					DH.driving(frame, steerVal, speedVal, 37.0, 0.0, rotaryFlag);
+					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 
 					if (!cornerFlag && (steerVal == 90 || steerVal == 10))
 					{
 						cornerFlag = true;
 						DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.75);
-						DH.mappingSetValue(7.0, 7.00, 10.0, 20.0, 30.0, 40.0);
+						DH.mappingSetValue(7.0, 7.00, 10.0, 20.0, 35.0, 40.0);
 						cout << "cornerFlag ON" << '\n';
 					}
-					else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
+					//else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
+					else if (cornerFlag && detectedLineCnt == 2)
 					{
 						cornerFlag = false;
 						DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.75);
