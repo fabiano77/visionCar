@@ -94,11 +94,11 @@ bool DetectColorSign::waitingCheck(Mat& frame, double difference)
 	double sum(0), average(0);
 	if (ready)
 	{
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 10; i++)
 		{
-			sum += pre_brightness[0];
+			sum += pre1_brightness[0];
 		}
-		average = sum / 5;
+		average = sum / 10;
 	}
 	else if (pre_brightness[4] > 0)
 		ready = true;
@@ -131,7 +131,7 @@ bool DetectColorSign::waitingCheck(Mat& frame, double difference)
 	else
 	{
 		pre_brightness[0] = brightRate;
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 9; i++)
 		{
 			pre_brightness[i + 1] = pre_brightness[i];
 		}

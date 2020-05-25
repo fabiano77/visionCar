@@ -220,15 +220,20 @@ int main()
 
 		//color detecting class ganerate
 		DetectColorSign detectColorSign(true);
+		DetectColorSign startCheck(true);
+		bool waitingFlag(true);
 
 		//메인동작 루프
 		while (true)
 		{
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
-			if (detectColorSign.waitingCheck(frame,20))
+			if (waitingFlag)
 			{
-				flicker = 4;
+					flicker = 4;
+					if (detectColorSign.waitingCheck(frame, 20))
+					else if (startCheck.waitingCheck(frame, 20))
+					else waitingFlag = false;
 			}
 			else //정상주행
 			{

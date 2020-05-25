@@ -45,7 +45,7 @@ private:
 	bool print;
 	bool waiting;
 	bool ready;
-	double pre_brightness[5];
+	double pre_brightness[10];
 	int startCount;
 	Scalar lower_red1;
 	Scalar upper_red1;
