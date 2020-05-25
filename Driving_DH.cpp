@@ -225,7 +225,9 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 	lineExtend(lowestLine, 0, lowestLineSlope);
 	lineExtend(rightLine, 0, rightLineSlope);
 	lineExtend(leftLine, 0, leftLineSlope);
-
+	cout << "lowestLineSlope = " << lowestLineSlope << endl;
+	cout << "rightLineSlope = " << rightLineSlope << endl;
+	cout << "leftLineSlope = " << leftLineSlope << endl;
 	if (lowest.x == -1)	//직선 없을 경우
 	{
 		//방금 전의 행동을 유지한다.
@@ -266,7 +268,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 			}
 		}
 	}
-	else	//lowest가 좌상향일 경우 
+	else	//if (lowestLineSlope <= 0) -> lowest가 좌상향일 경우 
 	{
 
 		if (leftLineSlope < 0)	//leftLine이 좌상향일 경우 = 직선1개( ㄱ ) - 좌회전
@@ -406,14 +408,14 @@ void Driving_DH::lineExtend(Vec4i& line, int mode, double& lineSlope)
 	{
 		//직선 그대로.
 	}
-	else if (mode == 1)
+	else if (mode == 1)	//좌끝 우끝 직선
 	{
 		double y1, y2;	//좌측y절편, 우측y절편
 		y1 = b;	//x = 0
 		y2 = (a * frame_size.width + b);	//x = max
 		line = Vec4i(0, cvRound(y1), frame_size.width, cvRound(y2));
 	}
-	else if (mode == 2)
+	else if (mode == 2)	//위끝 아래끝 직선
 	{
 		double x1, x2;
 		x1 = (frame_size.height - b) / a; // y = max
