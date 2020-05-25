@@ -559,7 +559,7 @@ int main()
 		bool rotaryFlag(false);
 		double Distance_first; //거리값
 		double Distance_second;
-		const double MAX_ULTRASONIC = 30; //30CM 최대
+		const double MAX_ULTRASONIC = 20; //30CM 최대
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 		bool shortDistanceFlag = false;	  //너무 가까운지에 대한 판단
 		bool overtakingFlag = false;	  //추월상황 판단
@@ -641,7 +641,7 @@ int main()
 			{
 				DCmotor.backward();
 			}
-			else if (shortDistanceFlag == false &&)
+			else if (shortDistanceFlag == false)
 
 				steering.setRatio(steerVal);
 			imshow("frame", frame);
