@@ -132,35 +132,59 @@ int main()
 	{
 		//color detecting class ganerate
 		DetectColorSign detectColorSign(true);
+		int flicker(4);
+		if (!flicker--)
+			flicker = 4;
 
 		while (true)
 		{
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 
+			whiteLed.off();
+			rightLed.off();
+			leftLed.off();
+
 			if (detectColorSign.priorityStop(distortedFrame, 1.5))
 			{
-				whiteLed.on();
+				if (flicker % 2 == 1)
+				{
+					whiteLed.on();
+				}
+				else
+				{
+					leftLed.on();
+					rightLed.on();
+				}
 				cout << "A priority stop signal was detected." << '\n';
 			}
 			else if (detectColorSign.isRedStop(distortedFrame, 1.5)) //빨간색 표지판 감지
 			{
-				whiteLed.on();
+				if (flicker % 3 == 1)
+				{
+					whiteLed.on();
+					leftLed.on();
+					rightLed.on();
+				}
 				cout << "A red stop sign was detected." << '\n';
 			}
 			else if (detectColorSign.isYellow(distortedFrame, 1.5)) //노란색 표지판 감지
 			{
-				whiteLed.on();
+				if (flicker % 3 == 1)
+				{
+					leftLed.on();
+					rightLed.on();
+				}
 				cout << "A yellow sign was detected." << '\n';
 			}
 			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 1.0) == 1) //초록색 표지판 감지
 			{
-				whiteLed.on();
+				if (flicker % 3 == 1) leftLed.on();
 				cout << "<----- signal was detected." << '\n';
 			}
 			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 1.5) == 2) //초록색 표지판 감지
 			{
-				whiteLed.on();
+				if (flicker % 3 == 1) rightLed.on();
 				cout << "-----> signal was detected." << '\n';
 			}
 			else
@@ -228,7 +252,7 @@ int main()
 			resizeWindow("frame", 480, 360);
 			moveWindow("frame", 320, 80 + 240);
 
-			//LED관리코드
+			// LED 관리코드
 			rightLed.off();
 			leftLed.off();
 			if (steerVal > 60)
@@ -251,9 +275,10 @@ int main()
 					whiteLed.off();
 			}
 
+			//키입력 관리코드 ( 0 = 수동모드, w = 전진, x = 후진, s = 멈춤, ESC 탈출 )
 			int key = waitKey(10);
 			if (key == 27)
-				break; //프로그램 종료 ESC(아스키코드 = 27)키.
+				break;
 			else if (key == '0')
 			{
 				manualFlag = !manualFlag;
@@ -262,7 +287,7 @@ int main()
 			}
 			else if (manualFlag && key != -1)
 			{
-				Manual.input(key); //movement by keyboard
+				Manual.input(key);
 				rewind(stdin);
 			}
 			else if (key == 'w')
@@ -716,7 +741,16 @@ int main()
 	}
 	//End Tunnel mode
 
+	else if (mode == 9) //Mode 9 : Tunnel(대희) ----------------------------------------------------
+	{
+
+
+	}
+	//End Tunnel mode
+
 	whiteLed.off();
+	rightLed.off();
+	leftLed.off();
 	allServoReset(pca);
 	cout << "-------------[program finished]-------------" << endl
 		<< endl;
