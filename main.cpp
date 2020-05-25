@@ -5,7 +5,7 @@
 #include "CustomPicar.h"
 #include "DetectColorSign.h"
 #include "Driving_DH.h"
-#include "driving_class/SM_drivingAngle.h"
+#include "SM_drivingAngle.h"
 
 using namespace std;
 using namespace auto_car;
