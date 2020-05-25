@@ -24,18 +24,18 @@ int main()
 	UltraSonic firstSonic(28, 27);	// 초음파센서 객체
 	UltraSonic secondSonic(30, 29); // 초음파센서 객체 2(민수: 우측)
 	cout << "[Sensor and motor setting complete]" << endl
-		 << endl;
+		<< endl;
 
 	//OpenCV setting----------------------------------------------
 	VideoCapture videocap(0); //camera obj
 	if (!videocap.isOpened())
 	{
 		cerr << endl
-			 << "video capture fail!" << endl;
+			<< "video capture fail!" << endl;
 		return -1;
 	}
 	cout << "[VideoCapture loading complete]" << endl
-		 << endl;
+		<< endl;
 
 	//Calibration setting-----------------------------------------
 	Size videoSize = Size(640, 480);
@@ -47,15 +47,15 @@ int main()
 	Mat distortedFrame;
 	Mat frame;
 	cout << "[calibration complete]" << endl
-		 << endl;
+		<< endl;
 
 	//mode selection----------------------------------------------
 	cout << "[visionCar] program start" << endl
-		 << endl;
+		<< endl;
 
 	cout << "Test 1 : Basic test" << endl;
 	cout << "Test 2 : Manual test" << endl
-		 << endl;
+		<< endl;
 
 	cout << "Mode 3 : Signal detection(대희)" << endl;
 	cout << "Mode 4 : Driving(대희)" << endl;
@@ -63,7 +63,7 @@ int main()
 	cout << "Mode 6 : Rotary(상민)" << endl;
 	cout << "Mode 7 : Overtaking(민수)" << endl;
 	cout << "Mode 8 : Tunnel" << endl
-		 << endl;
+		<< endl;
 
 	cout << "Select mode : ";
 	int mode;
@@ -428,124 +428,124 @@ int main()
 	}
 	//End Parking mode
 
-		else if (mode == 6)//Mode 6 : Rotary(상민) ----------------------------------------------
+	else if (mode == 6)//Mode 6 : Rotary(상민) ----------------------------------------------
 	{
-	//Self-driving class configuration
-	Driving_DH DH(true, 1.00);
-	DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
-	DH.mappingSetValue(7.0, 7.00, 0.00, -4.0, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
-	double steerVal(50.0);	//초기 각도(50이 중심)
-	double speedVal(40.0);	//초기 속도(0~100)
-	double speedVal_rotary(20.0);
-	double Distance;	//거리값
+		//Self-driving class configuration
+		Driving_DH DH(true, 1.00);
+		DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
+		DH.mappingSetValue(7.0, 7.00, 0.00, -4.0, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
+		double steerVal(50.0);	//초기 각도(50이 중심)
+		double speedVal(40.0);	//초기 속도(0~100)
+		double speedVal_rotary(20.0);
+		double Distance;	//거리값
 
-	bool cornerFlag(false);
-	bool rotaryFlag(true);
-	int rotaryDelayFlag = 0;
-	RoundAbout Rotary;
-	//메인동작 루프
-	while (true)
-	{
-		videocap >> distortedFrame;
-		remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
-
-		Distance = firstSonic.distance();	//초음파 거리측정.
-
-		cout << "distance = " << Distance << endl;	//거리출력
-
-		if (!Rotary.isStop(Distance)) // 회전 교차로 진입 (흰색 차선에서 멈춰있다고 가정)
+		bool cornerFlag(false);
+		bool rotaryFlag(true);
+		int rotaryDelayFlag = 0;
+		RoundAbout Rotary;
+		//메인동작 루프
+		while (true)
 		{
-			if (Rotary.isDelay(Distance)) { // 앞의 차량과 가까워졌을 시 정지
-				DCmotor.stop();
-			}
-			else if (Rotary.isDelay(Distance)) { // 
-				DH.driving(frame, steerVal, speedVal, speedVal, 0.0, rotaryFlag);
+			videocap >> distortedFrame;
+			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 
-				if (!cornerFlag && (steerVal == 90 || steerVal == 10))
-				{
-					cornerFlag = true;
-					DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
-					DH.mappingSetValue(15., 15.0, 10.0, 15.0, 40.0, 40.0);
-					cout << "cornerFlag ON" << '\n';
-				}
-				else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
-				{
-					cornerFlag = false;
-					DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
-					DH.mappingSetValue(7.0, 7.00, 0.00, -4.0, 0.00, 40.0);
-					cout << "cornerFlag OFF" << '\n';
-				}
+			Distance = firstSonic.distance();	//초음파 거리측정.
 
-				steering.setRatio(steerVal);
+			cout << "distance = " << Distance << endl;	//거리출력
 
-				DCmotor.go(speedVal_rotary);
-			}
-		}
-		
-		namedWindow("frame", WINDOW_NORMAL);
-		imshow("frame", frame);
-		resizeWindow("frame", 480, 360);
-		moveWindow("frame", 320, 80 + 240);
-
-		int key = waitKey(10);
-		if (key == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
-		/*else if (key == 'w') DCmotor.go(37);
-		else if (key == 'x') DCmotor.backward(40);
-		else if (key == 's') DCmotor.stop();
-		else if (key == '0')
-		{
-			//ManualMode class & basic speed rate
-			ManualMode Manual(pca, 40);
-			Manual.guide();
-
-			//메인루프
-			int key(-1);
-			while (key != 27)//if not ESC
+			if (!Rotary.isStop(Distance)) // 회전 교차로 진입 (흰색 차선에서 멈춰있다고 가정)
 			{
-				videocap >> distortedFrame;
-				remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
+				if (Rotary.isDelay(Distance)) { // 앞의 차량과 가까워졌을 시 정지
+					DCmotor.stop();
+				}
+				else if (Rotary.isDelay(Distance)) { // 
+					DH.driving(frame, steerVal, speedVal, speedVal, 0.0, rotaryFlag);
 
-				DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+					if (!cornerFlag && (steerVal == 90 || steerVal == 10))
+					{
+						cornerFlag = true;
+						DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
+						DH.mappingSetValue(15., 15.0, 10.0, 15.0, 40.0, 40.0);
+						cout << "cornerFlag ON" << '\n';
+					}
+					else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
+					{
+						cornerFlag = false;
+						DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
+						DH.mappingSetValue(7.0, 7.00, 0.00, -4.0, 0.00, 40.0);
+						cout << "cornerFlag OFF" << '\n';
+					}
 
-				namedWindow("frame", WINDOW_NORMAL);
-				imshow("frame", frame);
-				resizeWindow("frame", 480, 360);
-				moveWindow("frame", 320, 80 + 240);
+					steering.setRatio(steerVal);
 
-				key = waitKey(33);//if you not press, return -1
-				if (key == 27) break;
-				else if (key == '0') break;
-				else if (key != -1) Manual.input(key);//movement by keyboard
-				rewind(stdin);
+					DCmotor.go(speedVal_rotary);
+				}
 			}
+
+			namedWindow("frame", WINDOW_NORMAL);
+			imshow("frame", frame);
+			resizeWindow("frame", 480, 360);
+			moveWindow("frame", 320, 80 + 240);
+
+			int key = waitKey(10);
+			if (key == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
+			/*else if (key == 'w') DCmotor.go(37);
+			else if (key == 'x') DCmotor.backward(40);
+			else if (key == 's') DCmotor.stop();
+			else if (key == '0')
+			{
+				//ManualMode class & basic speed rate
+				ManualMode Manual(pca, 40);
+				Manual.guide();
+
+				//메인루프
+				int key(-1);
+				while (key != 27)//if not ESC
+				{
+					videocap >> distortedFrame;
+					remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
+
+					DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+
+					namedWindow("frame", WINDOW_NORMAL);
+					imshow("frame", frame);
+					resizeWindow("frame", 480, 360);
+					moveWindow("frame", 320, 80 + 240);
+
+					key = waitKey(33);//if you not press, return -1
+					if (key == 27) break;
+					else if (key == '0') break;
+					else if (key != -1) Manual.input(key);//movement by keyboard
+					rewind(stdin);
+				}
+			}*/
+		}
+
+
+
+		/*double Distance;	//거리값
+
+		while (true)
+		{
+			videocap >> distortedFrame;
+			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);	//캘리된 영상 frame
+
+			Distance = firstSonic.distance();	//초음파 거리측정.
+
+			cout << "distance = " << Distance << endl;	//거리출력
+
+			steering.setRatio(50);	//바퀴조향
+			DCmotor.go();			//dc모터 전진 argument로 속도전달가능
+			DCmotor.backward();		//dc모터 후진 argument로 속도전달가능
+			DCmotor.stop();			//정지
+
+			namedWindow("frame", WINDOW_NORMAL);
+			imshow("frame", frame);
+			resizeWindow("frame", 480, 360);
+			moveWindow("frame", 0, 0);
+
+			if (waitKey(33) == 27) break;	//프로그램 종료 ESC키.
 		}*/
-	}
-
-
-
-	/*double Distance;	//거리값
-
-	while (true)
-	{
-		videocap >> distortedFrame;
-		remap(distortedFrame, frame, map1, map2, INTER_LINEAR);	//캘리된 영상 frame
-
-		Distance = firstSonic.distance();	//초음파 거리측정.
-
-		cout << "distance = " << Distance << endl;	//거리출력
-
-		steering.setRatio(50);	//바퀴조향
-		DCmotor.go();			//dc모터 전진 argument로 속도전달가능
-		DCmotor.backward();		//dc모터 후진 argument로 속도전달가능
-		DCmotor.stop();			//정지
-
-		namedWindow("frame", WINDOW_NORMAL);
-		imshow("frame", frame);
-		resizeWindow("frame", 480, 360);
-		moveWindow("frame", 0, 0);
-
-		if (waitKey(33) == 27) break;	//프로그램 종료 ESC키.
-	}*/
 	}
 	//End Rotary mode
 
@@ -678,6 +678,6 @@ int main()
 
 	allServoReset(pca);
 	cout << "-------------[program finished]-------------" << endl
-		 << endl;
+		<< endl;
 	return 0;
 }
