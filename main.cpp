@@ -192,13 +192,13 @@ int main()
 				if (!cornerFlag && steerVal == 90 || steerVal == 10)	//최대 각 검출되면 cornerFlag ON
 				{
 					cornerFlag = true;
-					DH.mapping(cornerFlag);
+					DH.mappingSet(cornerFlag);
 					cout << "cornerFlag ON" << '\n';
 				}
 				else if (cornerFlag && detectedLineCnt == 2)			//직선 두개 검출되면 cornerFlag OFF
 				{
 					cornerFlag = false;
-					DH.mapping(cornerFlag);
+					DH.mappingSet(cornerFlag);
 					cout << "cornerFlag OFF" << '\n';
 				}
 				steering.setRatio(steerVal);
