@@ -233,7 +233,7 @@ int main()
 					videocap >> distortedFrame;
 					remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 
-					DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+					DH.driving(frame, steerVal, speedVal, 37.0, 0.0, rotaryFlag);
 
 					namedWindow("frame", WINDOW_NORMAL);
 					imshow("frame", frame);
