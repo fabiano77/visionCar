@@ -232,7 +232,7 @@ int main()
 			{
 				if (detectColorSign.waitingCheck(frame, 20))
 					flicker = 2;
-				else if (startCheck.waitingCheck(frame, 13))
+				else if (startCheck.waitingCheck(frame, 10))
 					flicker = 4;
 				else
 					waitingFlag = false;
