@@ -119,10 +119,10 @@ bool DetectColorSign::waitingCheck(Mat& frame, double difference)
 	int totalValue = pixelCnt * 255;
 	double brightRate = ((double)pixelValue / totalValue) * 100.0;
 
-	if (ready && (brightRate - average > difference || brightRate - average < -difference))
+	if (ready && (brightRate - average > difference || average - brightRate > difference))
 	{
 		startCount++;
-		if (startCount >= 5)
+		if (startCount >= 4)
 		{
 			waiting = false;
 			return false;
