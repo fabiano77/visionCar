@@ -82,6 +82,18 @@ private:
 	int ECHOPIN;
 };
 
+class PicarLED
+{
+public:
+	PicarLED(int ledPin);
+	void on();
+	void off();
+
+private:
+	int LEDPIN;
+};
+
+
 class ManualMode
 {
 public:

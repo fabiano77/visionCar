@@ -171,6 +171,27 @@ double UltraSonic::distance()
 	return distance;
 }
 
+PicarLED::PicarLED(int ledPin)
+{
+	LEDPIN = ledPin;
+
+	if (wiringPiSetup() == -1)
+	{
+		cout << "wiringPiSetup FAIL!!" << '\n';
+		exit(1);
+	}
+	pinMode(LEDPIN, OUTPUT);
+}
+
+void PicarLED::on()
+{
+	digitalWrite(LEDPIN, 1);
+}
+
+void PicarLED::off()
+{
+	digitalWrite(LEDPIN, 0);
+}
 
 ManualMode::ManualMode(PCA9685 pca_, double spd)
 {
