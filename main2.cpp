@@ -164,13 +164,15 @@ int main()
 	{
 		//Self-driving class configuration
 		Driving_DH DH(true, 1.00);
-		DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
+		DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.75);
 		DH.mappingSetValue(7.0, 7.00, 0.00, -4.0, 0.00, 40.0); //코너구간 조향수준 맵핑값 세팅
 		double steerVal(50.0);								   //초기 각도(50이 중심)
 		double speedVal(40.0);								   //초기 속도(0~100)
 
 		bool cornerFlag(false);
 		bool rotaryFlag(false);
+		int cornerCnt(0);
+		int straightCnt(0);
 
 		//메인동작 루프
 		while (true)
@@ -188,14 +190,14 @@ int main()
 				if (!cornerFlag && (steerVal == 90 || steerVal == 10))
 				{
 					cornerFlag = true;
-					DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
+					DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.75);
 					DH.mappingSetValue(15., 15.0, 10.0, 15.0, 30.0, 30.0);
 					cout << "cornerFlag ON" << '\n';
 				}
 				else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
 				{
 					cornerFlag = false;
-					DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
+					DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.75);
 					DH.mappingSetValue(7.0, 7.00, 0.00, -4.0, 0.00, 40.0);
 					cout << "cornerFlag OFF" << '\n';
 				}
