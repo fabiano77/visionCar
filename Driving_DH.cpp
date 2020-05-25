@@ -165,12 +165,8 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, int& resultLineCnt, bo
 
 	if (IMAGE_DEBUG)
 	{
-		createTrackbar("h1", "trackbar", &h1, 30, on_trackbar);
-		createTrackbar("h2", "trackbar", &h2, 60, on_trackbar);
 		createTrackbar("s", "trackbar", &s, 255, on_trackbar);
 		createTrackbar("v", "trackbar", &v, 255, on_trackbar);
-		createTrackbar("threshold1", "trackbar", &threshold_1, 500, on_trackbar);
-		createTrackbar("threshold2", "trackbar", &threshold_2, 500, on_trackbar);
 		createTrackbar("H_thresh", "trackbar", &HLP_threshold, 500, on_trackbar);
 		createTrackbar("H_minLen", "trackbar", &HLP_minLineLength, 500, on_trackbar);
 		createTrackbar("H_maxGap", "trackbar", &HLP_maxLineGap, 500, on_trackbar);

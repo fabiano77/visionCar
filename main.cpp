@@ -134,7 +134,6 @@ int main()
 		DetectColorSign detectColorSign(true);
 		int flicker(4);
 
-		cout << "flicker" << flicker << endl;
 		while (true)
 		{
 			videocap >> distortedFrame;
