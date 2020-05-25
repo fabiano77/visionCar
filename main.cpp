@@ -218,13 +218,18 @@ int main()
 		bool rotaryFlag(false);
 		int flicker(4);
 
+		//color detecting class ganerate
+		DetectColorSign detectColorSign(true);
+
 		//메인동작 루프
 		while (true)
 		{
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
-			if (false)
+			if (detectColorSign.waitingCheck(frame,20))
 			{
+				flicker = 4;
+				cout << "출발 대기중" << endl;
 			}
 			else //정상주행
 			{

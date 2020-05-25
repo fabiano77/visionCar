@@ -13,6 +13,11 @@ public:
 	bool detectTunnel(Mat& frame, double percent);
 	//return :: 어두운정도가 percent를 넘으면 true반환.
 
+	bool waitingCheck(Mat& frame, double difference);
+	//최근5프레임의 밝기 평균을 계산해서 다음 프레임이 difference(%)만큼차이가 나면
+	//count를 누적시키고 count가 5이상이 되면 false를 반환한다.
+	//그렇지 않으면 true를 반환한다.
+
 	bool priorityStop(Mat& frame, double percent);
 	//PreCondition :: percent에 붉은색이 몇퍼센트 존재해야 검출할건지 입력
 	//PostCondition :: none
@@ -38,6 +43,10 @@ public:
 
 private:
 	bool print;
+	bool waiting;
+	bool ready;
+	double pre_brightness[5];
+	int startCount;
 	Scalar lower_red1;
 	Scalar upper_red1;
 	Scalar lower_red2;

@@ -22,7 +22,14 @@ static void on_trackbar(int, void*)
 
 DetectColorSign::DetectColorSign()
 {
+	for (int i = 0; i < 5; i++)
+	{
+		pre_brightness[i] = 0;
+	}
+	ready = false;
 	print = true;
+	waiting = true;
+	startCount = 0;
 	lower_red1 = Scalar(0, 100, 200);
 	upper_red1 = Scalar(12, 255, 255);
 	lower_red2 = Scalar(168, 100, 200);
@@ -77,6 +84,60 @@ bool DetectColorSign::detectTunnel(Mat& frame, double percent)
 	}
 
 	return returnVal;
+}
+
+bool DetectColorSign::waitingCheck(Mat& frame, double difference)
+{
+	if (!waiting)
+		return false;
+
+	double sum(0), average(0);
+	if (ready)
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			sum += pre_brightness[0];
+		}
+		average = sum / 5;
+	}
+	else if (pre_brightness[4] > 0)
+		ready = true;
+
+	Mat grayFrame;
+	cvtColor(frame, grayFrame, COLOR_RGB2GRAY);
+
+	int pixelCnt(0);
+	int pixelValue(0);
+	for (int i = 0; i < grayFrame.cols; i += 10)				// 10픽셀마다 하나씩 검사함 속도를 위해
+	{
+		for (int j = 0; j < grayFrame.rows; j += 10)
+		{
+			pixelValue += grayFrame.at<uchar>(j, i);
+			pixelCnt++;
+		}
+	}
+	int totalValue = pixelCnt * 255;
+	double brightRate = ((double)pixelValue / totalValue) * 100.0;
+
+	if (brightRate - average > difference || brightRate - average < -difference)
+	{
+		startCount++;
+		if (startCount >= 5)
+		{
+			waiting = false;
+			return false;
+		}
+	}
+	else
+	{
+		pre_brightness[0] = brightRate;
+		for (int i = 0; i < 4; i++)
+		{
+			pre_brightness[i + 1] = pre_brightness[i];
+		}
+	}
+
+	return true;
 }
 
 bool DetectColorSign::priorityStop(Mat& frame, double percent)
