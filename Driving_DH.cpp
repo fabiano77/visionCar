@@ -119,12 +119,12 @@ Driving_DH::Driving_DH(const char* filename)
 	*(this) = Driving_DH(name);
 }
 
-void Driving_DH::driving(Mat& frame, double& steerVal, int resultLineCnt, bool rotaryFlag)
+void Driving_DH::driving(Mat& frame, double& steerVal, int& resultLineCnt, bool rotaryFlag)
 {
 	imgProcess(frame, steerVal, resultLineCnt, rotaryFlag);	//steerVal값을 구한다.
 }
 
-void Driving_DH::imgProcess(Mat& frame, double& steerVal, int resultLineCnt, bool rotaryFlag)
+void Driving_DH::imgProcess(Mat& frame, double& steerVal, int& resultLineCnt, bool rotaryFlag)
 {
 	//frame_ROI;
 	//frame_hsv;
