@@ -664,7 +664,7 @@ int main()
 		{
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
-			tunnelFlag = detectColorSign.detectTunnel(frame, 40);
+			tunnelFlag = detectColorSign.detectTunnel(frame, 65);
 
 			if (tunnelFlag)
 			{
@@ -686,8 +686,8 @@ int main()
 			else	//기본주행
 			{
 				whiteLed.off();
-				steering.setRatio(50);
-				DCmotor.go(40);
+				//steering.setRatio(50);
+				//DCmotor.go(40);
 			}
 
 			imshow("frame", frame);
