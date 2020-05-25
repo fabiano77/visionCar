@@ -20,7 +20,7 @@ private:
 	void basicSetting();
 	// 생성자마다 기본세팅
 
-	void lineExtend(Vec4i& line, int mode);
+	void lineExtend(Vec4i& line, int mode, double& lineSlope);
 	// 직선을 입력하면 화면전체크기의 직선으로 반환
 
 	void imgProcess(Mat& frame, double& steerVal, bool rotaryFlag);

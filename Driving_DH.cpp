@@ -209,30 +209,35 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 			if (leftLine[0] > lines[i][0])
 			{
 				leftLine = lines[i];
-				//leftSlope = slope;
 			}
 			if (rightLine[2] < lines[i][2])
 			{
 				rightLine = lines[i];
-				//rightSlope = slope;
 			}
 		}
 	}
 	//for문이 끝나고 나면 각종 특징직선 저장.
-	//cout << "leftSlope = " << leftSlope << ", rightSlope = " << rightSlope << '\n' << '\n';
+	double resultLineSlope;
+	double lowestLineSlope;
+	double rightLineSlope;
+	double leftLineSlope;
+
+	lineExtend(lowestLine, 1, lowestLineSlope);
+	lineExtend(rightLine, 1, rightLineSlope);
+	lineExtend(leftLine, 1, leftLineSlope);
 
 	if (lowest.x == -1)	//직선 없을 경우
 	{
 		//방금 전의 행동을 유지한다.
 		if (printResult) putText(frame, "none", RoiCenter, FONT_HERSHEY_COMPLEX, 1, Scalar(0, 0, 255), 2);
 	}
-	else if (lowest.x < RoiCenter.x)		//lowest가 좌측일 경우
+	else if (lowestLineSlope > 0)	//lowest가 우상향일 경우
 	{
 
-		if (rightLine[1] > rightLine[3])	//rightLine이 우상향일 경우 = 직선1개( / ) - 우회전
+		if (rightLineSlope > 0)		//rightLine이 우상향일 경우 = 직선1개( / ) - 우회전
 		{
 			resultLine = Vec4i(lowest.x, lowest.y, rightLine[2], rightLine[3]);
-			lineExtend(resultLine, 1);
+			lineExtend(resultLine, 1, resultLineSlope);
 			//판단한 직선 1개를 연장시킨다.
 			steerVal = 50 + mapping(resultLine[3]);
 			//주행각을 반환한다
@@ -244,10 +249,8 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 			}
 
 		}
-		else if (lines.size() > 1)	//직선 2개 - 직진
+		else
 		{
-			//lineExtend(leftLine, 2);
-			//lineExtend(rightLine, 2);
 
 			int slope = (rightLine[3] - leftLine[1]) / 3; // 우측 하단이 낮으면 양수 -> 낮으면 직선이 더 가깝다
 			steerVal = 50.0 - slope;
@@ -263,13 +266,13 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 			}
 		}
 	}
-	else	//lowest가 우측일 경우 
+	else	//lowest가 좌상향일 경우 
 	{
 
-		if (leftLine[1] < leftLine[3])	//leftLine이 우하향일 경우 = 직선1개( ㄱ ) - 좌회전
+		if (leftLineSlope < 0)	//leftLine이 좌상향일 경우 = 직선1개( ㄱ ) - 좌회전
 		{
 			resultLine = Vec4i(leftLine[0], leftLine[1], lowest.x, lowest.y);
-			lineExtend(resultLine, 1);
+			lineExtend(resultLine, 1, resultLineSlope);
 			//판단한 직선 1개를 연장시킨다.
 			steerVal = 50 - mapping(resultLine[1]);
 			//주행각을 반환한다
@@ -280,10 +283,8 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 				putText(frame, "LEFT(" + to_string((int)steerVal) + "%)", RoiCenter, FONT_HERSHEY_COMPLEX, 1, mint, 2);
 			}
 		}
-		else if (lines.size() > 1)	//직선 2개 - 직진
+		else
 		{
-			//lineExtend(leftLine, 2);
-			//lineExtend(rightLine, 2);
 
 			int slope = (rightLine[3] - leftLine[1]) / 3;
 			steerVal = 50.0 - slope;
@@ -396,7 +397,7 @@ double Driving_DH::mapping(int linePoint_)
 	}
 }
 
-void Driving_DH::lineExtend(Vec4i& line, int mode)
+void Driving_DH::lineExtend(Vec4i& line, int mode, double& lineSlope)
 {
 	double a, b;	//기울기=a, y절편=b
 	a = ((double)line[3] - line[1]) / ((double)line[2] - line[0]);
@@ -416,4 +417,5 @@ void Driving_DH::lineExtend(Vec4i& line, int mode)
 		if (x1 < x2) line = Vec4i(cvRound(x1), frame_size.height, cvRound(x2), 0);
 		else line = Vec4i(cvRound(x2), 0, cvRound(x1), frame_size.height);
 	}
+	lineSlope = a;
 }
