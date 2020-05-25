@@ -100,7 +100,7 @@ bool DetectColorSign::waitingCheck(Mat& frame, double difference)
 		}
 		average = sum / 10;
 	}
-	else if (pre_brightness[4] > 0)
+	else if (pre_brightness[9] > 0)
 		ready = true;
 
 	Mat grayFrame;
@@ -122,7 +122,7 @@ bool DetectColorSign::waitingCheck(Mat& frame, double difference)
 	if (ready && (brightRate - average > difference || brightRate - average < -difference))
 	{
 		startCount++;
-		if (startCount >= 3)
+		if (startCount >= 4)
 		{
 			waiting = false;
 			return false;
