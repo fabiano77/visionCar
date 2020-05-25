@@ -96,7 +96,7 @@ bool DetectColorSign::waitingCheck(Mat& frame, double difference)
 	{
 		for (int i = 0; i < 10; i++)
 		{
-			sum += pre1_brightness[0];
+			sum += pre_brightness[0];
 		}
 		average = sum / 10;
 	}

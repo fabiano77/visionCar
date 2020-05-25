@@ -230,10 +230,12 @@ int main()
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 			if (waitingFlag)
 			{
+				if (detectColorSign.waitingCheck(frame, 20))
+					flicker = 2;
+				else if (startCheck.waitingCheck(frame, 20))
 					flicker = 4;
-					if (detectColorSign.waitingCheck(frame, 20))
-					else if (startCheck.waitingCheck(frame, 20))
-					else waitingFlag = false;
+				else
+					waitingFlag = false;
 			}
 			else //정상주행
 			{
