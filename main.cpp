@@ -229,7 +229,6 @@ int main()
 			if (detectColorSign.waitingCheck(frame,20))
 			{
 				flicker = 4;
-				cout << "출발 대기중" << endl;
 			}
 			else //정상주행
 			{

@@ -122,7 +122,7 @@ bool DetectColorSign::waitingCheck(Mat& frame, double difference)
 	if (ready && (brightRate - average > difference || brightRate - average < -difference))
 	{
 		startCount++;
-		if (startCount >= 5)
+		if (startCount >= 3)
 		{
 			waiting = false;
 			return false;
@@ -136,6 +136,8 @@ bool DetectColorSign::waitingCheck(Mat& frame, double difference)
 			pre_brightness[i + 1] = pre_brightness[i];
 		}
 	}
+
+	putText(frame, "wating~~", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 153, 0), 2);
 
 	return true;
 }
