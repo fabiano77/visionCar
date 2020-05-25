@@ -414,14 +414,13 @@ int main()
 	{
 		//Self-driving class configuration
 		Driving_DH DH(true, 1.00);
-		DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
-		DH.mappingSetValue(7.0, 7.00, 0.00, -4.0, 0.00, 40.0);	//코너구간 조향수준 맵핑값 세팅
+		bool cornerFlag(false);
+		DH.mappingSet(cornerFlag);	//조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
 		double speedVal_rotary(20.0);
 		double Distance;	//거리값
 
-		bool cornerFlag(false);
 		bool rotaryFlag(true);
 		int rotaryDelayFlag = 0;
 		RoundAbout Rotary;
@@ -441,20 +440,18 @@ int main()
 					DCmotor.stop();
 				}
 				else if (Rotary.isDelay(Distance)) { // 
-					DH.driving(frame, steerVal, speedVal, speedVal, 0.0, rotaryFlag);
+					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 
-					if (!cornerFlag && (steerVal == 90 || steerVal == 10))
+					if (!cornerFlag && steerVal == 90 || steerVal == 10)	//최대 각 검출되면 cornerFlag ON
 					{
 						cornerFlag = true;
-						DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
-						DH.mappingSetValue(15., 15.0, 10.0, 15.0, 40.0, 40.0);
+						DH.mappingSet(cornerFlag);
 						cout << "cornerFlag ON" << '\n';
 					}
-					else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
+					else if (cornerFlag && detectedLineCnt == 2)			//직선 두개 검출되면 cornerFlag OFF
 					{
 						cornerFlag = false;
-						DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
-						DH.mappingSetValue(7.0, 7.00, 0.00, -4.0, 0.00, 40.0);
+						DH.mappingSet(cornerFlag);
 						cout << "cornerFlag OFF" << '\n';
 					}
 
@@ -487,7 +484,7 @@ int main()
 					videocap >> distortedFrame;
 					remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 
-					DH.driving(frame, steerVal, speedVal, 37.0, 0.0);
+					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 
 					namedWindow("frame", WINDOW_NORMAL);
 					imshow("frame", frame);
@@ -534,8 +531,8 @@ int main()
 	else if (mode == 7) //Mode 7 : Overtaking(민수) ------------------------------------------
 	{
 		Driving_DH DH(true, 1.00);
-		DH.mappingSetSection(0, 0.15, 0.20, 0.30, 0.42, 0.43);
-		DH.mappingSetValue(7.0, 7.00, 0.00, -4.0, 0.00, 40.0); //코너구간 조향수준 맵핑값 세팅
+		bool cornerFlag(false);
+		DH.mappingSet(cornerFlag); //조향수준 맵핑값 세팅
 		double steerVal(50.0);								   //초기 각도(50이 중심)
 		double speedVal(40.0);								   //초기 속도(0~100)
 		bool rotaryFlag(false);
@@ -560,7 +557,7 @@ int main()
 				rotaryFlag = false;
 				if (Distance_first > MAX_ULTRASONIC) //거리가 멀때
 				{
-					DH.driving(frame, steerVal, speedVal, speedVal, 0.0, rotaryFlag);
+					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 					shortDistanceFlag = false;
 					DCmotor.go();
 				}
@@ -591,7 +588,7 @@ int main()
 				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC) //추월 상황중 차량을 지나쳐갈 때 and 차량을 지나치고 복귀중 재탐색시
 				{
 					rotaryFlag = true;
-					DH.driving(frame, steerVal, speedVal, speedVal, 0.0, rotaryFlag);
+					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 				}
 				else if (Distance_first > MAX_ULTRASONIC && Distance_second > MAX_ULTRASONIC) //추월 상황 종료후 복귀 신호
 				{
@@ -605,7 +602,7 @@ int main()
 					if (returnFlag >= MAX_returnFlag)
 					{
 						rotaryFlag = true;
-						DH.driving(frame, steerVal, speedVal, speedVal, 0.0, rotaryFlag);
+						DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 					}
 				}
 
