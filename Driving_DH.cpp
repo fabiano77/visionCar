@@ -222,9 +222,9 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 	double rightLineSlope;
 	double leftLineSlope;
 
-	lineExtend(lowestLine, 1, lowestLineSlope);
-	lineExtend(rightLine, 1, rightLineSlope);
-	lineExtend(leftLine, 1, leftLineSlope);
+	lineExtend(lowestLine, 0, lowestLineSlope);
+	lineExtend(rightLine, 0, rightLineSlope);
+	lineExtend(leftLine, 0, leftLineSlope);
 
 	if (lowest.x == -1)	//직선 없을 경우
 	{
@@ -402,7 +402,11 @@ void Driving_DH::lineExtend(Vec4i& line, int mode, double& lineSlope)
 	double a, b;	//기울기=a, y절편=b
 	a = ((double)line[3] - line[1]) / ((double)line[2] - line[0]);
 	b = line[1] - a * line[0];
-	if (mode == 1)
+	if (mode == 0)
+	{
+		//직선 그대로.
+	}
+	else if (mode == 1)
 	{
 		double y1, y2;	//좌측y절편, 우측y절편
 		y1 = b;	//x = 0
