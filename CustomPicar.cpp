@@ -75,8 +75,8 @@ void Servo::operator++(int)
 	uint16_t val = value + (length * (rate / 100));
 	if (val > maxVal) val = maxVal;
 	setValue(val);
-	
-	cout << " @pin :" << pin << ", setRatio = " << ((val - minVal)*100.0) / length << endl;
+
+	cout << " @pin :" << pin << ", setRatio = " << ((val - minVal) * 100.0) / length << endl;
 }
 void Servo::operator--(int)
 {
@@ -112,12 +112,9 @@ Wheel::Wheel(PCA9685 pca_, int leftPin, int rightPin)
 }
 void Wheel::go(double speed)
 {
-	if (backwardFlag)
-	{
-		backwardFlag = false;
-		digitalWrite(0, 0);
-		digitalWrite(2, 0);
-	}
+	digitalWrite(0, 0);
+	digitalWrite(2, 0);
+
 	if (speed > 100) speed = 100;
 	if (speed < 0) speed = 0;
 	uint16_t val = length * (speed / 100);
@@ -131,12 +128,9 @@ void Wheel::stop()
 }
 void Wheel::backward(double speed)
 {
-	if (!backwardFlag)
-	{
-		backwardFlag = true;
-		digitalWrite(0, 1);
-		digitalWrite(2, 1);
-	}
+	digitalWrite(0, 1);
+	digitalWrite(2, 1);
+
 	if (speed > 100) speed = 100;
 	if (speed < 0) speed = 0;
 	uint16_t val = length * (speed / 100);
