@@ -261,8 +261,10 @@ int main()
 					if (key == 27)
 						break;
 					else if (key == '0')
+					{
 						cout << "Auto driving start" << endl;
-					break;
+						break;
+					}
 					else if (key != -1)
 						Manual.input(key); //movement by keyboard
 					rewind(stdin);
