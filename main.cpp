@@ -133,14 +133,14 @@ int main()
 		//color detecting class ganerate
 		DetectColorSign detectColorSign(true);
 		int flicker(4);
-		if (!flicker--)
-			flicker = 4;
 
 		cout << "flicker" << flicker << endl;
 		while (true)
 		{
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
+			if (!flicker--)
+				flicker = 4;
 
 			whiteLed.off();
 			rightLed.off();
