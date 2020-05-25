@@ -31,8 +31,8 @@ DetectColorSign::DetectColorSign()
 	lower_yellow = Scalar(18, 100, 200);
 	upper_yellow = Scalar(42, 255, 255);
 
-	lower_green = Scalar(48, 100, 200);
-	upper_green = Scalar(72, 255, 255);
+	lower_green = Scalar(45, 70, 150);
+	upper_green = Scalar(75, 255, 255);
 }
 DetectColorSign::DetectColorSign(bool onPrint)
 {
