@@ -136,6 +136,7 @@ int main()
 		if (!flicker--)
 			flicker = 4;
 
+		cout << "flicker" << flicker << endl;
 		while (true)
 		{
 			videocap >> distortedFrame;
@@ -147,7 +148,7 @@ int main()
 
 			if (detectColorSign.priorityStop(frame, 1.5))
 			{
-				if (flicker % 2 == 1)
+				if ((flicker % 2) == 1)
 				{
 					whiteLed.on();
 				}
@@ -160,7 +161,7 @@ int main()
 			}
 			else if (detectColorSign.isRedStop(frame, 1.5)) //빨간색 표지판 감지
 			{
-				if (flicker % 3 == 1)
+				if ((flicker % 3) == 1)
 				{
 					whiteLed.on();
 					leftLed.on();
@@ -170,7 +171,7 @@ int main()
 			}
 			else if (detectColorSign.isYellow(frame, 1.5)) //노란색 표지판 감지
 			{
-				if (flicker % 3 == 1)
+				if ((flicker % 3) == 1)
 				{
 					leftLed.on();
 					rightLed.on();
@@ -179,12 +180,12 @@ int main()
 			}
 			else if (detectColorSign.isGreenTurnSignal(frame, 1.0) == 1) //초록색 표지판 감지
 			{
-				if (flicker % 3 == 1) leftLed.on();
+				if ((flicker % 3) == 1) leftLed.on();
 				cout << "<----- signal was detected." << '\n';
 			}
 			else if (detectColorSign.isGreenTurnSignal(frame, 1.5) == 2) //초록색 표지판 감지
 			{
-				if (flicker % 3 == 1) rightLed.on();
+				if ((flicker % 3) == 1) rightLed.on();
 				cout << "-----> signal was detected." << '\n';
 			}
 			else
