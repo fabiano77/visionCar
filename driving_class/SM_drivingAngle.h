@@ -36,7 +36,8 @@ private:
 
 class RoundAbout { // 회전 교차로
 public:
-	RoundAbout();// flag가 활성화(0보다 크면)되어있으면 정지
+	RoundAbout();
+
 	bool isStop(const double Distance);
 	//PreCondition   :: 회전 교차로 정지선에서 멈춰있어야 함. 초음파 센서 활성화
 	//PostCondition  :: DCmoter.go 동작.
