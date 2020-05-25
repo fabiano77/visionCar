@@ -36,6 +36,7 @@ int main()
 			<< "video capture fail!" << endl;
 		return -1;
 	}
+	whiteLed.off();
 	cout << "[VideoCapture loading complete]" << endl
 		<< endl;
 
@@ -48,6 +49,7 @@ int main()
 	initUndistortRectifyMap(cameraMatrix, distCoeffs, Mat(), cameraMatrix, videoSize, CV_32FC1, map1, map2);
 	Mat distortedFrame;
 	Mat frame;
+	whiteLed.on();
 	cout << "[calibration complete]" << endl
 		<< endl;
 
@@ -188,7 +190,7 @@ int main()
 		DH.mappingSet(cornerFlag);		//조향수준 맵핑값 세팅
 
 		bool rotaryFlag(false);
-		bool flicker(false);
+		int flicker(4);
 
 		//메인동작 루프
 		while (true)
@@ -223,11 +225,12 @@ int main()
 			imshow("frame", frame);
 			resizeWindow("frame", 480, 360);
 			moveWindow("frame", 320, 80 + 240);
-			if (flicker)
+			if (!flicker)
+				flicker = 4;
+			if (2 < flicker--)
 				whiteLed.on();
 			else
 				whiteLed.off();
-			flicker = !flicker;
 
 			int key = waitKey(10);
 			if (key == 27)
@@ -659,26 +662,26 @@ int main()
 
 		while (true)
 		{
-			leftDistance = firstSonic.distance();	//좌측 거리측정.
-			rightDistance = secondSonic.distance(); //우측 거리측정.
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
 			tunnelFlag = detectColorSign.detectTunnel(frame, 40);
 
 			if (tunnelFlag)
 			{
-				whiteLed.on();
-				double longDistance = (leftDistance > rightDistance) ? leftDistance : rightDistance;
-				double shortDistance = (leftDistance > rightDistance) ? rightDistance : leftDistance;
-				double angle = (longDistance / shortDistance) - 1;	//대략 0~0.5사이
-				angle *= 100;	//대략0~50사이
-				if (angle > 15) angle = 15;	//최대 15으로 제한.
-				if (leftDistance > rightDistance)
-					angle = 50 + angle;
-				else
-					angle = 50 - angle;
-				steering.setRatio(angle);
-				DCmotor.go(30);
+				whiteLed.on();	//전조등 킨다.
+				//leftDistance = firstSonic.distance();	//좌측 거리측정.
+				//rightDistance = secondSonic.distance(); //우측 거리측정.
+				//double longDistance = (leftDistance > rightDistance) ? leftDistance : rightDistance;
+				//double shortDistance = (leftDistance > rightDistance) ? rightDistance : leftDistance;
+				//double angle = (longDistance / shortDistance) - 1;	//대략 0~0.5사이
+				//angle *= 100;	//대략0~50사이
+				//if (angle > 15) angle = 15;	//최대 15으로 제한.
+				//if (leftDistance > rightDistance)
+				//	angle = 50 + angle;
+				//else
+				//	angle = 50 - angle;
+				//steering.setRatio(angle);
+				//DCmotor.go(30);
 			}
 			else	//기본주행
 			{
