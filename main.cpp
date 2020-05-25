@@ -230,6 +230,7 @@ int main()
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 			if (waitingFlag)
 			{
+				waitKey(100);
 				if (detectColorSign.waitingCheck(frame, 13))
 					flicker = 2;
 				else if (startCheck.waitingCheck(frame, 13))
