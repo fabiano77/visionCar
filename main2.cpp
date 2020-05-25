@@ -192,7 +192,7 @@ int main()
 				if (!cornerFlag && (steerVal == 90 || steerVal == 10))
 				{
 					cornerFlag = true;
-					DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.75);
+					DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.68);
 					DH.mappingSetValue(7.0, 7.00, 10.0, 20.0, 35.0, 40.0);
 					cout << "cornerFlag ON" << '\n';
 				}
@@ -200,7 +200,7 @@ int main()
 				else if (cornerFlag && detectedLineCnt == 2)
 				{
 					cornerFlag = false;
-					DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.75);
+					DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.68);
 					DH.mappingSetValue(7.0, 7.00, 0.00, -4.0, 0.00, 40.0);
 					cout << "cornerFlag OFF" << '\n';
 				}
@@ -226,6 +226,7 @@ int main()
 				DCmotor.stop();
 			else if (key == '0')
 			{
+				Manual.guide();
 
 				//메인루프
 				int key(-1);
