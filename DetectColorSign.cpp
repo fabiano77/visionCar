@@ -23,16 +23,16 @@ static void on_trackbar(int, void*)
 DetectColorSign::DetectColorSign()
 {
 	print = true;
-	lower_red1 = Scalar(0, 100, 100);
-	upper_red1 = Scalar(15, 255, 255);
-	lower_red2 = Scalar(165, 100, 100);
+	lower_red1 = Scalar(0, 100, 200);
+	upper_red1 = Scalar(12, 255, 255);
+	lower_red2 = Scalar(168, 100, 200);
 	upper_red2 = Scalar(180, 255, 255);
 
-	lower_yellow = Scalar(15, 100, 100);
-	upper_yellow = Scalar(45, 255, 255);
+	lower_yellow = Scalar(18, 100, 200);
+	upper_yellow = Scalar(42, 255, 255);
 
-	lower_green = Scalar(45, 100, 100);
-	upper_green = Scalar(75, 255, 255);
+	lower_green = Scalar(48, 100, 200);
+	upper_green = Scalar(72, 255, 255);
 }
 DetectColorSign::DetectColorSign(bool onPrint)
 {
