@@ -175,7 +175,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, int& resultLineCnt, bo
 		createTrackbar("H_minLen", "trackbar", &HLP_minLineLength, 500, on_trackbar);
 		createTrackbar("H_maxGap", "trackbar", &HLP_maxLineGap, 500, on_trackbar);
 		namedWindow("trackbar", WINDOW_NORMAL);
-		moveWindow("trackbar", 640, 40);
+		moveWindow("trackbar", 700, 40);
 
 		namedWindow("frame_yellow", WINDOW_NORMAL);
 		imshow("frame_yellow", frame_yellow);
