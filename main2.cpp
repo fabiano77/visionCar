@@ -167,10 +167,8 @@ int main()
 
 		//Self-driving class configuration
 		Driving_DH DH(true, 1.00);
-		DH.mappingSetSection(-0.15, 0.00, 0.15, 0.35, 0.45, 0.50, 0.55);
-		DH.mappingSetValue(20.0000, 10.0, 8.00, 0.00, -4.0, 0.00, 40.0); //코너구간 조향수준 맵핑값 세팅
-		double steerVal(50.0);								   //초기 각도(50이 중심)
-		double speedVal(40.0);								   //초기 속도(0~100)
+		DH.mappingStraight();			//조향수준 맵핑값 세팅
+		double steerVal(50.0);			//초기 각도(50이 중심)
 
 		bool cornerFlag(false);
 		bool rotaryFlag(false);
@@ -191,16 +189,14 @@ int main()
 				if (!cornerFlag && (steerVal == 90 || steerVal == 10))
 				{
 					cornerFlag = true;
-					DH.mappingSetSection(-0.15, 0.00, 0.15, 0.35, 0.45, 0.50, 0.55);
-					DH.mappingSetValue(20.0000, 10.0, 15.0, 25.0, 30.0, 35.0, 40.0);
+					DH.mappingCorner();
 					cout << "cornerFlag ON" << '\n';
 				}
 				//else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
 				else if (cornerFlag && detectedLineCnt == 2)
 				{
 					cornerFlag = false;
-					DH.mappingSetSection(-0.15, 0.00, 0.15, 0.35, 0.45, 0.50, 0.55);
-					DH.mappingSetValue(20.0000, 10.0, 8.00, 0.00, -4.0, 0.00, 40.0);
+					DH.mappingStraight();
 					cout << "cornerFlag OFF" << '\n';
 				}
 
@@ -233,22 +229,19 @@ int main()
 				{
 					videocap >> distortedFrame;
 					remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
-
 					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 
 					if (!cornerFlag && (steerVal == 90 || steerVal == 10))
 					{
 						cornerFlag = true;
-						DH.mappingSetSection(-0.15, 0.00, 0.15, 0.35, 0.45, 0.50, 0.55);
-						DH.mappingSetValue(15.0000, 10.0, 15.0, 25.0, 30.0, 35.0, 40.0);
+						DH.mappingCorner();
 						cout << "cornerFlag ON" << '\n';
 					}
 					//else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
 					else if (cornerFlag && detectedLineCnt == 2)
 					{
 						cornerFlag = false;
-						DH.mappingSetSection(-0.15, 0.00, 0.15, 0.35, 0.45, 0.50, 0.55);
-						DH.mappingSetValue(15.0000, 10.0, 8.00, 0.00, -4.0, 0.00, 40.0);
+						DH.mappingStraight();
 						cout << "cornerFlag OFF" << '\n';
 					}
 

@@ -124,6 +124,18 @@ void Driving_DH::driving(Mat& frame, double& steerVal, int& resultLineCnt, bool 
 	imgProcess(frame, steerVal, resultLineCnt, rotaryFlag);	//steerVal값을 구한다.
 }
 
+void Driving_DH::mappingCorner()
+{
+	mappingSetSection(-0.15, 0.00, 0.15, 0.35, 0.45, 0.50, 0.55);
+	mappingSetValue(15.0000, 10.0, 15.0, 25.0, 30.0, 35.0, 40.0);
+}
+
+void Driving_DH::mappingStraight()
+{
+	mappingSetSection(-0.15, 0.00, 0.15, 0.35, 0.45, 0.50, 0.55);
+	mappingSetValue(15.0000, 10.0, 8.00, 0.00, -4.0, 0.00, 40.0);
+}
+
 void Driving_DH::imgProcess(Mat& frame, double& steerVal, int& resultLineCnt, bool rotaryFlag)
 {
 	//frame_ROI;

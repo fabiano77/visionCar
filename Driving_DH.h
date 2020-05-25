@@ -13,10 +13,12 @@ public:
 	Driving_DH(string& filename);		//img
 	Driving_DH(const char* filename);	//img
 	void driving(Mat& frame, double& steerVal, int& resultLineCnt, bool rotaryFlag);	//level은 감,가속
-	void mappingSetSection(double section0_, double section1_, double section2_, double section3_, double section4_, double section5_, double section6_);
-	void mappingSetValue(double value0_, double value1_, double value2_, double value3_, double value4_, double value5_, double value6_);
+	void mappingCorner();
+	void mappingStraight();
 
 private:
+	void mappingSetSection(double section0_, double section1_, double section2_, double section3_, double section4_, double section5_, double section6_);
+	void mappingSetValue(double value0_, double value1_, double value2_, double value3_, double value4_, double value5_, double value6_);
 	void basicSetting();
 	// 생성자마다 기본세팅
 
