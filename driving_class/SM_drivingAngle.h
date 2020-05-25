@@ -12,14 +12,14 @@ class CheckStart {
 public:
 	CheckStart();
 
-	bool isStart(Mat& frame, double percent);
-	//PreCondition   :: isWhite(frame, percent)가 동작
-	//PostCondition  :: DCmoter.go 동작함. Go!라는 문자가 화면에 출력됨
-	//Return         :: isWhite가 true에서 false로 된 후 일정 frame 이상 유지되면 true
+	bool isStop(Mat& frame, double percent);
+	//PreCondition   :: 멈춰있는 상태. isWhite(frame, percent)가 동작.
+	//PostCondition  :: DCmoter.go 동작.
+	//Return         :: isWhite가 true에서 false로 된 후 일정 frame 이상 유지되면 false
 	bool isTunnel(Mat& frame, double percent);
-	//PreCondition   :: isBlack(frame, percent)가 동작
-	//PostCondition  :: 터널에서 차선을 검출할 함수 동작함. Tunnel!라는 문자가 화면에 출력됨
-	//Return         :: isBlack이 true로 된 후 일정 frame 이상 유지되면 true
+	//PreCondition   :: DCmoter.go 동작. isBlack(frame, percent)가 동작.
+	//PostCondition  :: 터널에서 차선을 검출할 함수 동작.
+	//Return         :: isBlack이 true로 된 후 몇 초가 지나면 true
 	int GetFlag_start();
 	int GetFlag_tunnel();
 private:
@@ -32,15 +32,19 @@ private:
 	Scalar upper_white;
 	Scalar lower_black;
 	Scalar upper_black;
-	Mat frame_hsv;
 };
 
-class RoundAbout {
+class RoundAbout { // 회전 교차로
 public:
-	RoundAbout();
+	RoundAbout();// flag가 활성화(0보다 크면)되어있으면 정지
 	bool isStop(const double Distance);
+	//PreCondition   :: 회전 교차로 정지선에서 멈춰있어야 함. 초음파 센서 활성화
+	//PostCondition  :: DCmoter.go 동작.
+	//Return         :: 앞 차와의 Distance가 감지된 후, 일정 거리 이상 멀어지면 false
 	bool isDelay(const double Distance);
-
+	//PreCondition   :: 회전 교차로에서 DCmoter.go 동작.
+	//PostCondition  :: true이면 DCmoter.stop 동작. false이면 DCmoter.go 동작.
+	//Return         :: 앞 차와의 Distance가 가까워지면 true, 멀어진 후 몇 초가 지나면 false
 private:
 	int flag_start;
 	int check_start;

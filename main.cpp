@@ -428,7 +428,7 @@ int main()
 	}
 	//End Parking mode
 
-		else if (mode == 6)//Mode 6 : Rotary(상민) ----------------------------------------------
+	else if (mode == 6)//Mode 6 : Rotary(상민) ----------------------------------------------
 	{
 	//Self-driving class configuration
 	Driving_DH DH(true, 1.00);
