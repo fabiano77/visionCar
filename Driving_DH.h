@@ -13,8 +13,8 @@ public:
 	Driving_DH(string& filename);		//img
 	Driving_DH(const char* filename);	//img
 	void driving(Mat& frame, double& steerVal, int& resultLineCnt, bool rotaryFlag);	//level은 감,가속
-	void mappingSetSection(double section0_, double section1_, double section2_, double section3_, double section4_, double section5_);
-	void mappingSetValue(double value0_, double value1_, double value2_, double value3_, double value4_, double value5_);
+	void mappingSetSection(double section0_, double section1_, double section2_, double section3_, double section4_, double section5_, double section6_);
+	void mappingSetValue(double value0_, double value1_, double value2_, double value3_, double value4_, double value5_, double value6_);
 
 private:
 	void basicSetting();
@@ -61,8 +61,8 @@ private:
 
 	double straightLevel;
 
-	double section[6];
-	double value[6];
+	double section[7];
+	double value[7];
 };
 
 #endif	//DRIVING_DH_H

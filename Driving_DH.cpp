@@ -328,7 +328,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, int& resultLineCnt, bo
 	}
 }
 
-void Driving_DH::mappingSetSection(double section0_, double section1_, double section2_, double section3_, double section4_, double section5_)
+void Driving_DH::mappingSetSection(double section0_, double section1_, double section2_, double section3_, double section4_, double section5_, double section6_)
 {
 	section[0] = section0_;
 	section[1] = section1_;
@@ -336,9 +336,10 @@ void Driving_DH::mappingSetSection(double section0_, double section1_, double se
 	section[3] = section3_;
 	section[4] = section4_;
 	section[5] = section5_;
+	section[6] = section6_;
 }
 
-void Driving_DH::mappingSetValue(double value0_, double value1_, double value2_, double value3_, double value4_, double value5_)
+void Driving_DH::mappingSetValue(double value0_, double value1_, double value2_, double value3_, double value4_, double value5_, double value6_)
 {
 	value[0] = value0_;
 	value[1] = value1_;
@@ -346,6 +347,7 @@ void Driving_DH::mappingSetValue(double value0_, double value1_, double value2_,
 	value[3] = value3_;
 	value[4] = value4_;
 	value[5] = value5_;
+	value[6] = value6_;
 }
 
 double Driving_DH::mapping(int linePoint_)
@@ -392,9 +394,16 @@ double Driving_DH::mapping(int linePoint_)
 		double pointPosition = pointRatio - section[4];
 		return value[4] + (pointPosition / sectionLen) * valueLen;
 	}
+	else if (pointRatio < section[6])
+	{
+		double sectionLen = section[6] - section[5];
+		double valueLen = value[6] - value[5];
+		double pointPosition = pointRatio - section[5];
+		return value[5] + (pointPosition / sectionLen) * valueLen;
+	}
 	else //50 (1.0)
 	{
-		return value[5];
+		return value[6];
 	}
 }
 
