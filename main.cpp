@@ -145,7 +145,7 @@ int main()
 			rightLed.off();
 			leftLed.off();
 
-			if (detectColorSign.priorityStop(distortedFrame, 1.5))
+			if (detectColorSign.priorityStop(frame, 1.5))
 			{
 				if (flicker % 2 == 1)
 				{
@@ -158,7 +158,7 @@ int main()
 				}
 				cout << "A priority stop signal was detected." << '\n';
 			}
-			else if (detectColorSign.isRedStop(distortedFrame, 1.5)) //빨간색 표지판 감지
+			else if (detectColorSign.isRedStop(frame, 1.5)) //빨간색 표지판 감지
 			{
 				if (flicker % 3 == 1)
 				{
@@ -168,7 +168,7 @@ int main()
 				}
 				cout << "A red stop sign was detected." << '\n';
 			}
-			else if (detectColorSign.isYellow(distortedFrame, 1.5)) //노란색 표지판 감지
+			else if (detectColorSign.isYellow(frame, 1.5)) //노란색 표지판 감지
 			{
 				if (flicker % 3 == 1)
 				{
@@ -177,12 +177,12 @@ int main()
 				}
 				cout << "A yellow sign was detected." << '\n';
 			}
-			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 1.0) == 1) //초록색 표지판 감지
+			else if (detectColorSign.isGreenTurnSignal(frame, 1.0) == 1) //초록색 표지판 감지
 			{
 				if (flicker % 3 == 1) leftLed.on();
 				cout << "<----- signal was detected." << '\n';
 			}
-			else if (detectColorSign.isGreenTurnSignal(distortedFrame, 1.5) == 2) //초록색 표지판 감지
+			else if (detectColorSign.isGreenTurnSignal(frame, 1.5) == 2) //초록색 표지판 감지
 			{
 				if (flicker % 3 == 1) rightLed.on();
 				cout << "-----> signal was detected." << '\n';
