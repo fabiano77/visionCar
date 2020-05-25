@@ -22,7 +22,7 @@ static void on_trackbar(int, void*)
 
 DetectColorSign::DetectColorSign()
 {
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		pre_brightness[i] = 0;
 	}
