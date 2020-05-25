@@ -230,7 +230,6 @@ int main()
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 			if (waitingFlag)
 			{
-				waitKey(100);
 				if (detectColorSign.waitingCheck(frame, 13))
 					flicker = 2;
 				else if (startCheck.waitingCheck(frame, 13))
@@ -288,7 +287,7 @@ int main()
 			}
 
 			//키입력 관리코드 ( 0 = 수동모드, w = 전진, x = 후진, s = 멈춤, ESC 탈출 )
-			int key = waitKey(10);
+			int key = waitKey(33);
 			if (key == 27)
 				break;
 			else if (key == '0')
