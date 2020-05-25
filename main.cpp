@@ -24,6 +24,8 @@ int main()
 	UltraSonic firstSonic(28, 27);	// 초음파센서 객체
 	UltraSonic secondSonic(26, 25); // 초음파센서 객체 2(민수: 우측) 
 	PicarLED whiteLed(24);
+	PicarLED rightLed(23);
+	PicarLED leftLed(22);
 	whiteLed.on();
 	cout << "[Sensor and motor setting complete]" << endl
 		<< endl;
@@ -225,12 +227,29 @@ int main()
 			imshow("frame", frame);
 			resizeWindow("frame", 480, 360);
 			moveWindow("frame", 320, 80 + 240);
-			if (!flicker)
-				flicker = 4;
-			if (2 < flicker--)
-				whiteLed.on();
-			else
+
+			//LED관리코드
+			rightLed.off();
+			leftLed.off();
+			if (steerVal > 60)
+			{
+				rightLed.on();
 				whiteLed.off();
+			}
+			else if (steerVal < 40)
+			{
+				leftLed.on();
+				whiteLed.off();
+			}
+			else
+			{
+				if (!flicker)
+					flicker = 4;
+				if (2 < flicker--)
+					whiteLed.on();
+				else
+					whiteLed.off();
+			}
 
 			int key = waitKey(10);
 			if (key == 27)
