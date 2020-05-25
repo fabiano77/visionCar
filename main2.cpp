@@ -240,7 +240,7 @@ int main()
 					{
 						cornerFlag = true;
 						DH.mappingSetSection(-0.15, 0.00, 0.15, 0.35, 0.45, 0.50, 0.55);
-						DH.mappingSetValue(20.0000, 10.0, 15.0, 25.0, 30.0, 35.0, 40.0);
+						DH.mappingSetValue(15.0000, 10.0, 15.0, 25.0, 30.0, 35.0, 40.0);
 						cout << "cornerFlag ON" << '\n';
 					}
 					//else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
@@ -248,7 +248,7 @@ int main()
 					{
 						cornerFlag = false;
 						DH.mappingSetSection(-0.15, 0.00, 0.15, 0.35, 0.45, 0.50, 0.55);
-						DH.mappingSetValue(20.0000, 10.0, 8.00, 0.00, -4.0, 0.00, 40.0);
+						DH.mappingSetValue(15.0000, 10.0, 8.00, 0.00, -4.0, 0.00, 40.0);
 						cout << "cornerFlag OFF" << '\n';
 					}
 
