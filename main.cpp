@@ -415,6 +415,7 @@ int main()
 		//Self-driving class configuration
 		Driving_DH DH(true, 1.00);
 		bool cornerFlag(false);
+		int detectedLineCnt(-1);
 		DH.mappingSet(cornerFlag);	//조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
@@ -532,6 +533,7 @@ int main()
 	{
 		Driving_DH DH(true, 1.00);
 		bool cornerFlag(false);
+		int detectedLineCnt(-1);
 		DH.mappingSet(cornerFlag); //조향수준 맵핑값 세팅
 		double steerVal(50.0);								   //초기 각도(50이 중심)
 		double speedVal(40.0);								   //초기 속도(0~100)
