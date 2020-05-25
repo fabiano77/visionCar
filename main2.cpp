@@ -167,12 +167,13 @@ int main()
 
 		//Self-driving class configuration
 		Driving_DH DH(true, 1.00);
-		DH.mappingStraight();			//조향수준 맵핑값 세팅
-		double steerVal(50.0);			//초기 각도(50이 중심)
-
 		bool cornerFlag(false);
-		bool rotaryFlag(false);
+		bool manualFlag(false);
 		int detectedLineCnt(-1);
+		double steerVal(50.0);			//초기 각도(50이 중심)
+		DH.mappingSet(cornerFlag);		//조향수준 맵핑값 세팅
+
+		bool rotaryFlag(false);
 
 		//메인동작 루프
 		while (true)
@@ -186,20 +187,18 @@ int main()
 			{
 				DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 
-				if (!cornerFlag && (steerVal == 90 || steerVal == 10))
+				if (!cornerFlag && steerVal == 90 || steerVal == 10)	//최대 각 검출되면 cornerFlag ON
 				{
 					cornerFlag = true;
-					DH.mappingCorner();
+					DH.mapping(cornerFlag);
 					cout << "cornerFlag ON" << '\n';
 				}
-				//else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
-				else if (cornerFlag && detectedLineCnt == 2)
+				else if (cornerFlag && detectedLineCnt == 2)			//직선 두개 검출되면 cornerFlag OFF
 				{
 					cornerFlag = false;
-					DH.mappingStraight();
+					DH.mapping(cornerFlag);
 					cout << "cornerFlag OFF" << '\n';
 				}
-
 				steering.setRatio(steerVal);
 
 				//DCmotor.go(37);
@@ -213,56 +212,24 @@ int main()
 			int key = waitKey(10);
 			if (key == 27)
 				break; //프로그램 종료 ESC(아스키코드 = 27)키.
+			else if (key == '0')
+			{
+				manualFlag = !manualFlag;
+				Manual.guide();
+				cout << "Auto driving start" << endl;
+			}
+			else if (manualFlag && key != -1)
+			{
+				Manual.input(key); //movement by keyboard
+				rewind(stdin);
+			}
 			else if (key == 'w')
 				DCmotor.go(37);
 			else if (key == 'x')
 				DCmotor.backward(40);
 			else if (key == 's')
 				DCmotor.stop();
-			else if (key == '0')
-			{
-				Manual.guide();
 
-				//메인루프
-				int key(-1);
-				while (key != 27) //if not ESC
-				{
-					videocap >> distortedFrame;
-					remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
-					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-
-					if (!cornerFlag && (steerVal == 90 || steerVal == 10))
-					{
-						cornerFlag = true;
-						DH.mappingCorner();
-						cout << "cornerFlag ON" << '\n';
-					}
-					//else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
-					else if (cornerFlag && detectedLineCnt == 2)
-					{
-						cornerFlag = false;
-						DH.mappingStraight();
-						cout << "cornerFlag OFF" << '\n';
-					}
-
-					namedWindow("frame", WINDOW_NORMAL);
-					imshow("frame", frame);
-					resizeWindow("frame", 480, 360);
-					moveWindow("frame", 320, 80 + 240);
-
-					key = waitKey(33); //if you not press, return -1
-					if (key == 27)
-						break;
-					else if (key == '0')
-					{
-						cout << "Auto driving start" << endl;
-						break;
-					}
-					else if (key != -1)
-						Manual.input(key); //movement by keyboard
-					rewind(stdin);
-				}
-			}
 		}
 	}
 	//End Driving mode
