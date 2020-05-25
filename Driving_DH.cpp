@@ -225,9 +225,7 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, bool rotaryFlag)
 	lineExtend(lowestLine, 0, lowestLineSlope);
 	lineExtend(rightLine, 0, rightLineSlope);
 	lineExtend(leftLine, 0, leftLineSlope);
-	cout << "lowestLineSlope = " << lowestLineSlope << endl;
-	cout << "rightLineSlope = " << rightLineSlope << endl;
-	cout << "leftLineSlope = " << leftLineSlope << endl;
+
 	if (lowest.x == -1)	//직선 없을 경우
 	{
 		//방금 전의 행동을 유지한다.
