@@ -162,6 +162,10 @@ int main()
 
 	else if (mode == 4) //Mode 4 : Driving(대희) --------------------------------------------
 	{
+		//ManualMode class & basic speed rate
+		ManualMode Manual(pca, 40);
+		Manual.guide();
+
 		//Self-driving class configuration
 		Driving_DH DH(true, 1.00);
 		DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.75);
@@ -191,7 +195,7 @@ int main()
 				{
 					cornerFlag = true;
 					DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.75);
-					DH.mappingSetValue(15., 15.0, 10.0, 15.0, 30.0, 30.0);
+					DH.mappingSetValue(7.0, 7.00, 10.0, 20.0, 30.0, 40.0);
 					cout << "cornerFlag ON" << '\n';
 				}
 				else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
@@ -223,9 +227,6 @@ int main()
 				DCmotor.stop();
 			else if (key == '0')
 			{
-				//ManualMode class & basic speed rate
-				ManualMode Manual(pca, 40);
-				Manual.guide();
 
 				//메인루프
 				int key(-1);
@@ -235,6 +236,21 @@ int main()
 					remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
 
 					DH.driving(frame, steerVal, speedVal, 37.0, 0.0, rotaryFlag);
+
+					if (!cornerFlag && (steerVal == 90 || steerVal == 10))
+					{
+						cornerFlag = true;
+						DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.75);
+						DH.mappingSetValue(7.0, 7.00, 10.0, 20.0, 30.0, 40.0);
+						cout << "cornerFlag ON" << '\n';
+					}
+					else if (cornerFlag && steerVal >= 43 && steerVal <= 57)
+					{
+						cornerFlag = false;
+						DH.mappingSetSection(0, 0.15, 0.35, 0.50, 0.60, 0.75);
+						DH.mappingSetValue(7.0, 7.00, 0.00, -4.0, 0.00, 40.0);
+						cout << "cornerFlag OFF" << '\n';
+					}
 
 					namedWindow("frame", WINDOW_NORMAL);
 					imshow("frame", frame);
