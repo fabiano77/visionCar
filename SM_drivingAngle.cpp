@@ -8,8 +8,8 @@ using namespace cv;
 using namespace std;
 
 CheckStart::CheckStart() {
-	lower_white = Scalar(200,200,200);
-	upper_white = Scalar(255,255,255);
+	lower_white = Scalar(200, 200, 200);
+	upper_white = Scalar(255, 255, 255);
 	lower_black = Scalar(0, 0, 0);
 	upper_black = Scalar(80, 80, 80);
 	flag_start = -1;
@@ -37,8 +37,8 @@ bool CheckStart::isWhite(Mat& frame, double percent) {
 	double whiteRatio = ((double)whitePixel / ((frame.cols / 10) * (frame.rows / 10)));	//검출된 픽셀수를 전체 픽셀수로 나눈 비율
 	whiteRatio *= 100;
 
-	if (whiteRatio > percent)	{	returnVal = true;	}
-	else	{	returnVal = false;	}
+	if (whiteRatio > percent) { returnVal = true; }
+	else { returnVal = false; }
 
 	return returnVal;
 }
@@ -98,7 +98,7 @@ bool CheckStart::isStop(Mat& frame, double percent) {
 bool CheckStart::isTunnel(Mat& frame, double percent) {
 
 	if (isBlack(frame, percent)) { // 어두워지면 flag 증가
-		if(flag_tunnel < 15) // 최대 임계값
+		if (flag_tunnel < 15) // 최대 임계값
 			flag_tunnel++;
 	}
 	else { // 밝으면 flag 감소
@@ -142,15 +142,14 @@ bool RoundAbout::isStop(const double Distance) {
 		return false;
 	}
 	else { // 정지선에서 대기 상태
-		if (flag1_start > 0){ // 2. 앞의 차량이 일정 거리 이상 멀어질 경우 1프레임 당 flag 감소
+		if (flag1_start > 0) { // 2. 앞의 차량이 일정 거리 이상 멀어질 경우 1프레임 당 flag 감소
 			if (Distance >= uper1_distance) {
-				flag1_start--;		
+				flag1_start--;
 			}
 			return true;
 		}
 		else if (flag1_start == 0) { // 3. flag가 0이 될 경우 출발
-			putText(frame, "Go!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
-			if (check1_start != 0) { 
+			if (check1_start != 0) {
 				check1_start = 0; // 출발했다는 표시
 			}
 			return false; // 출발
@@ -159,13 +158,13 @@ bool RoundAbout::isStop(const double Distance) {
 		{
 			if (Distance < lower1_distance) { // 앞의 차량이 나타났을 때 flag 활성화
 				flag1_start = 15; // 1초당 4프레임정도 처리한다고 가정하면, 4초 뒤에 출발
-			}	
+			}
 			return true;
 		}
 	}
 }
 
-bool RoundAbout::isDelay(const double Distance) { 
+bool RoundAbout::isDelay(const double Distance) {
 	if (Distance < lower2_distance) { // 앞의 차량이 나타났을 때 flag 활성화
 		flag2_start = 15;
 		return true; // 정지
@@ -298,7 +297,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 
 	Point rp1, rp0;//오른쪽
 	Point lp1, lp0;//왼쪽
-	float s = 1000;//값 
+	float s = 1000;//값
 	double dydxLeft, dydxRight;//각 축별 기울기 값
 
 	//double left_interP = 0, right_interP = 0;
@@ -422,7 +421,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 				flag == 112;
 			}
 			// steering 방향 조절 : 기본적으로 heading 방향과 반대 방향임
-		
+
 			// 위에는 기본적인 경우
 			//////////////////////////////////////////////////////
 			// 아래는 special case -> 한 쪽 차선에 붙어있을 경우, 곡선 차선이 나올 경우
@@ -442,7 +441,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 
 			// 한 쪽 차선에 붙어 있을 경우 heading 방향이 steering 방향이 됨
 			if ((flag != 21) || (flag != 22)) {
-				if (abs(rp1.y - rp0.y) > abs(lp1.y - lp0.y)) {// 오른쪽 차선에 붙어있을 경우 
+				if (abs(rp1.y - rp0.y) > abs(lp1.y - lp0.y)) {// 오른쪽 차선에 붙어있을 경우
 					if (headingAngle <= 0) {
 						steering = -steering;
 						flag = 121;
@@ -458,12 +457,12 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 			steering *= weight;
 		}
 		// 30은 임계값
-		//if ((atan(dydxRight) > -30) && (atan(dydxLeft) > 30)) { // 좌회전 구간 (곡선인 오른쪽 차선 나올 때) 
+		//if ((atan(dydxRight) > -30) && (atan(dydxLeft) > 30)) { // 좌회전 구간 (곡선인 오른쪽 차선 나올 때)
 			// heading > 0 이다.
 		//	steering =
 		//}
 		else if ((right_index != 0) && (left_index == 0)) { // 오른쪽 차선만 보일 때
-			// steering 그대로		
+			// steering 그대로
 			if (headingAngle < -70) {
 				steering = -5;
 				flag = 0;
@@ -477,7 +476,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 				flag = 0;
 			}
 			steering *= weight;
-			
+
 		}
 		else if ((right_index == 0) && (left_index != 0)) { // 왼쪽 차선만 보일 때
 			if (headingAngle > 70) {
@@ -506,7 +505,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 	//heading Angle은 차량이 바라보는 방향
 	cout << "headingAngle: " << headingAngle << endl;
 	cout << "steering: " << steering << endl << endl;
-	
+
 	slopeDegrees.clear();
 	leftLines.clear();
 	rightLines.clear();

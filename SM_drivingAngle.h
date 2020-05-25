@@ -36,7 +36,8 @@ private:
 
 class RoundAbout { // 회전 교차로
 public:
-	RoundAbout();// flag가 활성화(0보다 크면)되어있으면 정지
+	RoundAbout();
+
 	bool isStop(const double Distance);
 	//PreCondition   :: 회전 교차로 정지선에서 멈춰있어야 함. 초음파 센서 활성화
 	//PostCondition  :: DCmoter.go 동작.
@@ -46,12 +47,15 @@ public:
 	//PostCondition  :: true이면 DCmoter.stop 동작. false이면 DCmoter.go 동작.
 	//Return         :: 앞 차와의 Distance가 가까워지면 true, 멀어진 후 몇 초가 지나면 false
 private:
-	int flag_start;
-	int check_start;
-	double lower_distance;
-	double uper_distance;
-	double distance_Threshold;
-	bool delay;
+	int flag1_start;
+	int check1_start;
+	double lower1_distance;
+	double uper1_distance;
+
+	int flag2_start;
+	int check2_start;
+	double lower2_distance;
+	double uper2_distance;
 };
 
 /*
@@ -62,7 +66,7 @@ void drivingAngle_SM(Mat& inputImg, vector<Vec4i> lines, double& steering, doubl
 void regionOfInterest(Mat& src, Mat& dst, Point* points);//roi 지정
 //precondition : point that you want to roi(3 or 4 points recommended
 //postcondition : fill white without roi sector
-// return : masked img dst 
+// return : masked img dst
 
 bool extractLines(Mat& src, vector<Vec4i>& lines);//추출되면 1 안되면 0
 //precondition: src must be color image
