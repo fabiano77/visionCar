@@ -8,10 +8,10 @@ using namespace cv;
 using namespace std;
 
 CheckStart::CheckStart() {
-	lower_white = Scalar(200,255,255);
+	lower_white = Scalar(200,200,200);
 	upper_white = Scalar(255,255,255);
 	lower_black = Scalar(0, 0, 0);
-	upper_black = Scalar(50, 50, 50);
+	upper_black = Scalar(80, 80, 80);
 	flag_start = -1;
 	flag_tunnel = -1;
 	check_start = -1;
@@ -70,46 +70,47 @@ bool CheckStart::isBlack(Mat& frame, double percent) {
 	return returnVal;
 }
 
-bool CheckStart::isStart(Mat& frame, double percent) {
-	if (isWhite(frame, percent)) { // 흰색 카드가 검출될 때
-		flag_start = 10; // 10 frame 이후 출발
+bool CheckStart::isStop(Mat& frame, double percent) {
+	if (check_start == 0) { // 4. 최종 상황 : 한번이라도 출발했으면 계속 출발상태이다.
+		return false;
 	}
-	else { // 흰색 카드가 검출이 안될 때
-		if(flag_start > 0) // 흰색 카드가 검출 된 후 사라졌을 때
+	else { // 출발하기 전 상황
+		if (flag_start > 0) {// 2. 흰색 카드가 검출 된 후 사라졌을 때 1 프레임 당 flag 감소
 			flag_start--;
-	}
-	if (flag_start == 0) {
-		putText(frame, "Go!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
-		if (check_start != 0) {
-			check_start = 0;
-		}
-		return true;
-	}
-	else {
-		if (check_start == 0) {
 			return true;
 		}
-		else {
+		else if (flag_start == 0) { // 3. flag가 0이 될 경우 출발
+			putText(frame, "Go!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+			if (check_start != 0) {
+				check_start = 0; // 출발했다는 표시
+			}
 			return false;
+		}
+		else { // 1. 초기 상황
+			if (isWhite(frame, percent)) { // 흰색 카드가 검출되면 flag 활성화
+				flag_start = 13; // 해당 frame 이후 출발
+			}
+			return true;
 		}
 	}
 }
 
 bool CheckStart::isTunnel(Mat& frame, double percent) {
-	if (isBlack(frame, percent)) {
-		if(flag_tunnel < 10) // 최대 임계값 10 frame
+
+	if (isBlack(frame, percent)) { // 어두워지면 flag 증가
+		if(flag_tunnel < 15) // 최대 임계값
 			flag_tunnel++;
 	}
-	else {
+	else { // 밝으면 flag 감소
 		if (flag_tunnel > 0)
 			flag_tunnel--;
 	}
 
-	if (flag_tunnel >= 5) { // 최소 임계값 5 frame, 임계값 범위 내에 있을 시 터널이라고 인식
+	if (flag_tunnel >= 7) { // 최소 임계값. flag가 이보다 크면 터널 안에 있다고 인식
 		putText(frame, "Tunnel!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
 		return true;
 	}
-	else {
+	else { // 최소 임계값보다 flag가 작으면 터널 밖이라고 인식
 		return false;
 	}
 }
@@ -137,32 +138,26 @@ RoundAbout::RoundAbout() {
 }
 
 bool RoundAbout::isStop(const double Distance) {
-	if (check1_start == 0) { // 한 번이라도 출발했을 경우 출발을 유지한다.
+	if (check1_start == 0) { // 4. 최종 상황 : 한 번이라도 출발했을 경우 출발을 유지한다.
 		return false;
 	}
-	else {
-		if (flag1_start > 0) 
-		{
-			if (Distance >= uper1_distance) { // 앞의 차량이 일정 거리 이상으로 멀어질 경우
-				if (flag1_start <= 0) { 
-					flag1_start = 0;
-				}
-				flag1_start--; // 1프레임 당 flag값을 감소시켜서 0으로 만든다.
-			}			
-			if (flag1_start == 0) { // flag가 0이 될 경우
-				putText(frame, "Go!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
-				if (check1_start != 0) { 
-					check1_start = 0; // 출발했다는 표시
-				}
-				return false; // 출발
+	else { // 정지선에서 대기 상태
+		if (flag1_start > 0){ // 2. 앞의 차량이 일정 거리 이상 멀어질 경우 1프레임 당 flag 감소
+			if (Distance >= uper1_distance) {
+				flag1_start--;		
 			}
-			else {
-				return true; // 정지
-			}
+			return true;
 		}
-		else // 초기 상황
+		else if (flag1_start == 0) { // 3. flag가 0이 될 경우 출발
+			putText(frame, "Go!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+			if (check1_start != 0) { 
+				check1_start = 0; // 출발했다는 표시
+			}
+			return false; // 출발
+		}
+		else // 1. 초기 상황
 		{
-			if (Distance < lower1_distance) { // 앞의 차량이 나타났을 때
+			if (Distance < lower1_distance) { // 앞의 차량이 나타났을 때 flag 활성화
 				flag1_start = 15; // 1초당 4프레임정도 처리한다고 가정하면, 4초 뒤에 출발
 			}	
 			return true;
@@ -170,18 +165,18 @@ bool RoundAbout::isStop(const double Distance) {
 	}
 }
 
-bool RoundAbout::isDelay(const double Distance) { // flag가 활성화(0보다 크면)되어있으면 정지
-	if (Distance < lower2_distance) { // 앞의 차량이 나타났을 때
-		flag2_start = 15; // 1초당 4프레임정도 처리한다고 가정하면, 4초 뒤에 출발
+bool RoundAbout::isDelay(const double Distance) { 
+	if (Distance < lower2_distance) { // 앞의 차량이 나타났을 때 flag 활성화
+		flag2_start = 15;
 		return true; // 정지
 	}
-	else {
-		if (flag2_start < 0) {
+	else { // 앞의 차량이 가깝지 않을 때
+		if (flag2_start < 0) { // flag가 비활성화 되었을 때
 			return false; // 출발
 		}
-		else {
+		else { // flag가 활성화 되어 있을 때
 			if (Distance >= uper2_distance) { // 앞의 차량이 일정 거리 이상으로 멀어질 경우				
-				flag2_start--; // 1프레임 당 flag값을 감소시켜서 0으로 만든다.
+				flag2_start--;
 			}
 			return true;
 		}
