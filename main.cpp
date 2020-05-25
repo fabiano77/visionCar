@@ -201,7 +201,7 @@ int main()
 					DH.mappingSet(cornerFlag);
 					cout << "cornerFlag OFF" << '\n';
 				}
-				steering.setRatio(steerVal);
+				if (!manualFlag) steering.setRatio(steerVal);
 
 				//DCmotor.go(37);
 			}
