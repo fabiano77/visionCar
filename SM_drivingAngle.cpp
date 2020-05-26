@@ -17,7 +17,7 @@ CheckStart::CheckStart() {
 	lower_white = Scalar(200, 200, 200);
 	upper_white = Scalar(255, 255, 255);
 	lower_black = Scalar(0, 0, 0);
-	upper_black = Scalar(80, 80, 80);
+	upper_black = Scalar(100, 100, 100);
 	flag_start = -1;
 	flag_tunnel = -1;
 	check_start = -1;
@@ -78,7 +78,7 @@ bool CheckStart::isBlack(Mat& frame, double percent) {
 
 	double blackRatio = ((double)blackPixel / ((frame.cols / 10) * (frame.rows / 10)));	//검출된 픽셀수를 전체 픽셀수로 나눈 비율
 	blackRatio *= 100;
-
+	cout << "blackRatio : " << blackRatio << endl;
 	if (blackRatio > percent) { returnVal = true; }
 	else { returnVal = false; }
 

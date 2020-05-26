@@ -813,7 +813,7 @@ int main()
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
 
-			check_tunnel = cs.isTunnel(frame, 60);
+			check_tunnel = cs.isTunnel(frame, 30);
 
 			if (check_tunnel) // 터널 입장
 			{
