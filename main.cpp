@@ -580,8 +580,6 @@ int main()
 			}*/
 		}
 
-
-
 		/*double Distance;	//거리값
 
 		while (true)
@@ -715,16 +713,17 @@ int main()
 	{
 		double leftDistance; //좌측 거리값
 		double rightDistance; //우측 거리값
-		DetectColorSign detectColorSign(true);
-		bool tunnelFlag(false);
-
+		
+		CheckStart cs;
+		bool check_tunnel;
 		while (true)
 		{
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
-			tunnelFlag = detectColorSign.detectTunnel(frame, 65);
+			
+			check_tunnel = cs.isTunnel(frame, 60);
 
-			if (tunnelFlag)
+			if (check_tunnel) // 터널 입장
 			{
 				whiteLed.on();	//전조등 킨다.
 				//leftDistance = firstSonic.distance();	//좌측 거리측정.
@@ -743,6 +742,7 @@ int main()
 			}
 			else	//기본주행
 			{
+				cs.GetFlag_tunnel();
 				whiteLed.off();
 				//steering.setRatio(50);
 				//DCmotor.go(40);
