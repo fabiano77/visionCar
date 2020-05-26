@@ -611,7 +611,7 @@ int main()
 	else if (mode == 7) //Mode 7 : Overtaking(민수) ------------------------------------------
 	{
 		int choosemodeNum = 0;
-		cout << "MS'mode 1: Original , 2: 분기점 추가, 3:시간 기반" << endl;
+		cout << "MS'mode 1: Original , 2: 분기점 추가, 3:시간 기반 4: add 대희형 5:time기반" << endl;
 		cin >> choosemodeNum;
 		Driving_DH DH(true, 1.00);
 		bool cornerFlag(false);
