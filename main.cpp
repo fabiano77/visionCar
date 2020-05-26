@@ -846,6 +846,8 @@ int main()
 	}
 
 	else if (choosemodeNum == 3) {
+
+	int switchCase = 0;//0은 기본주행
 		while (true)
 		{
 			DCmotor.go();
@@ -858,7 +860,6 @@ int main()
 			bool overtakingFlag = true;	  //추월상황 판단
 			int holdFlag = 0;//상태유지 flag
 			const int MAX_holdFlag = 10;
-			int switchCase = 0;//0은 기본주행
 
 			switch (switchCase) {
 			case 0:
