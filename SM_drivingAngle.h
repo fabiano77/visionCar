@@ -51,6 +51,7 @@ private:
 	int check1_start;
 	double lower1_distance;
 	double uper1_distance;
+	int flag_wait;
 
 	int flag2_start;
 	int check2_start;
