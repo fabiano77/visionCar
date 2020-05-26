@@ -642,6 +642,7 @@ int main()
 			Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
 			if (overtakingFlag == false)			  //추월상황이 아닐때,
 			{
+				endFlag = false;
 				rotaryFlag = false;
 				if (Distance_first > MAX_ULTRASONIC) //거리가 멀때
 				{
@@ -673,13 +674,20 @@ int main()
 					steerVal = 10; //먼저 좌회전
 					returnFlag = MAX_returnFlag;
 				}
-				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC) //추월 상황중 차량을 지나쳐갈 때 and 차량을 지나치고 복귀중 재탐색시
+				
+				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC && endFlag == false) //추월 상황중 차량을 지나쳐갈 때
 				{
 					rotaryFlag = true;
 					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 				}
+				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC && endFlag == true) // 차량을 지나치고 복귀중 재탐색시
+				{
+					rotaryFlag = false;
+					steerVal = 50;
+				}
 				else if (Distance_first > MAX_ULTRASONIC && Distance_second > MAX_ULTRASONIC) //추월 상황 종료후 복귀 신호
 				{
+					endFlag = true;
 					rotaryFlag = false;
 					steerVal = 90;
 					//예비 상황 혹시 차량을 지나쳐가는 루프에 들어오지 못하는 경우 방지
@@ -692,6 +700,7 @@ int main()
 						overtakingFlag = true;
 						DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 						returnFlag = 0;
+						endFlag = false;
 					}
 				}
 
