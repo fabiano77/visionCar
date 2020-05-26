@@ -345,16 +345,19 @@ int main()
 					{
 					case 0:
 						cout << "기본 주행 코드" << endl;
+						cout << "sideDistance : " << sideDistance << endl;
 						if ((sideDistance != 0) && (sideDistance < 5)) // 처음 벽을 만나면 다음 분기로 이동
 							caseNum++;
 						break;
 					case 1:
 						cout << "벽을 처음 만난 후" << endl;
+						cout << "sideDistance : " << sideDistance << endl;
 						if (sideDistance > 10) // 벽을 지나 주차공간을 만나면 다음 분기로 이동
 							caseNum++;
 						break;
 					case 2:
 						cout << "주차 공간을 만난 후" << endl;
+						cout << "sideDistance : " << sideDistance << endl;
 						if ((sideDistance != 0) && (sideDistance < 5))
 						{ // 주차공간을 지나 다시 벽을 만나면 다음 분기로 이동
 							DCmotor.stop();
@@ -365,6 +368,7 @@ int main()
 						break;
 					case 3:
 						cout << "후진 진행 - 1 -" << endl;
+						cout << "sideDistance : " << sideDistance << endl;
 						if ((backDistance != 0) && (backDistance < 5))
 						{ // 후진 중 어느정도 주차공간에 진입하였으면 다음 분기로 이동
 							DCmotor.stop();
@@ -375,6 +379,7 @@ int main()
 						break;
 					case 4:
 						cout << "후진 진행 - 2 -" << endl;
+						cout << "sideDistance : " << sideDistance << endl;
 						if ((sideDistance != 0) && (sideDistance < 2))
 						{
 							DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
@@ -384,6 +389,7 @@ int main()
 						break;
 					case 5:
 						cout << "주차 완료 및 차량 복귀" << endl;
+						cout << "sideDistance : " << sideDistance << endl;
 						DCmotor.go(); // 바퀴 조향은 그대로 탈출
 						if (1)
 						{ // 주차 분기 탈출 구문으로 차선이 검출되면 주차 분기를 탈출한다.
