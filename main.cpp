@@ -407,7 +407,7 @@ int main()
 					DCmotor.stop();
 					break;
 				}
-				waitKey(250);
+				waitKey(50);
 			}
 		}
 
@@ -446,7 +446,7 @@ int main()
 						DCmotor.go(40);
 						waitKey(1000);
 						DCmotor.stop();
-						steering.setRatio(80); // 바퀴를 오른쪽으로 돌린 후 후진
+						steering.setRatio(70); // 바퀴를 오른쪽으로 돌린 후 후진
 						DCmotor.backward(40);
 						caseNum = 3;
 					}
@@ -486,7 +486,7 @@ int main()
 					DCmotor.stop();
 					break;
 				}
-				waitKey(250);
+				waitKey(50);
 			}
 		}
 	}
