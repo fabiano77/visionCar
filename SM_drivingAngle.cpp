@@ -98,7 +98,7 @@ bool CheckStart::isStop(Mat& frame, double percent) {
 bool CheckStart::isTunnel(Mat& frame, double percent) {
 
 	if (isBlack(frame, percent)) { // 어두워지면 flag 증가
-		if (flag_tunnel < 15) // 최대 임계값
+		if (flag_tunnel < 20) // 최대 임계값
 			flag_tunnel++;
 	}
 	else { // 밝으면 flag 감소
@@ -106,7 +106,7 @@ bool CheckStart::isTunnel(Mat& frame, double percent) {
 			flag_tunnel--;
 	}
 
-	if (flag_tunnel >= 7) { // 최소 임계값. flag가 이보다 크면 터널 안에 있다고 인식
+	if (flag_tunnel >= 10) { // 최소 임계값. flag가 이보다 크면 터널 안에 있다고 인식
 		putText(frame, "Tunnel!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
 		return true;
 	}
@@ -157,7 +157,7 @@ bool RoundAbout::isStop(const double Distance) {
 		else // 1. 초기 상황
 		{
 			if (Distance < lower1_distance) { // 앞의 차량이 나타났을 때 flag 활성화
-				flag1_start = 15; // 1초당 4프레임정도 처리한다고 가정하면, 4초 뒤에 출발
+				flag1_start =35; // 1초당 10프레임정도 처리
 			}
 			return true;
 		}
@@ -166,7 +166,7 @@ bool RoundAbout::isStop(const double Distance) {
 
 bool RoundAbout::isDelay(const double Distance) {
 	if (Distance < lower2_distance) { // 앞의 차량이 나타났을 때 flag 활성화
-		flag2_start = 15;
+		flag2_start = 35;
 		return true; // 정지
 	}
 	else { // 앞의 차량이 가깝지 않을 때
