@@ -862,6 +862,7 @@ int main()
 
 			switch (switchCase) {
 			case 0:
+				cout << "직진중" << endl;
 				DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 				if (Distance_first < MAX_ULTRASONIC) {
 					switchCase = 1;//회전부분으로 이동
@@ -869,6 +870,7 @@ int main()
 				break;
 
 			case 1: //좌회전 중
+				cout << "추월 시작 및 좌회전 중" << endl;
 				steerVal = 10;
 				if (holdFlag >= MAX_holdFlag) {
 					holdFlag = 0;
@@ -879,18 +881,24 @@ int main()
 				}
 				break;
 			case 2: //각도 다시 변환
+				cout << "각도 조정중" << endl;
 				steerVal = 90;//다시 직진으로 만들자
-				if (holdFlag >= MAX_holdFlag) {
-					holdFlag = 0;
-					switchCase = 3;
-				}
-				else {
-					holdFlag++;
+				if (Distance_second < MAX_ULTRASONIC)
+				{
+					if (holdFlag >= MAX_holdFlag) {
+						holdFlag = 0;
+						switchCase = 3;
+					}
+					else {
+						holdFlag++;
+					}
 				}
 				break;
 			case 3:
+				cout << "추월중 직진중" << endl;
 				steerVal = 50;
 				if (Distance_second > MAX_ULTRASONIC) { switchCase = 4; }
+
 				if (holdFlag >= 3 * MAX_holdFlag) {
 					holdFlag = 0;
 					switchCase = 4;
@@ -901,17 +909,19 @@ int main()
 				break;
 			case 4:
 				steerVal = 90;
+				cout << "추월 후 복귀중" << endl;
 				if (Distance_second < MAX_ULTRASONIC) //오른쪽 탐지되면 원래대로 전환
 				{
 					switchCase = 0;
 				}
-				else if (holdFlag >= MAX_holdFlag && Distance_second > MAX_ULTRASONIC) {
+				else if (holdFlag >= MAX_holdFlag) {
 					holdFlag = 0;
 					switchCase = 0;
 				}
 				else {
 					holdFlag++;
 				}
+				break;
 			}
 
 			steering.setRatio(steerVal);
