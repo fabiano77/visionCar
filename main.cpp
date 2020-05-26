@@ -631,6 +631,7 @@ int main()
 		bool overtakingFlag = false;	  //추월상황 판단
 		int returnFlag = 0;
 		const int MAX_returnFlag = 5; // 아무생각 없이 직진하지 말라는 방지 flag
+		bool endFlag = false;//상황 리턴시 혼돈방지 flag
 		//초음파 센서 하나인 경우
 		while (true)
 		{
@@ -686,10 +687,11 @@ int main()
 					{
 						returnFlag++;
 					}
-					if (returnFlag >= MAX_returnFlag)
+					else if (returnFlag >= MAX_returnFlag)//일정 이상시 복귀
 					{
-						rotaryFlag = true;
+						overtakingFlag = true;
 						DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
+						returnFlag = 0;
 					}
 				}
 
