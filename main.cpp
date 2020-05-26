@@ -633,6 +633,7 @@ int main()
 		int returnFlag = 0;
 		const int MAX_returnFlag = 5; // 아무생각 없이 직진하지 말라는 방지 flag
 		bool endFlag = false;//상황 리턴시 혼돈방지 flag
+		bool startFlag = true;//시작할 수 있는경우 true로 함
 		//초음파 센서 하나인 경우
 		while (true)
 		{
@@ -643,6 +644,7 @@ int main()
 			Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
 			if (overtakingFlag == false)			  //추월상황이 아닐때,
 			{
+				startFlag = true;
 				endFlag = false;
 				rotaryFlag = false;
 				if (Distance_first > MAX_ULTRASONIC) //거리가 멀때
@@ -681,14 +683,15 @@ int main()
 					cout << "추월중" << endl;
 					rotaryFlag = true;
 					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
+					startFlag = false;
 				}
-				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC && endFlag == true) // 차량을 지나치고 복귀중 재탐색시
+				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC && endFlag == true&&startFlag==false) // 차량을 지나치고 복귀중 재탐색시
 				{
 					cout << "복귀 시도중" << endl;
 					rotaryFlag = false;
 					steerVal = 50;
 				}
-				else if (Distance_first > MAX_ULTRASONIC && Distance_second > MAX_ULTRASONIC) //추월 상황 종료후 복귀 신호
+				else if (Distance_first > MAX_ULTRASONIC && Distance_second > MAX_ULTRASONIC &&startFlag==false) //추월 상황 종료후 복귀 신호
 				{
 					cout << " 복귀 중 " << endl;
 					endFlag = true;
