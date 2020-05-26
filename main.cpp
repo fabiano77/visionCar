@@ -329,6 +329,7 @@ int main()
 		bool sensingFlag(false);
 		TickMeter tm;
 
+		DCmotor.go(40);
 
 		while (!parkingComplete)
 		{
