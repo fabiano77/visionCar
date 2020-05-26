@@ -370,10 +370,12 @@ int main()
 				cout << "주차 공간 감지" << endl;
 				if (sideDistance < 30) //
 				{
-					tm.stop();
-					cout << "폭 감지 시간 = " << tm.getTimeMilli() << endl;
 					DCmotor.stop();
-					if (tm.getTimeMilli() > 1200)	//폭 길 경우 -> 수평
+					tm.stop();
+					double widthTime = tm.getTimeMilli();
+					cout << "폭 감지 시간 = " << widthTime << endl;
+
+					if (widthTime > 600)	//폭 길 경우 -> 수평
 					{
 						cout << "수평 주차로 판단한다." << endl;
 						DCmotor.stop();
