@@ -376,7 +376,7 @@ int main()
 					cout << "폭 감지 시간 = " << widthTime << endl;
 
 					//if (widthTime > 600)	//폭 길 경우 -> 수평
-					if(true)
+					if (true)
 					{
 						cout << "수평 주차로 판단한다." << endl;
 						DCmotor.stop();
@@ -627,7 +627,7 @@ int main()
 		bool rotaryFlag(false);
 		double Distance_first; //거리값
 		double Distance_second;
-		const double MAX_ULTRASONIC = 30; //30CM 최대
+		const double MAX_ULTRASONIC = 25; //30CM 최대
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 
 		//초음파 센서 하나인 경우
@@ -925,6 +925,9 @@ int main()
 		}
 		else if (choosemodeNum == 4) {
 
+			int delay = 1700;
+			cout << "delay = ";
+			cin >> delay;
 			int switchCase = 0;//0은 기본주행
 			int holdFlag = 0;//상태유지 flag
 			const int MAX_holdFlag = 10;
@@ -937,6 +940,8 @@ int main()
 
 				Distance_first = firstSonic.distance();	  //초음파 거리측정 1번센서.
 				Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
+				cout << "전방 센서 거리 : " << Distance_first << endl;
+				cout << "측면 센서 거리 : " << Distance_second << endl;
 
 
 				switch (switchCase) {
@@ -948,50 +953,44 @@ int main()
 					break;
 
 				case 1: //좌회전 중
-					cout << "추월 시작 및 좌회전 중" << endl;
+					cout << "1) 추월 시작 및 좌회전 중" << endl;
 					steerVal = 10;
-					if (holdFlag >= MAX_holdFlag) {
-						holdFlag = 0;
-						switchCase = 2;
-					}
-					else {
-						holdFlag++;
-					}
+					waitKey(delay);
+					switchCase = 2;
 					break;
+
 				case 2: //각도 다시 변환
-					cout << "각도 조정중 및 직진상황" << endl;
-					if (Distance_second < MAX_ULTRASONIC)
-					{
-						if (holdFlag >= 3*MAX_holdFlag) {
-							holdFlag = 0;
-							switchCase = 3;
-						}
-						else {
-							holdFlag++;
-						}
-					}
-					else if (Distance_second > MAX_ULTRASONIC)//
-					{ switchCase = 3; }
-					break;
-				case 3:
+					cout << "2) 각도 조정중" << endl;
 					steerVal = 90;
-					cout << "추월 후 복귀중" << endl;
-					if (Distance_second < MAX_ULTRASONIC) //오른쪽 탐지되면 원래대로 전환
-					{
-						holdFlag = 0;
-						switchCase = 0;
-					}
-					if (holdFlag >= MAX_holdFlag) {//만약
-						holdFlag = 0;
-						switchCase = 0;
-					}
-					else {
-						holdFlag++;
-					}
+					waitKey(delay);
+					switchCase = 3;
+					break;
+
+				case 3:
+					cout << "3) 직진 중" << endl;
+					steerVal = 50;
+					if (Distance_second > MAX_ULTRASONIC)
+						switchCase = 4;
+					break;
+
+				case 4:
+					steerVal = 90;
+					cout << "4) 추월 후 복귀중" << endl;
+					waitKey(delay);
+					switchCase = 5;
+					break;
+
+				case 5:
+					steerVal = 10;
+					cout << "5) 복귀 후 각도조정중" << endl;
+					waitKey(delay);
+					switchCase = 0;
 					break;
 				}
 				//switch문 종료
+
 				steering.setRatio(steerVal);
+
 				if (waitKey(33) == 27) {
 					break; //프로그램 종료 ESC키.
 				}
