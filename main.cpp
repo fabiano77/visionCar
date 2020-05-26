@@ -635,6 +635,7 @@ int main()
 			const int MAX_returnFlag = 5; // 아무생각 없이 직진하지 말라는 방지 flag
 			bool endFlag = false;//상황 리턴시 혼돈방지 flag
 			bool startFlag = true;//시작할 수 있는경우 true로 함
+			int afterOvertakingFlag = 0;
 			while (true)
 			{
 
@@ -726,8 +727,9 @@ int main()
 			}
 			steering.setRatio(steerVal);
 			imshow("frame", frame);
-			if (waitKey(33) == 27)
+			if (waitKey(33) == 27) {
 				break; //프로그램 종료 ESC키.
+			}
 		}
 
 		else if (choosemodeNum == 1) {
@@ -794,8 +796,8 @@ int main()
 					}
 					else if (Distance_second < MAX_ULTRASONIC)//추월중인 부분
 					{
-						cout << "추월 중 부분"
-							DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
+						cout << "추월 중 부분" << endl;
+						DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 						frontOvertakingFlag = false;
 					}
 					else if (Distance_second > MAX_ULTRASONIC && Distance_first > MAX_ULTRASONIC && frontOvertakingFlag == false) //추월을 지난 부분
@@ -820,8 +822,9 @@ int main()
 			}
 			steering.setRatio(steerVal);
 			imshow("frame", frame);
-			if (waitKey(33) == 27)
+			if (waitKey(33) == 27){
 				break; //프로그램 종료 ESC키.
+			}
 		}
 
 
