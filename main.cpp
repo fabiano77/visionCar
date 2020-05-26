@@ -524,7 +524,7 @@ int main()
 			{
 				if (Rotary.isDelay(Distance)) { // 앞의 차량과 가까워졌을 시 정지
 					DCmotor.stop();
-					cout << "stop!" << endl;
+					cout << "<<< stop! >>>" << endl;
 				}
 				else { // 
 					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);

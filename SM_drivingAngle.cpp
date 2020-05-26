@@ -155,6 +155,7 @@ RoundAbout::RoundAbout() {
 
 bool RoundAbout::isStop(const double Distance) {
 	if (check1_start == 0) { // 4. 최종 상황 : 한 번이라도 출발했을 경우 출발을 유지한다.
+		cout << "4. : go! " << endl;
 		return false;
 	}
 	else { // 정지선에서 대기 상태
@@ -162,18 +163,20 @@ bool RoundAbout::isStop(const double Distance) {
 			if (Distance >= uper1_distance) {
 				flag1_start--;
 			}
+			cout << "2. : flag1_start = " << flag1_start << endl;
 			return true;
 		}
 		else if (flag1_start == 0) { // 3. flag가 0이 될 경우 출발
 			if (check1_start != 0) {
 				check1_start = 0; // 출발했다는 표시
 			}
+			cout << "3. : start! " << endl;
 			return false; // 출발
 		}
 		else // 1. 초기 상황
 		{
 			if (Distance < lower1_distance) {
-				if (flag_wait < 15)
+				if (flag_wait < 5)
 					flag_wait++;
 			}
 			else {
@@ -181,10 +184,13 @@ bool RoundAbout::isStop(const double Distance) {
 					flag_wait--;
 				}
 			}
+			cout << "1. : flag_wait = " << flag_wait << ",";
 			if (flag_wait == 15) {	
 				flag_wait = -1;
 				flag1_start = 35; // 1초당 10프레임정도 처리
+				cout << " flag1_start = " << flag1_start;
 			}
+			cout << endl;
 			return true;
 		}
 	}
@@ -192,10 +198,10 @@ bool RoundAbout::isStop(const double Distance) {
 
 bool RoundAbout::isDelay(const double Distance) {
 	if (Distance < lower2_distance) { // 앞의 차량이 나타났을 때 flag 활성화
-		if (flag_wait < 10) {
+		if (flag_wait < 5) {
 			flag_wait++;
 		}
-		if (flag_wait == 10) {
+		if (flag_wait == 5) {
 			flag_wait = -1;
 			flag2_start = 35;
 		}
