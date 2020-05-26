@@ -929,7 +929,7 @@ int main()
 			cout << "delay = ";
 			cin >> delay;
 			int switchCase = 0;//0은 기본주행
-			int holdFlag = 0;//상태유지 flag
+			bool delayFlag = false;//상태유지 flag
 			const int MAX_holdFlag = 10;
 			while (true)
 			{
@@ -955,14 +955,14 @@ int main()
 				case 1: //좌회전 중
 					cout << "1) 추월 시작 및 좌회전 중" << endl;
 					steerVal = 10;
-					waitKey(delay);
+					delayFlag = true;
 					switchCase = 2;
 					break;
 
 				case 2: //각도 다시 변환
 					cout << "2) 각도 조정중" << endl;
 					steerVal = 90;
-					waitKey(delay);
+					delayFlag = true;
 					switchCase = 3;
 					break;
 
@@ -976,20 +976,22 @@ int main()
 				case 4:
 					steerVal = 90;
 					cout << "4) 추월 후 복귀중" << endl;
-					waitKey(delay);
+					delayFlag = true;
 					switchCase = 5;
 					break;
 
 				case 5:
 					steerVal = 10;
 					cout << "5) 복귀 후 각도조정중" << endl;
-					waitKey(delay);
+					delayFlag = true;
 					switchCase = 0;
 					break;
 				}
 				//switch문 종료
 
 				steering.setRatio(steerVal);
+				if (delayFlag)
+					waitKey(delay);
 
 				if (waitKey(33) == 27) {
 					break; //프로그램 종료 ESC키.
