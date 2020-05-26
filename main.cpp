@@ -909,11 +909,12 @@ int main()
 				break;
 			case 4:
 				steerVal = 90;
+				cout << "추월 후 복귀중" << endl;
 				if (Distance_second < MAX_ULTRASONIC) //오른쪽 탐지되면 원래대로 전환
 				{
 					switchCase = 0;
 				}
-				else if (holdFlag >= MAX_holdFlag && Distance_second > MAX_ULTRASONIC) {
+				else if (holdFlag >= MAX_holdFlag) {
 					holdFlag = 0;
 					switchCase = 0;
 				}
