@@ -616,7 +616,7 @@ int main()
 	else if (mode == 7) //Mode 7 : Overtaking(민수) ------------------------------------------
 	{
 		int choosemodeNum = 0;
-		cout << "MS'mode 1: Original , 2: 분기점 추가, 3:시간 기반 4: add 대희형 5:time기반" << endl;
+		cout << "MS'mode 1: Original , 2: 분기점 추가, 3:flag 기반 4: add 대희형 " << endl;
 		cin >> choosemodeNum;
 		Driving_DH DH(true, 1.00);
 		bool cornerFlag(false);
@@ -969,7 +969,7 @@ int main()
 
 				case 3:
 					cout << "3) 직진 중" << endl;
-					steerVal = 50;
+					steerVal = 50;//차선이 생기면 여기에 driving넣으면됨
 					if (Distance_second > MAX_SIDE_ULTRASONIC)
 						switchCase = 4;
 					break;
@@ -1002,67 +1002,7 @@ int main()
 			}
 
 		}
-		else if (choosemodeNum == 5) {
-
-			int switchCase = 0;//0은 기본주행
-			while (true)
-			{
-				DCmotor.go();
-				videocap >> distortedFrame;
-				remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
-
-				Distance_first = firstSonic.distance();	  //초음파 거리측정 1번센서.
-				Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
-
-				bool overtakingFlag = true;	  //추월상황 판단
-				const int MAX_holdFlag = 10;
-
-				switch (switchCase) {
-				case 0:
-					cout << "직진중" << endl;
-					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-					if (Distance_first < MAX_ULTRASONIC) {
-						switchCase = 1;//회전부분으로 이동
-						DCmotor.stop();
-						waitKey(100);
-					}
-					break;
-
-				case 1: //좌회전 중
-					cout << "추월 시작 및 좌회전 중" << endl;
-					steerVal = 10;
-					DCmotor.go();
-					waitKey(1500);
-					switchCase = 2;
-
-					break;
-				case 2:
-					steerVal = 90;
-					waitKey(1200);
-				case 3: //각도 다시 변환
-					cout << "각도 조정중 및 직진상황" << endl;
-					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-					while (Distance_second < MAX_ULTRASONIC) {
-						waitKey(200);
-						if (Distance_second > MAX_ULTRASONIC) {
-							switchCase = 4;
-						}
-					}
-					break;
-				case 4:
-					steerVal = 80;
-					cout << "추월 후 복귀중" << endl;
-					waitKey(1500);
-					switchCase = 5;
-					break;
-				}
-				steering.setRatio(steerVal);
-				if (waitKey(33) == 27) {
-					break; //프로그램 종료 ESC키.
-				}
-			}
-
-		}
+		
 		//0.3초당 1frame 처리
 		// steering.setRatio(50);	//바퀴조향
 		// DCmotor.go();			//dc모터 전진 argument로 속도전달가능
