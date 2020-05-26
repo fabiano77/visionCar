@@ -397,6 +397,7 @@ int main()
 						cout << "Detect line and keep going" << endl;
 						caseNum++;
 					}
+					break;
 				default:
 					parkingComplete = true;
 					if (parkingComplete)
@@ -406,6 +407,7 @@ int main()
 				}
 				waitKey(33);
 			}
+			cout << "씨!발련아" << endl;
 		}
 
 		else
