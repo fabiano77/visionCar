@@ -319,190 +319,172 @@ int main()
 	}
 	//End Driving mode
 
+
 	else if (mode == 5) //Mode 5 : Parking(석준) ---------------------------------------------
 	{
-		double sideDistance = 0;	  // 측면 거리센서 값
-		double backDistance = 0;	  // 후방 거리센서 값
-		int caseNum = 0;			  // Switch - Case 문 변수
-		bool parkingComplete = false; // 주차 완료를 나타내는 플래그
+	double sideDistance = 0;	  // 측면 거리센서 값
+	double backDistance = 0;	  // 후방 거리센서 값
+	int caseNum = 0;			  // Switch - Case 문 변수
+	bool parkingComplete = false; // 주차 완료를 나타내는 플래그
+	bool sensingFlag(false);
 
-		cout << "Select Mode : " << endl;
-		cout << "0 : Parallel Parking" << endl;
-		cout << "1 : Vertical Parking" << endl;
-		cin >> mode;
-		if (mode == 0)
-		{ // 평행주차 모드
-			waitKey(0); // key 입력 시 출발
-			DCmotor.go();
-			while (!parkingComplete)
+
+	while (!parkingComplete)
+	{
+		videocap >> distortedFrame;
+		remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
+
+		sideDistance = secondSonic.distance();  //초음파 거리측정.
+		waitKey(50);
+		backDistance = firstSonic.distance(); //초음파 거리측정.
+
+		cout << "sideDistance : " << sideDistance << endl;
+		cout << "backDistance : " << backDistance << endl;
+
+
+		cout << "caseNum : " << caseNum << endl;
+
+		switch (caseNum)
+		{
+			//주차 상황 판단전
+		case 0:
+			cout << "기본 주행 코드" << endl;
+			if (sideDistance < 30) // 처음 벽을 만나면 다음 분기로 이동
+				caseNum = 1;
+			break;
+
+		case 1:
+			cout << "벽 처음 감지" << endl;
+			if (sideDistance > 45) // 벽을 지나 주차공간을 만나면 다음 분기로 이동
+				caseNum = 2;
+			break;
+
+		case 2:
+			if (!sensingFlag)	//주차공간의 폭을 측정
 			{
-				videocap >> distortedFrame;
-				remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
-
-				sideDistance = secondSonic.distance();  //초음파 거리측정.
-				waitKey(50);
-				backDistance = firstSonic.distance(); //초음파 거리측정.
-
-				cout << "sideDistance : " << sideDistance << endl;
-				cout << "backDistance : " << backDistance << endl;
-
-
-				cout << "caseNum : " << caseNum << endl;
-
-				switch (caseNum)
-				{
-				case 0:
-					cout << "기본 주행 코드" << endl;
-					if ((sideDistance != 0) && (sideDistance < 30)) // 처음 벽을 만나면 다음 분기로 이동
-						caseNum = 1;
-					break;
-				case 1:
-					cout << "벽을 처음 만난 후" << endl;
-					if (sideDistance > 45) // 벽을 지나 주차공간을 만나면 다음 분기로 이동
-						caseNum = 2;
-					break;
-				case 2:
-					cout << "주차 공간을 만난 후" << endl;
-					if ((sideDistance != 0) && (sideDistance < 30))
-					{ // 주차공간을 지나 다시 벽을 만나면 다음 분기로 이동
-						DCmotor.stop();
-						waitKey(500);
-						DCmotor.go();
-						waitKey(700);
-						DCmotor.stop();
-						waitKey(500);
-						steering.setRatio(90); // 바퀴를 오른쪽으로 돌린 후 후진
-						DCmotor.backward(40);
-						caseNum = 3;
-					}
-					break;
-				case 3:
-					cout << "후진 진행 - 1 -" << endl;
-					if ((backDistance != 0) && (backDistance < 10) || ((sideDistance != 0) && (sideDistance < 12)))
-					{ // 후진 중 어느정도 주차공간에 진입하였으면 다음 분기로 이동
-						DCmotor.stop();
-						waitKey(500);
-						DCmotor.go();
-						waitKey(700);
-						steering.setRatio(10); // 바퀴를 왼쪽으로 돌린 후 후진
-						DCmotor.backward(40);
-						caseNum = 4;
-					}
-					break;
-				case 4:
-					cout << "후진 진행 - 2 -" << endl;
-					if (((sideDistance != 0) && (sideDistance < 8)) || ((backDistance != 0) && (backDistance < 8)))
-					{
-						DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
-						waitKey(3000);
-						caseNum = 5;
-					}
-					break;
-				case 5:
-					cout << "주차 완료 및 차량 복귀" << endl;
-					DCmotor.go(); // 바퀴 조향은 그대로 탈출
-					if (1)
-					{ // 주차 분기 탈출 구문으로 차선이 검출되면 주차 분기를 탈출한다.
-						waitKey(2000);
-						cout << "Detect line and keep going" << endl;
-						caseNum = 6;
-					}
-					break;
-				default:
-					parkingComplete = true;
-					if (parkingComplete)
-						cout << "Parking branck is done" << endl;
-					DCmotor.stop();
-					break;
-				}
-				waitKey(150);
+				sensingFlag = true;
+				TickMeter tm;
+				tm.start();
 			}
-		}
-
-		else
-		{ // 수직주차 모드
-			waitKey(0); // key 입력 시 출발
-			DCmotor.go();
-			while (!parkingComplete)
+			cout << "주차 공간 감지" << endl;
+			if (sideDistance < 30) //
 			{
-				videocap >> distortedFrame;
-				remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
-
-				sideDistance = secondSonic.distance();  //초음파 거리측정.
-				waitKey(50);
-				backDistance = firstSonic.distance(); //초음파 거리측정.
-
-				switch (caseNum)
+				tm.stop();
+				cout << "폭 감지 시간 = " << tm.getTimeMilli() << endl;
+				DCmotor.stop();
+				if (tm.getTimeMilli() > 2500)	//폭 길 경우 -> 수평
 				{
-				case 0:
-					cout << "기본 주행 코드" << endl;
-					if ((sideDistance != 0) && (sideDistance < 30)) { // 처음 벽을 만나면 다음 분기로 이동
-						caseNum = 1;
-					}
-					break;
-				case 1:
-					cout << "벽을 처음 만난 후" << endl;
-					if (sideDistance > 45) // 벽을 지나 주차공간을 만나면 다음 분기로 이동
-						caseNum = 2;
-					break;
-				case 2:
-					cout << "주차 공간을 만난 후" << endl;
-					if ((sideDistance != 0) && (sideDistance < 30))
-					{ // 주차공간을 지나 다시 벽을 만나면 다음 분기로 이동
-						DCmotor.stop();
-						waitKey(500);
-						DCmotor.backward();
-						waitKey(550);
-						DCmotor.stop();
-						steering.setRatio(20);
-						DCmotor.go(40);
-						waitKey(1000);
-						DCmotor.stop();
-						steering.setRatio(80); // 바퀴를 오른쪽으로 돌린 후 후진
-						DCmotor.backward(40);
-						caseNum = 3;
-					}
-					break;
-				case 3:
-					cout << "후진 진행 - 1 -" << endl;
-					if ((sideDistance != 0) && (sideDistance < 10))
-					{ // 후진 중 어느정도 주차공간에 진입하였으면 다음 분기로 이동
-						DCmotor.stop();
-						steering.setRatio(50); // 바퀴를 왼쪽으로 돌린 후 후진
-						DCmotor.backward();
-						caseNum = 5;
-					}
-					break;
-				case 5:
-					cout << "후진 진행 - 2 -" << endl;
-					if ((backDistance != 0) && (backDistance < 5))
-					{
-						DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
-						waitKey(3000);
-						caseNum = 6;
-					}
-					break;
-				case 6:
-					cout << "주차 완료 및 차량 복귀" << endl;
-					DCmotor.go(); // 바퀴 조향은 그대로 탈출
-					if (1)
-					{ // 주차 분기 탈출 구문으로 차선이 검출되면 주차 분기를 탈출한다.
-						waitKey(3000);
-						cout << "Detect line and keep going" << endl;
-						caseNum = 7;
-					}
-				default:
-					parkingComplete = true;
-					if (parkingComplete)
-						cout << "Parking branck is done" << endl;
+					cout << "수평 주차로 판단한다." << endl;
 					DCmotor.stop();
-					break;
+					waitKey(500);
+					DCmotor.go();
+					waitKey(700);
+					DCmotor.stop();
+					waitKey(500);
+					steering.setRatio(90); // 바퀴를 오른쪽으로 돌린 후 후진
+					DCmotor.backward(40);
+					caseNum = 103;
 				}
-				waitKey(150);
+				else 	//폭 짧음 -> 수직
+				{
+					cout << "수직 주차로 판단한다." << endl;
+					DCmotor.stop();
+					waitKey(500);
+					DCmotor.backward();
+					waitKey(550);
+					DCmotor.stop();
+					steering.setRatio(20);
+					DCmotor.go(40);
+					waitKey(1000);
+					DCmotor.stop();
+					steering.setRatio(80); // 바퀴를 오른쪽으로 돌린 후 후진
+					DCmotor.backward(40);
+					caseNum = 203;
+				}
 			}
+			break;
+			//주차 상황 판단 완료.
+
+
+			//수평 주차 시작---------------------------------------------
+		case 103:
+			cout << "수평) 후진 진행 - 1 -" << endl;
+			if ((backDistance != 0) && (backDistance < 10) || ((sideDistance != 0) && (sideDistance < 12)))
+			{ // 후진 중 어느정도 주차공간에 진입하였으면 다음 분기로 이동
+				DCmotor.stop();
+				waitKey(500);
+				DCmotor.go();
+				waitKey(700);
+				steering.setRatio(10); // 바퀴를 왼쪽으로 돌린 후 후진
+				DCmotor.backward(40);
+				caseNum = 104;
+			}
+			break;
+		case 104:
+			cout << "수평) 후진 진행 - 2 -" << endl;
+			if (((sideDistance != 0) && (sideDistance < 8)) || ((backDistance != 0) && (backDistance < 8)))
+			{
+				DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
+				waitKey(3000);
+				caseNum = 105;
+			}
+			break;
+		case 105:
+			cout << "수평) 주차 완료 및 차량 복귀" << endl;
+			DCmotor.go(); // 바퀴 조향은 그대로 탈출
+			if (1)
+			{ // 주차 분기 탈출 구문으로 차선이 검출되면 주차 분기를 탈출한다.
+				waitKey(2000);
+				cout << "Detect line and keep going" << endl;
+				caseNum = 106;
+			}
+			break;
+			//End 수평 주차---------------------------------------------
+
+
+
+			//수직 주차 시작---------------------------------------------
+		case 203:
+			cout << "수직) 후진 진행 - 1 -" << endl;
+			if (sideDistance < 10)
+			{ // 후진 중 어느정도 주차공간에 진입하였으면 다음 분기로 이동
+				DCmotor.stop();
+				steering.setRatio(50); // 바퀴를 왼쪽으로 돌린 후 후진
+				DCmotor.backward();
+				caseNum = 205;
+			}
+			break;
+		case 205:
+			cout << "수직) 후진 진행 - 2 -" << endl;
+			if (backDistance < 5)
+			{
+				DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
+				waitKey(3000);
+				caseNum = 206;
+			}
+			break;
+		case 206:
+			DCmotor.go(); // 바퀴 조향은 그대로 탈출
+			if (1)
+			{ // 주차 분기 탈출 구문으로 차선이 검출되면 주차 분기를 탈출한다.
+				waitKey(3000);
+				cout << "Detect line and keep going" << endl;
+				caseNum = 207;
+			}
+			break;
+			//End 수직주차 case---------------------------------------------
+
+
+		default:
+			parkingComplete = true;
+			if (parkingComplete)
+				cout << "Parking branck is done" << endl;
+			DCmotor.stop();
+			break;
 		}
-	}
-	//End Parking mode
+		//End Parking mode
+
+
 
 	else if (mode == 6)//Mode 6 : Rotary(상민) ----------------------------------------------
 	{
