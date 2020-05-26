@@ -97,8 +97,8 @@ int main()
 		//waitKey(1500);		//wait 1.5sec
 
 		//DCmotor.stop(); //dc모터 멈춤
-		cout << "1번센서 거리 = " << firstSonic.distance << endl;
-		cout << "2번센서 거리 = " << secondSonic.distance << endl;
+		cout << "1번센서 거리 = " << firstSonic.distance() << endl;
+		cout << "2번센서 거리 = " << secondSonic.distance() << endl;
 		waitKey(33);
 	}
 	//End basic test
