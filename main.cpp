@@ -419,7 +419,7 @@ int main()
 					waitKey(500);
 					DCmotor.go();
 					waitKey(700);
-					steering.setRatio(15); // 바퀴를 왼쪽으로 돌린 후 후진
+					steering.setRatio(12); // 바퀴를 왼쪽으로 돌린 후 후진
 					DCmotor.backward(40);
 					caseNum = 104;
 				}
@@ -438,6 +438,10 @@ int main()
 			case 105:
 				cout << "수평) 주차 완료 및 차량 복귀" << endl;
 				DCmotor.go(); // 바퀴 조향은 그대로 탈출
+				waitKey(700);
+				steering(63);
+				waitKey(1200);
+				DCmotor.stop();
 				if (1)
 				{ // 주차 분기 탈출 구문으로 차선이 검출되면 주차 분기를 탈출한다.
 					waitKey(2000);
@@ -471,6 +475,12 @@ int main()
 				break;
 			case 206:
 				DCmotor.go(); // 바퀴 조향은 그대로 탈출
+				waitKey(1300);
+				steering(90);
+				waitKey(1300);
+				steering(50);
+				waitKey(1000);
+				DCmotor.stop();
 				if (1)
 				{ // 주차 분기 탈출 구문으로 차선이 검출되면 주차 분기를 탈출한다.
 					waitKey(3000);
