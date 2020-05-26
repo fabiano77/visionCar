@@ -444,7 +444,7 @@ int main()
 						DCmotor.stop();
 						waitKey(500);
 						DCmotor.backward();
-						waitKey(400);
+						waitKey(800);
 						DCmotor.stop();
 						steering.setRatio(20);
 						DCmotor.go(40);
@@ -490,7 +490,7 @@ int main()
 					DCmotor.stop();
 					break;
 				}
-				waitKey(50);
+				waitKey(150);
 			}
 		}
 	}
