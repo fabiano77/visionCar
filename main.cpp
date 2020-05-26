@@ -439,7 +439,7 @@ int main()
 				cout << "수평) 주차 완료 및 차량 복귀" << endl;
 				DCmotor.go(); // 바퀴 조향은 그대로 탈출
 				waitKey(700);
-				steering(63);
+				steering.setRatio(63);
 				waitKey(1200);
 				DCmotor.stop();
 				if (1)
@@ -476,9 +476,9 @@ int main()
 			case 206:
 				DCmotor.go(); // 바퀴 조향은 그대로 탈출
 				waitKey(1300);
-				steering(90);
+				steering.setRatio(90);
 				waitKey(1300);
-				steering(50);
+				steering.setRatio(50);
 				waitKey(1000);
 				DCmotor.stop();
 				if (1)
