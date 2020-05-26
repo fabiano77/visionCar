@@ -375,7 +375,8 @@ int main()
 					double widthTime = tm.getTimeMilli();
 					cout << "폭 감지 시간 = " << widthTime << endl;
 
-					if (widthTime > 600)	//폭 길 경우 -> 수평
+					//if (widthTime > 600)	//폭 길 경우 -> 수평
+					if(true)
 					{
 						cout << "수평 주차로 판단한다." << endl;
 						DCmotor.stop();
@@ -418,7 +419,7 @@ int main()
 					waitKey(500);
 					DCmotor.go();
 					waitKey(700);
-					steering.setRatio(10); // 바퀴를 왼쪽으로 돌린 후 후진
+					steering.setRatio(15); // 바퀴를 왼쪽으로 돌린 후 후진
 					DCmotor.backward(40);
 					caseNum = 104;
 				}
@@ -428,7 +429,9 @@ int main()
 				if ((sideDistance < 10) || (backDistance < 10))
 				{
 					DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
+					steering.setRatio(50);
 					waitKey(3000);
+					steering.setRatio(15);
 					caseNum = 105;
 				}
 				break;
