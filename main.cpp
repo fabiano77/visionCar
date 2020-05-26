@@ -331,6 +331,7 @@ int main()
 		cin >> mode;
 		if (mode == 0)
 		{ // 평행주차 모드
+			waitKey(0); // key 입력 시 출발
 			while (!parkingComplete)
 			{
 				videocap >> distortedFrame;
@@ -410,7 +411,7 @@ int main()
 
 		else
 		{ // 수직주차 모드
-
+			waitKey(0); // key 입력 시 출발
 			while (!parkingComplete)
 			{
 				videocap >> distortedFrame;
