@@ -840,7 +840,7 @@ int main()
 	else if (choosemodeNum == 3) {
 		while (true)
 		{
-
+			DCmotor.go();
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
 
