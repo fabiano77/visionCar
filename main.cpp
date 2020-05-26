@@ -954,14 +954,14 @@ int main()
 
 				case 1: //좌회전 중
 					cout << "1) 추월 시작 및 좌회전 중" << endl;
-					steerVal = 10;
+					steerVal = 0;
 					delayFlag = true;
 					switchCase = 2;
 					break;
 
 				case 2: //각도 다시 변환
 					cout << "2) 각도 조정중" << endl;
-					steerVal = 90;
+					steerVal = 100;
 					delayFlag = true;
 					switchCase = 3;
 					break;
@@ -974,14 +974,14 @@ int main()
 					break;
 
 				case 4:
-					steerVal = 90;
+					steerVal = 100;
 					cout << "4) 추월 후 복귀중" << endl;
 					delayFlag = true;
 					switchCase = 5;
 					break;
 
 				case 5:
-					steerVal = 10;
+					steerVal = 0;
 					cout << "5) 복귀 후 각도조정중" << endl;
 					delayFlag = true;
 					switchCase = 0;
