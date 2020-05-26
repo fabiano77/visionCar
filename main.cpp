@@ -504,7 +504,7 @@ int main()
 		DH.mappingSet(cornerFlag);	//조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
-		double speedVal_rotary(20.0);
+		double speedVal_rotary(25.0);
 		double Distance;	//거리값
 
 		bool rotaryFlag(true);
@@ -524,8 +524,9 @@ int main()
 			{
 				if (Rotary.isDelay(Distance)) { // 앞의 차량과 가까워졌을 시 정지
 					DCmotor.stop();
+					cout << "stop!" << endl;
 				}
-				else if (Rotary.isDelay(Distance)) { // 
+				else { // 
 					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 
 					if (!cornerFlag && steerVal == 90 || steerVal == 10)	//최대 각 검출되면 cornerFlag ON

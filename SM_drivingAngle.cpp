@@ -143,8 +143,9 @@ int CheckStart::GetFlag_tunnel() {
 RoundAbout::RoundAbout() {
 	flag1_start = -1;
 	check1_start = -1;
-	lower1_distance = 30;
-	uper1_distance = 30;
+	lower1_distance = 25;
+	uper1_distance = 40;
+	flag_wait = -1;
 
 	flag2_start = -1;
 	check2_start = -1;
@@ -171,8 +172,18 @@ bool RoundAbout::isStop(const double Distance) {
 		}
 		else // 1. 초기 상황
 		{
-			if (Distance < lower1_distance) { // 앞의 차량이 나타났을 때 flag 활성화
-				flag1_start =35; // 1초당 10프레임정도 처리
+			if (Distance < lower1_distance) {
+				if (flag_wait < 15)
+					flag_wait++;
+			}
+			else {
+				if (flag_wait > 0) {
+					falg_wait--;
+				}
+			}
+			if (flag_wait == 15) {	
+				flag_wait = -1;
+				flag1_start = 35; // 1초당 10프레임정도 처리
 			}
 			return true;
 		}
@@ -181,10 +192,19 @@ bool RoundAbout::isStop(const double Distance) {
 
 bool RoundAbout::isDelay(const double Distance) {
 	if (Distance < lower2_distance) { // 앞의 차량이 나타났을 때 flag 활성화
-		flag2_start = 35;
+		if (flag_wait < 10) {
+			flag_wait++;
+		}
+		if (flag_wait == 10) {
+			flag_wait = -1;
+			flag2_start = 35;
+		}
 		return true; // 정지
 	}
 	else { // 앞의 차량이 가깝지 않을 때
+		if (flag_wait > 0) {
+			flag_wait--;
+		}
 		if (flag2_start < 0) { // flag가 비활성화 되었을 때
 			return false; // 출발
 		}
