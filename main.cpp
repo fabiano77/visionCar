@@ -627,7 +627,7 @@ int main()
 		bool rotaryFlag(false);
 		double Distance_first; //거리값
 		double Distance_second;
-		const double MAX_ULTRASONIC = 35; //30CM 최대
+		const double MAX_ULTRASONIC = 30; //30CM 최대
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 
 		//초음파 센서 하나인 경우
@@ -927,6 +927,7 @@ int main()
 
 			int switchCase = 0;//0은 기본주행
 			int holdFlag = 0;//상태유지 flag
+			const int MAX_holdFlag = 10;
 			while (true)
 			{
 				DCmotor.go();
@@ -937,8 +938,6 @@ int main()
 				Distance_first = firstSonic.distance();	  //초음파 거리측정 1번센서.
 				Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
 
-				bool overtakingFlag = true;	  //추월상황 판단
-				const int MAX_holdFlag = 10;
 
 				switch (switchCase) {
 				case 0:
@@ -991,6 +990,7 @@ int main()
 					cout << "추월 후 복귀중" << endl;
 					if (Distance_second < MAX_ULTRASONIC) //오른쪽 탐지되면 원래대로 전환
 					{
+						holdFlag = 0;
 						switchCase = 0;
 					}
 					
@@ -1003,7 +1003,7 @@ int main()
 					}
 					break;
 				}
-
+				//switch문 종료
 				steering.setRatio(steerVal);
 				if (waitKey(33) == 27) {
 					break; //프로그램 종료 ESC키.
