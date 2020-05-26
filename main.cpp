@@ -483,6 +483,7 @@ int main()
 				DCmotor.stop();
 				break;
 			}
+			waitKey(150);
 		}
 	}
 	//End Parking mode
