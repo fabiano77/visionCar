@@ -426,51 +426,42 @@ int main()
 				{
 				case 0:
 					cout << "기본 주행 코드" << endl;
-					if ((sideDistance != 0) && (sideDistance < 7)) // 처음 벽을 만나면 다음 분기로 이동
+					if ((sideDistance != 0) && (sideDistance < 30)) { // 처음 벽을 만나면 다음 분기로 이동
 						caseNum = 1;
+					}
 					break;
 				case 1:
 					cout << "벽을 처음 만난 후" << endl;
-					if (sideDistance > 13) // 벽을 지나 주차공간을 만나면 다음 분기로 이동
+					if (sideDistance > 45) // 벽을 지나 주차공간을 만나면 다음 분기로 이동
 						caseNum = 2;
 					break;
 				case 2:
 					cout << "주차 공간을 만난 후" << endl;
-					if ((sideDistance != 0) && (sideDistance < 7))
+					if ((sideDistance != 0) && (sideDistance < 30))
 					{ // 주차공간을 지나 다시 벽을 만나면 다음 분기로 이동
 						DCmotor.stop();
-						steering.setRatio(100); // 바퀴를 오른쪽으로 돌린 후 후진
+						steering.setRatio(30);
+						DCmotor.go(40);
+						waitKey(1000);
+						DCmotor.stop();
+						steering.setRatio(70); // 바퀴를 오른쪽으로 돌린 후 후진
 						DCmotor.backward(40);
 						caseNum = 3;
 					}
 					break;
 				case 3:
 					cout << "후진 진행 - 1 -" << endl;
-					if ((backDistance != 0) && (backDistance < 3))
+					if ((sideDistance != 0) && (sideDistance < 10))
 					{ // 후진 중 어느정도 주차공간에 진입하였으면 다음 분기로 이동
 						DCmotor.stop();
 						steering.setRatio(50); // 바퀴를 왼쪽으로 돌린 후 후진
-						DCmotor.go();
-						waitKey(1000); // 조금 앞으로 차를 뺀다.
-						DCmotor.stop();
-						steering.setRatio(25);
 						DCmotor.backward();
 						caseNum = 4;
 					}
 					break;
-				case 4:
-					cout << "후진 진행 - 2 -" << endl;
-					if ((sideDistance != 0) && (sideDistance < 2))
-					{
-						DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
-						steering.setRatio(50);
-						DCmotor.backward();
-						caseNum = 5;
-					}
-					break;
 				case 5:
 					cout << "후진 진행 - 2 -" << endl;
-					if ((backDistance != 0) && (backDistance < 3))
+					if ((backDistance != 0) && (backDistance < 5))
 					{
 						DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
 						waitKey(3000);
