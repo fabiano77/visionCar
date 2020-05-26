@@ -332,6 +332,7 @@ int main()
 		if (mode == 0)
 		{ // 평행주차 모드
 			waitKey(0); // key 입력 시 출발
+			DCmotor.go();
 			while (!parkingComplete)
 			{
 				videocap >> distortedFrame;
@@ -412,6 +413,7 @@ int main()
 		else
 		{ // 수직주차 모드
 			waitKey(0); // key 입력 시 출발
+			DCmotor.go();
 			while (!parkingComplete)
 			{
 				videocap >> distortedFrame;
@@ -420,7 +422,6 @@ int main()
 				sideDistance = secondSonic.distance();  //초음파 거리측정.
 				waitKey(50);
 				backDistance = firstSonic.distance(); //초음파 거리측정.
-
 
 				switch (caseNum)
 				{
@@ -440,11 +441,11 @@ int main()
 					if ((sideDistance != 0) && (sideDistance < 30))
 					{ // 주차공간을 지나 다시 벽을 만나면 다음 분기로 이동
 						DCmotor.stop();
-						steering.setRatio(30);
+						steering.setRatio(10);
 						DCmotor.go(40);
-						waitKey(1000);
+						waitKey(1300);
 						DCmotor.stop();
-						steering.setRatio(70); // 바퀴를 오른쪽으로 돌린 후 후진
+						steering.setRatio(90); // 바퀴를 오른쪽으로 돌린 후 후진
 						DCmotor.backward(40);
 						caseNum = 3;
 					}
@@ -456,7 +457,7 @@ int main()
 						DCmotor.stop();
 						steering.setRatio(50); // 바퀴를 왼쪽으로 돌린 후 후진
 						DCmotor.backward();
-						caseNum = 4;
+						caseNum = 5;
 					}
 					break;
 				case 5:
