@@ -253,7 +253,8 @@ int main()
 					DH.mappingSet(cornerFlag);
 					cout << "cornerFlag ON" << '\n';
 				}
-				else if (cornerFlag && detectedLineCnt == 2)			//직선 두개 검출되면 cornerFlag OFF
+				//else if (cornerFlag && detectedLineCnt == 2)				//직선 두개 검출되면 cornerFlag OFF
+				else if (cornerFlag && (steerVal >= 40 && steerVal <= 60))	//각도가 좁아지면 cornerFlag OFF
 				{
 					cornerFlag = false;
 					DH.mappingSet(cornerFlag);
@@ -675,7 +676,7 @@ int main()
 					steerVal = 10; //먼저 좌회전
 					returnFlag = MAX_returnFlag;
 				}
-				
+
 				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC && endFlag == false) //추월 상황중 차량을 지나쳐갈 때
 				{
 					rotaryFlag = true;
@@ -715,7 +716,7 @@ int main()
 			// DCmotor.backward();		//dc모터 후진 argument로 속도전달가능
 			// DCmotor.stop();			//정지
 
-				steering.setRatio(steerVal);
+			steering.setRatio(steerVal);
 			imshow("frame", frame);
 			if (waitKey(33) == 27)
 				break; //프로그램 종료 ESC키.

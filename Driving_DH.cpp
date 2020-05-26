@@ -133,7 +133,7 @@ void Driving_DH::mappingSet(bool cFlag)
 	}
 	else		//직진상태일때
 	{
-		mappingSetSection(-0.15, 0.00, 0.15, 0.35, 0.45, 0.50, 0.55);
+		mappingSetSection(-0.15, 0.00, 0.15, 0.35, 0.45, 0.53, 0.61);
 		mappingSetValue(15.0000, 10.0, 8.00, 0.00, -4.0, 0.00, 40.0);
 	}
 }
