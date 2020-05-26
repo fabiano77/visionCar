@@ -703,12 +703,6 @@ int main()
 			// DCmotor.backward();		//dc모터 후진 argument로 속도전달가능
 			// DCmotor.stop();			//정지
 
-			if (shortDistanceFlag == true) //사물과 거리가 너무 가까울 때
-			{
-				DCmotor.backward();
-			}
-			else if (shortDistanceFlag == false)
-
 				steering.setRatio(steerVal);
 			imshow("frame", frame);
 			if (waitKey(33) == 27)
