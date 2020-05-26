@@ -628,6 +628,7 @@ int main()
 		double Distance_first; //거리값
 		double Distance_second;
 		const double MAX_ULTRASONIC = 27; //30CM 최대
+		const double MAX_SIDE_ULTRASONIC = 60;
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 
 		//초음파 센서 하나인 경우
@@ -969,7 +970,7 @@ int main()
 				case 3:
 					cout << "3) 직진 중" << endl;
 					steerVal = 50;
-					if (Distance_second > MAX_ULTRASONIC)
+					if (Distance_second > MAX_SIDE_ULTRASONIC)
 						switchCase = 4;
 					break;
 
@@ -981,7 +982,6 @@ int main()
 					break;
 
 				case 5:
-					steerVal = 0;
 					cout << "5) 복귀 후 각도조정중" << endl;
 					delayFlag = true;
 					switchCase = 0;
