@@ -627,13 +627,14 @@ int main()
 		bool rotaryFlag(false);
 		double Distance_first; //거리값
 		double Distance_second;
-		const double MAX_ULTRASONIC = 20; //30CM 최대
+		const double MAX_ULTRASONIC = 30; //30CM 최대
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 		bool shortDistanceFlag = false;	  //너무 가까운지에 대한 판단
 		bool overtakingFlag = false;	  //추월상황 판단
 		int returnFlag = 0;
 		const int MAX_returnFlag = 5; // 아무생각 없이 직진하지 말라는 방지 flag
 		bool endFlag = false;//상황 리턴시 혼돈방지 flag
+		bool startFlag = true;//시작할 수 있는경우 true로 함
 		//초음파 센서 하나인 경우
 		while (true)
 		{
@@ -644,6 +645,7 @@ int main()
 			Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
 			if (overtakingFlag == false)			  //추월상황이 아닐때,
 			{
+				startFlag = true;
 				endFlag = false;
 				rotaryFlag = false;
 				if (Distance_first > MAX_ULTRASONIC) //거리가 멀때
@@ -658,12 +660,12 @@ int main()
 					DCmotor.backward();
 					shortDistanceFlag = true;
 				}
-				else if (shortDistanceFlag == false) //추월상황 탐지 거리일 때(처음 진입의 경우)
+				else if (Distance_first<MAX_ULTRASONIC && shortDistanceFlag == false) //추월상황 탐지 거리일 때(처음 진입의 경우)
 				{
 					cout << "추월 시나리오 진입" << endl;
 					overtakingFlag = true;
 				}
-				else if (shortDistanceFlag == true) //추월상황 탐지 거리일 때(너무 가까이에 왔었던 경우)
+				else if (Distance_first < MAX_ULTRASONIC && shortDistanceFlag == true) //추월상황 탐지 거리일 때(너무 가까이에 왔었던 경우)
 				{
 					overtakingFlag = false;
 				}
@@ -673,25 +675,29 @@ int main()
 				if (Distance_first < MAX_ULTRASONIC && Distance_first > MIN_ULTRASONIC && Distance_second > MAX_ULTRASONIC) //추월상황 시작시, 직진의 물체탐지
 				{
 					cout << "좌회전 추월" << endl;
-					steerVal = 10; //먼저 좌회전
+					steerVal = 20; //먼저 좌회전
 					returnFlag = MAX_returnFlag;
 				}
 				
 				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC && endFlag == false) //추월 상황중 차량을 지나쳐갈 때
 				{
+					cout << "추월중" << endl;
 					rotaryFlag = true;
 					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
+					startFlag = false;
 				}
-				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC && endFlag == true) // 차량을 지나치고 복귀중 재탐색시
+				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC && endFlag == true&&startFlag==false) // 차량을 지나치고 복귀중 재탐색시
 				{
+					cout << "복귀 시도중" << endl;
 					rotaryFlag = false;
 					steerVal = 50;
 				}
-				else if (Distance_first > MAX_ULTRASONIC && Distance_second > MAX_ULTRASONIC) //추월 상황 종료후 복귀 신호
+				else if (Distance_first > MAX_ULTRASONIC && Distance_second > MAX_ULTRASONIC &&startFlag==false) //추월 상황 종료후 복귀 신호
 				{
+					cout << " 복귀 중 " << endl;
 					endFlag = true;
 					rotaryFlag = false;
-					steerVal = 90;
+					steerVal = 80;
 					//예비 상황 혹시 차량을 지나쳐가는 루프에 들어오지 못하는 경우 방지
 					if (returnFlag < MAX_returnFlag)
 					{
@@ -709,7 +715,6 @@ int main()
 				//차량 복귀 신호가 문제일 수 도 있음.
 			}
 
-			cout << "distance = " << Distance_first << endl; //거리출력
 			//0.3초당 1frame 처리
 			// steering.setRatio(50);	//바퀴조향
 			// DCmotor.go();			//dc모터 전진 argument로 속도전달가능
