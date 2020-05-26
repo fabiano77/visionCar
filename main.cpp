@@ -402,8 +402,8 @@ int main()
 						cout << "Parking branck is done" << endl;
 					DCmotor.stop();
 					break;
-
 				}
+				waitKey(33);
 			}
 		}
 
@@ -490,6 +490,7 @@ int main()
 					DCmotor.stop();
 					break;
 				}
+				waitKey(33);
 			}
 		}
 	}
