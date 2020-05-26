@@ -632,6 +632,7 @@ int main()
 		bool overtakingFlag = false;	  //추월상황 판단
 		int returnFlag = 0;
 		const int MAX_returnFlag = 5; // 아무생각 없이 직진하지 말라는 방지 flag
+		bool endFlag = false;//상황 리턴시 혼돈방지 flag
 		//초음파 센서 하나인 경우
 		while (true)
 		{
@@ -642,6 +643,7 @@ int main()
 			Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
 			if (overtakingFlag == false)			  //추월상황이 아닐때,
 			{
+				endFlag = false;
 				rotaryFlag = false;
 				if (Distance_first > MAX_ULTRASONIC) //거리가 멀때
 				{
@@ -673,13 +675,20 @@ int main()
 					steerVal = 10; //먼저 좌회전
 					returnFlag = MAX_returnFlag;
 				}
-				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC) //추월 상황중 차량을 지나쳐갈 때 and 차량을 지나치고 복귀중 재탐색시
+				
+				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC && endFlag == false) //추월 상황중 차량을 지나쳐갈 때
 				{
 					rotaryFlag = true;
 					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 				}
+				else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC && endFlag == true) // 차량을 지나치고 복귀중 재탐색시
+				{
+					rotaryFlag = false;
+					steerVal = 50;
+				}
 				else if (Distance_first > MAX_ULTRASONIC && Distance_second > MAX_ULTRASONIC) //추월 상황 종료후 복귀 신호
 				{
+					endFlag = true;
 					rotaryFlag = false;
 					steerVal = 90;
 					//예비 상황 혹시 차량을 지나쳐가는 루프에 들어오지 못하는 경우 방지
@@ -687,10 +696,12 @@ int main()
 					{
 						returnFlag++;
 					}
-					if (returnFlag >= MAX_returnFlag)
+					else if (returnFlag >= MAX_returnFlag)//일정 이상시 복귀
 					{
-						rotaryFlag = true;
+						overtakingFlag = true;
 						DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
+						returnFlag = 0;
+						endFlag = false;
 					}
 				}
 
@@ -703,12 +714,6 @@ int main()
 			// DCmotor.go();			//dc모터 전진 argument로 속도전달가능
 			// DCmotor.backward();		//dc모터 후진 argument로 속도전달가능
 			// DCmotor.stop();			//정지
-
-			if (shortDistanceFlag == true) //사물과 거리가 너무 가까울 때
-			{
-				DCmotor.backward();
-			}
-			else if (shortDistanceFlag == false)
 
 				steering.setRatio(steerVal);
 			imshow("frame", frame);
