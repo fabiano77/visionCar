@@ -627,7 +627,7 @@ int main()
 		bool rotaryFlag(false);
 		double Distance_first; //거리값
 		double Distance_second;
-		const double MAX_ULTRASONIC = 25; //30CM 최대
+		const double MAX_ULTRASONIC = 27; //30CM 최대
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 
 		//초음파 센서 하나인 경우
@@ -991,7 +991,10 @@ int main()
 
 				steering.setRatio(steerVal);
 				if (delayFlag)
+				{
+					delayFlag = false;
 					waitKey(delay);
+				}
 
 				if (waitKey(33) == 27) {
 					break; //프로그램 종료 ESC키.
