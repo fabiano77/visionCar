@@ -403,9 +403,8 @@ int main()
 					DCmotor.stop();
 					break;
 				}
-				waitKey(100);
+				waitKey(300);
 			}
-			cout << "씨!발련아" << endl;
 		}
 
 		else
