@@ -442,6 +442,9 @@ int main()
 					if ((sideDistance != 0) && (sideDistance < 30))
 					{ // 주차공간을 지나 다시 벽을 만나면 다음 분기로 이동
 						DCmotor.stop();
+						DCmotor.backward();
+						waitKey(200);
+						DCmotor.stop();
 						steering.setRatio(25);
 						DCmotor.go(40);
 						waitKey(1000);
