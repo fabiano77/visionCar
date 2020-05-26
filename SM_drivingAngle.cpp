@@ -185,7 +185,7 @@ bool RoundAbout::isStop(const double Distance) {
 				}
 			}
 			cout << "1. : flag_wait = " << flag_wait << ",";
-			if (flag_wait == 15) {	
+			if (flag_wait == 5) {	
 				flag_wait = -1;
 				flag1_start = 35; // 1초당 10프레임정도 처리
 				cout << " flag1_start = " << flag1_start;
