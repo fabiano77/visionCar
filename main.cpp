@@ -616,7 +616,7 @@ int main()
 	else if (mode == 7) //Mode 7 : Overtaking(민수) ------------------------------------------
 	{
 		int choosemodeNum = 0;
-		cout << "MS'mode 1: Original , 2: 분기점 추가, 3:flag 기반 4: add 대희형 " << endl;
+		cout << "MS'mode 1: Original , 2: 추월차선 만들었을시 사용 " << endl;
 		cin >> choosemodeNum;
 		Driving_DH DH(true, 1.00);
 		bool cornerFlag(false);
@@ -633,298 +633,6 @@ int main()
 
 		//초음파 센서 하나인 경우
 		if (choosemodeNum == 1) {
-			bool shortDistanceFlag = false;	  //너무 가까운지에 대한 판단
-			bool overtakingFlag = false;	  //추월상황 판단
-			int returnFlag = 0;
-			const int MAX_returnFlag = 5; // 아무생각 없이 직진하지 말라는 방지 flag
-			bool endFlag = false;//상황 리턴시 혼돈방지 flag
-			bool startFlag = true;//시작할 수 있는경우 true로 함
-			int afterOvertakingFlag = 0;
-			while (true)
-			{
-
-				videocap >> distortedFrame;
-				remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
-
-				Distance_first = firstSonic.distance();	  //초음파 거리측정 1번센서.
-				Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
-				if (overtakingFlag == false)			  //추월상황이 아닐때,
-				{
-					startFlag = true;
-					endFlag = false;
-					rotaryFlag = false;
-					if (Distance_first > MAX_ULTRASONIC) //거리가 멀때
-					{
-						DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-						shortDistanceFlag = false;
-						DCmotor.go();
-						cout << "추월상황 미탐지" << endl;
-					}
-					else if (Distance_first < MIN_ULTRASONIC) //거리가 가까울 때
-					{
-						cout << "거리가 가까워서 후진" << endl;
-						DCmotor.backward();
-						shortDistanceFlag = true;
-					}
-					else if (Distance_first < MAX_ULTRASONIC && shortDistanceFlag == false) //추월상황 탐지 거리일 때(처음 진입의 경우)
-					{
-						cout << "추월 시나리오 진입" << endl;
-						overtakingFlag = true;
-					}
-					else if (Distance_first < MAX_ULTRASONIC && shortDistanceFlag == true) //추월상황 탐지 거리일 때(너무 가까이에 왔었던 경우)
-					{
-						overtakingFlag = false;
-					}
-				}
-				else //추월상황일 때
-				{
-					if (Distance_first < MAX_ULTRASONIC && Distance_first > MIN_ULTRASONIC && Distance_second > MAX_ULTRASONIC) //추월상황 시작시, 직진의 물체탐지
-					{
-						cout << "좌회전 추월" << endl;
-						steerVal = 20; //먼저 좌회전
-						returnFlag = MAX_returnFlag;
-					}
-					else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC && endFlag == false && startFlag == true) //추월 상황중 차량을 지나쳐갈 때
-					{
-						cout << "추월중" << endl;
-						rotaryFlag = true;
-						DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-						if (afterOvertakingFlag >= MAX_returnFlag) { //추월상태 일정이상 유지수 변경 가능
-							startFlag = false;
-							steerVal = 80;
-						}
-						else if (afterOvertakingFlag <= MAX_returnFlag && afterOvertakingFlag > 0) {//추월상태 유지
-							afterOvertakingFlag++;
-						}
-						else {//오류난 경우
-							afterOvertakingFlag = 0;
-						}
-					}
-					else if (Distance_first > MAX_ULTRASONIC && Distance_second < MAX_ULTRASONIC && endFlag == true && startFlag == false) // 차량을 지나치고 복귀중 재탐색시
-					{
-						cout << "복귀 시도중" << endl;
-						rotaryFlag = false;
-						steerVal = 50;
-					}
-					else if (Distance_first > MAX_ULTRASONIC && Distance_second > MAX_ULTRASONIC && startFlag == false) //추월 상황 종료후 복귀 신호
-					{
-						cout << " 복귀 중 " << endl;
-						endFlag = true;
-						rotaryFlag = false;
-						steerVal = 80;
-						//예비 상황 혹시 차량을 지나쳐가는 루프에 들어오지 못하는 경우 방지
-						if (returnFlag < MAX_returnFlag)
-						{
-							returnFlag++;
-						}
-						else if (returnFlag >= MAX_returnFlag)//일정 이상시 복귀
-						{
-							overtakingFlag = false; //복귀 신호로 전환
-							DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-							returnFlag = 0;
-							endFlag = false;
-						}
-					}
-
-					//차량 복귀 신호가 문제일 수 도 있음.
-				}
-
-				steering.setRatio(steerVal);
-				if (waitKey(33) == 27) {
-					break; //프로그램 종료 ESC키.
-				}
-			}
-		}
-
-		else if (choosemodeNum == 2) {
-			bool shortDistanceFlag = false;	  //너무 가까운지에 대한 판단
-			bool overtakingFlag = false;	  //추월상황 판단
-			int startOvertakingFlag = 0; //추월 시나리오 전환 flag MAX_flag넘으면 시작
-			int endOvertakingFlag = 0;
-			const int MAX_Flag = 10; // 아무생각 없이 직진하지 말라는 방지 flag
-			bool endFlag = false;//상황 리턴시 혼돈방지 flag
-			bool startFlag = true;//시작할 수 있는경우 true로 함
-			bool frontOvertakingFlag = false;
-			bool rearOvertakingFlag = false;
-			while (true)
-			{
-				videocap >> distortedFrame;
-				remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
-
-				Distance_first = firstSonic.distance();	  //초음파 거리측정 1번센서.
-				Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
-				if (overtakingFlag == false)			  //추월상황이 아닐때,
-				{
-					startFlag = true;
-					endFlag = false;
-					rotaryFlag = false;
-					if (Distance_first > MAX_ULTRASONIC) //거리가 멀때
-					{
-						DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-						shortDistanceFlag = false;
-						DCmotor.go();
-						cout << "추월상황 미탐지" << endl;
-					}
-					else if (Distance_first < MIN_ULTRASONIC) //거리가 가까울 때
-					{
-						cout << "거리가 가까워서 후진" << endl;
-						DCmotor.backward();
-						shortDistanceFlag = true;
-					}
-					else if (Distance_first < MAX_ULTRASONIC && shortDistanceFlag == false || startOvertakingFlag >= MAX_Flag) //추월상황 탐지 거리일 때(처음 진입의 경우)
-					{
-						cout << "추월 시나리오 시작" << endl;
-						if (startOvertakingFlag < MAX_Flag) {
-							startOvertakingFlag++;
-							steerVal = 10;
-						}
-						else {
-							overtakingFlag = true;
-							startOvertakingFlag = 0;
-							frontOvertakingFlag = true;
-						}
-					}
-					else if (Distance_first < MAX_ULTRASONIC && shortDistanceFlag == true) //추월상황 탐지 거리일 때(너무 가까이에 왔었던 경우)
-					{
-						overtakingFlag = false;
-					}
-				}
-				else //추월상황일 때
-				{
-
-
-					if (frontOvertakingFlag == true && rearOvertakingFlag == false && Distance_first < MAX_ULTRASONIC) //추월 시작 부분
-					{
-						cout << "추월 시작부분" << endl;
-						rotaryFlag = true;
-						steerVal = 80 - 10;
-					}
-					else if (frontOvertakingFlag == true && rearOvertakingFlag == false && Distance_first > MAX_ULTRASONIC) //추월 시작이후 각도 조정 부분
-					{
-						cout << "추월 시작 이후 각도 조정부분" << endl;
-						DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-					}
-					else if (Distance_second < MAX_ULTRASONIC)//추월중인 부분
-					{
-						cout << "추월 중 부분" << endl;
-						DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-						frontOvertakingFlag = false;
-					}
-					else if (Distance_second > MAX_ULTRASONIC && Distance_first > MAX_ULTRASONIC && frontOvertakingFlag == false) //추월을 지난 부분
-					{
-						cout << "추월 종료부분" << endl;
-						rearOvertakingFlag = true;//추월 종료 시도 부분
-					}
-					else if (rearOvertakingFlag == true && frontOvertakingFlag == false)//추월 끝나고 복귀 시도 코드
-					{
-						cout << "추월 종료후 복귀 시도 부분" << endl;
-						if (endOvertakingFlag >= MAX_Flag) {
-							rotaryFlag = false;
-							overtakingFlag = true;
-							cout << "추월 종료" << endl;
-						}
-						else {
-							endOvertakingFlag++;
-							steerVal = 80;
-						}
-					}
-				}
-				steering.setRatio(steerVal);
-				if (waitKey(33) == 27) {
-					break; //프로그램 종료 ESC키.
-				}
-			}
-
-		}
-
-		else if (choosemodeNum == 3) {
-
-			int switchCase = 0;//0은 기본주행
-			int holdFlag = 0;//상태유지 flag
-			while (true)
-			{
-				DCmotor.go();
-				videocap >> distortedFrame;
-				remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
-
-				Distance_first = firstSonic.distance();	  //초음파 거리측정 1번센서.
-				Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
-
-				bool overtakingFlag = true;	  //추월상황 판단
-				const int MAX_holdFlag = 10;
-
-				switch (switchCase) {
-				case 0:
-					cout << "직진중" << endl;
-					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-					if (Distance_first < MAX_ULTRASONIC) {
-						switchCase = 1;//회전부분으로 이동
-					}
-					break;
-
-				case 1: //좌회전 중
-					cout << "추월 시작 및 좌회전 중" << endl;
-					steerVal = 10;
-					if (holdFlag >= MAX_holdFlag) {
-						holdFlag = 0;
-						switchCase = 2;
-					}
-					else {
-						holdFlag++;
-					}
-					break;
-				case 2: //각도 다시 변환
-					cout << "각도 조정중" << endl;
-					steerVal = 90;//다시 직진으로 만들자
-					if (Distance_second < MAX_ULTRASONIC)
-					{
-						if (holdFlag >= MAX_holdFlag) {
-							holdFlag = 0;
-							switchCase = 3;
-						}
-						else {
-							holdFlag++;
-						}
-					}
-					break;
-				case 3:
-					cout << "추월중 직진중" << endl;
-					steerVal = 50;
-					if (Distance_second > MAX_ULTRASONIC) { switchCase = 4; }
-
-					if (holdFlag >= 3 * MAX_holdFlag) {
-						holdFlag = 0;
-						switchCase = 4;
-					}
-					else {
-						holdFlag++;
-					}
-					break;
-				case 4:
-					steerVal = 90;
-					cout << "추월 후 복귀중" << endl;
-					if (Distance_second < MAX_ULTRASONIC) //오른쪽 탐지되면 원래대로 전환
-					{
-						switchCase = 0;
-					}
-					else if (holdFlag >= MAX_holdFlag) {
-						holdFlag = 0;
-						switchCase = 0;
-					}
-					else {
-						holdFlag++;
-					}
-					break;
-				}
-
-				steering.setRatio(steerVal);
-				if (waitKey(33) == 27) {
-					break; //프로그램 종료 ESC키.
-				}
-			}
-
-		}
-		else if (choosemodeNum == 4) {
 
 			int delay = 1700;
 			cout << "delay = ";
@@ -1002,7 +710,88 @@ int main()
 			}
 
 		}
-		
+		else if (choosemodeNum == 2) {
+
+			int delay = 1700;
+			cout << "delay = ";
+			cin >> delay;
+			int switchCase = 0;//0은 기본주행
+			bool delayFlag = false;//상태유지 flag
+			const int MAX_holdFlag = 10;
+			while (true)
+			{
+				DCmotor.go();
+				videocap >> distortedFrame;
+				remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
+				DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
+
+				Distance_first = firstSonic.distance();	  //초음파 거리측정 1번센서.
+				Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
+				cout << "전방 센서 거리 : " << Distance_first << endl;
+				cout << "측면 센서 거리 : " << Distance_second << endl;
+
+
+				switch (switchCase) {
+				case 0:
+					cout << "직진중" << endl;
+					if (Distance_first < MAX_ULTRASONIC) {
+						switchCase = 1;//회전부분으로 이동
+					}
+
+					rotaryFlag = true;
+					break;
+
+				case 1: //좌회전 중
+					cout << "1) 추월 시작 및 좌회전 중" << endl;
+					steerVal = 0;
+					delayFlag = true;
+					switchCase = 2;
+					break;
+
+				case 2: //각도 다시 변환
+					cout << "2) 각도 조정중" << endl;
+					// steerVal = 100;
+					//차선인식되서 돌아가는지 확인 필요
+					delayFlag = true;
+					switchCase = 3;
+					break;
+
+				case 3:
+					cout << "3) 직진 중" << endl;
+					steerVal = 50;//차선이 생기면 여기에 driving넣으면됨
+					if (Distance_second > MAX_SIDE_ULTRASONIC)
+						switchCase = 4;
+					break;
+
+				case 4:
+					steerVal = 100;
+					cout << "4) 추월 후 복귀중" << endl;
+					delayFlag = true;
+					rotaryFlag = false;
+					switchCase = 5;
+					break;
+
+				case 5:
+					cout << "5) 복귀 후 각도조정중" << endl;
+					delayFlag = true;
+					switchCase = 0;
+					break;
+				}
+				//switch문 종료
+
+				steering.setRatio(steerVal);
+				if (delayFlag)
+				{
+					delayFlag = false;
+					waitKey(delay);
+				}
+
+				if (waitKey(33) == 27) {
+					break; //프로그램 종료 ESC키.
+				}
+			}
+
+		}
 		//0.3초당 1frame 처리
 		// steering.setRatio(50);	//바퀴조향
 		// DCmotor.go();			//dc모터 전진 argument로 속도전달가능
