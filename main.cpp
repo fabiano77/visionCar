@@ -373,7 +373,7 @@ int main()
 					tm.stop();
 					cout << "폭 감지 시간 = " << tm.getTimeMilli() << endl;
 					DCmotor.stop();
-					if (tm.getTimeMilli() > 2500)	//폭 길 경우 -> 수평
+					if (tm.getTimeMilli() > 1800)	//폭 길 경우 -> 수평
 					{
 						cout << "수평 주차로 판단한다." << endl;
 						DCmotor.stop();
@@ -457,7 +457,7 @@ int main()
 				break;
 			case 205:
 				cout << "수직) 후진 진행 - 2 -" << endl;
-				if (backDistance < 5)
+				if (backDistance < 6)
 				{
 					DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
 					waitKey(3000);
