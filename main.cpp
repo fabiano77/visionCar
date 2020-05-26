@@ -724,11 +724,12 @@ int main()
 
 					//차량 복귀 신호가 문제일 수 도 있음.
 				}
-			}
-			steering.setRatio(steerVal);
-			imshow("frame", frame);
-			if (waitKey(33) == 27) {
-				break; //프로그램 종료 ESC키.
+
+				steering.setRatio(steerVal);
+				imshow("frame", frame);
+				if (waitKey(33) == 27) {
+					break; //프로그램 종료 ESC키.
+				}
 			}
 		}
 
@@ -819,12 +820,13 @@ int main()
 						}
 					}
 				}
+				steering.setRatio(steerVal);
+				imshow("frame", frame);
+				if (waitKey(33) == 27) {
+					break; //프로그램 종료 ESC키.
+				}
 			}
-			steering.setRatio(steerVal);
-			imshow("frame", frame);
-			if (waitKey(33) == 27){
-				break; //프로그램 종료 ESC키.
-			}
+			
 		}
 
 
