@@ -337,6 +337,7 @@ int main()
 				remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
 
 				sideDistance = secondSonic.distance();  //초음파 거리측정.
+				waitKey(50);
 				backDistance = firstSonic.distance(); //초음파 거리측정.
 
 				cout << "sideDistance : " << sideDistance << endl;
