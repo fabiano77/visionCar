@@ -444,7 +444,7 @@ int main()
 						DCmotor.stop();
 						waitKey(500);
 						DCmotor.backward();
-						waitKey(800);
+						waitKey(550);
 						DCmotor.stop();
 						steering.setRatio(20);
 						DCmotor.go(40);
