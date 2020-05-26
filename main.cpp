@@ -358,7 +358,7 @@ int main()
 					break;
 				case 1:
 					cout << "벽을 처음 만난 후" << endl;
-					if (sideDistance > 13) // 벽을 지나 주차공간을 만나면 다음 분기로 이동
+					if (sideDistance > 45) // 벽을 지나 주차공간을 만나면 다음 분기로 이동
 						caseNum = 2;
 					break;
 				case 2:
@@ -383,7 +383,7 @@ int main()
 						DCmotor.stop();
 						waitKey(500);
 						DCmotor.go();
-						waitKey(1000);
+						waitKey(700);
 						steering.setRatio(10); // 바퀴를 왼쪽으로 돌린 후 후진
 						DCmotor.backward(40);
 						caseNum = 4;
