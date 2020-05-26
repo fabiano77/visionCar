@@ -798,7 +798,7 @@ int main()
 					}
 					else if (frontOvertakingFlag == true && rearOvertakingFlag == false && Distance_first > MAX_ULTRASONIC) //추월 시작이후 각도 조정 부분
 					{
-						cout<<"추월 시작 이후 각도 조정부분"
+						cout << "추월 시작 이후 각도 조정부분" << endl;
 						DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 					}
 					else if (Distance_second < MAX_ULTRASONIC)//추월중인 부분
