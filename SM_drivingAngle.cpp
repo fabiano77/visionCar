@@ -178,7 +178,7 @@ bool RoundAbout::isStop(const double Distance) {
 			}
 			else {
 				if (flag_wait > 0) {
-					falg_wait--;
+					flag_wait--;
 				}
 			}
 			if (flag_wait == 15) {	
