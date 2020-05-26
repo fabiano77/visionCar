@@ -405,7 +405,7 @@ int main()
 					DCmotor.stop();
 					break;
 				}
-				waitKey(33);
+				waitKey(500);
 			}
 			cout << "씨!발련아" << endl;
 		}
