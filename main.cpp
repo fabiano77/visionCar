@@ -475,11 +475,11 @@ int main()
 				break;
 			case 206:
 				DCmotor.go(); // 바퀴 조향은 그대로 탈출
-				waitKey(1300);
-				steering.setRatio(90);
-				waitKey(1300);
-				steering.setRatio(50);
 				waitKey(1000);
+				steering.setRatio(100);
+				waitKey(1500);
+				steering.setRatio(50);
+				waitKey(500);
 				DCmotor.stop();
 				if (1)
 				{ // 주차 분기 탈출 구문으로 차선이 검출되면 주차 분기를 탈출한다.
