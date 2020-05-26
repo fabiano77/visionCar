@@ -466,7 +466,7 @@ int main()
 				break;
 			case 205:
 				cout << "수직) 후진 진행 - 2 -" << endl;
-				if (backDistance < 6)
+				if (backDistance < 8)
 				{
 					DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
 					waitKey(3000);
