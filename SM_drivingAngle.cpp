@@ -1,11 +1,17 @@
 #include "SM_drivingAngle.h"
 #include "ImageProcessing_Constants.h"
 #include <opencv2/opencv.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/core/matx.hpp>
 #include <iostream>
 using namespace cv;
 using namespace std;
+
+int B = 80;
+int G = 80;
+int R = 80;
+
+static void on_trackbar(int, void*)
+{
+}
 
 CheckStart::CheckStart() {
 	lower_white = Scalar(200, 200, 200);
@@ -50,6 +56,15 @@ bool CheckStart::isBlack(Mat& frame, double percent) {
 
 	//cvtColor(frame, frame_hsv, COLOR_BGR2HSV);
 	inRange(frame, lower_black, upper_black, frame_black);
+	imshow("frame_black", frame_black);
+
+	createTrackbar("B", "trackbar", &B, 255, on_trackbar);
+	createTrackbar("G", "trackbar", &G, 255, on_trackbar);
+	createTrackbar("R", "trackbar", &R, 255, on_trackbar);
+	upper_black = Scalar(B, G, R);
+
+	namedWindow("trackbar", WINDOW_NORMAL);
+	moveWindow("trackbar", 700, 40);
 
 	int blackPixel(0);
 	for (int i = 0; i < frame_black.cols; i += 10)				// 10픽셀마다 하나씩 검사함 속도를 위해
