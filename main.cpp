@@ -339,6 +339,7 @@ int main()
 				sideDistance = firstSonic.distance();  //초음파 거리측정.
 				backDistance = secondSonic.distance(); //초음파 거리측정.
 
+				cout << "castNum : " << caseNum << endl;
 
 				switch (caseNum)
 				{
