@@ -97,9 +97,12 @@ int main()
 		//waitKey(1500);		//wait 1.5sec
 
 		//DCmotor.stop(); //dc모터 멈춤
-		cout << "1번센서 거리 = " << firstSonic.distance() << endl;
-		cout << "2번센서 거리 = " << secondSonic.distance() << endl;
-		waitKey(33);
+		while (true)
+		{
+			cout << "1번센서 거리 = " << firstSonic.distance() << endl;
+			cout << "2번센서 거리 = " << secondSonic.distance() << endl;
+			waitKey(33);
+		}
 	}
 	//End basic test
 
@@ -713,14 +716,14 @@ int main()
 	{
 		double leftDistance; //좌측 거리값
 		double rightDistance; //우측 거리값
-		
+
 		CheckStart cs;
 		bool check_tunnel;
 		while (true)
 		{
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
-			
+
 			check_tunnel = cs.isTunnel(frame, 60);
 
 			if (check_tunnel) // 터널 입장
