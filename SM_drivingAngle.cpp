@@ -80,7 +80,7 @@ bool CheckStart::isStop(Mat& frame, double percent) {
 			return true;
 		}
 		else if (flag_start == 0) { // 3. flag가 0이 될 경우 출발
-			putText(frame, "Go!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+			putText(frame, "Go!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 3.5, Scalar(255), 2);
 			if (check_start != 0) {
 				check_start = 0; // 출발했다는 표시
 			}
@@ -107,7 +107,7 @@ bool CheckStart::isTunnel(Mat& frame, double percent) {
 	}
 
 	if (flag_tunnel >= 10) { // 최소 임계값. flag가 이보다 크면 터널 안에 있다고 인식
-		putText(frame, "Tunnel!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+		putText(frame, "Tunnel!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 3.5, Scalar(255), 2);
 		return true;
 	}
 	else { // 최소 임계값보다 flag가 작으면 터널 밖이라고 인식
