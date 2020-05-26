@@ -78,25 +78,28 @@ int main()
 
 	if (mode == 1) //Test 1 : Basic test------------------------------------------------------
 	{
-		steering.setRatio(100); //바퀴 우측
-		steering.setRatio(0);	//바퀴 좌측
-		steering.resetCenter(); //바퀴 좌우정렬
+		//steering.setRatio(100); //바퀴 우측
+		//steering.setRatio(0);	//바퀴 좌측
+		//steering.resetCenter(); //바퀴 좌우정렬
 
-		cam_tilt.setRatio(100); //카메라 상향
-		cam_tilt.setRatio(0);	//카메라 하향
-		cam_tilt.resetCenter(); //카메라 상하정렬
+		//cam_tilt.setRatio(100); //카메라 상향
+		//cam_tilt.setRatio(0);	//카메라 하향
+		//cam_tilt.resetCenter(); //카메라 상하정렬
 
-		cam_pan.setRatio(100); //카메라 우향
-		cam_pan.setRatio(0);   //카메라 좌향
-		cam_pan.resetCenter(); //카메라 좌우정렬
+		//cam_pan.setRatio(100); //카메라 우향
+		//cam_pan.setRatio(0);   //카메라 좌향
+		//cam_pan.resetCenter(); //카메라 좌우정렬
 
-		DCmotor.go();  //dc모터 전진
-		waitKey(1500); //wait 1.5sec
+		//DCmotor.go();  //dc모터 전진
+		//waitKey(1500); //wait 1.5sec
 
-		DCmotor.backward(); //dc모터 후진
-		waitKey(1500);		//wait 1.5sec
+		//DCmotor.backward(); //dc모터 후진
+		//waitKey(1500);		//wait 1.5sec
 
-		DCmotor.stop(); //dc모터 멈춤
+		//DCmotor.stop(); //dc모터 멈춤
+		cout << "1번센서 거리 = " << firstSonic.distance << endl;
+		cout << "2번센서 거리 = " << secondSonic.distance << endl;
+		waitKey(33);
 	}
 	//End basic test
 
