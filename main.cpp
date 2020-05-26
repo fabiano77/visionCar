@@ -373,7 +373,7 @@ int main()
 					tm.stop();
 					cout << "폭 감지 시간 = " << tm.getTimeMilli() << endl;
 					DCmotor.stop();
-					if (tm.getTimeMilli() > 1800)	//폭 길 경우 -> 수평
+					if (tm.getTimeMilli() > 1200)	//폭 길 경우 -> 수평
 					{
 						cout << "수평 주차로 판단한다." << endl;
 						DCmotor.stop();
