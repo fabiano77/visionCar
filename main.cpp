@@ -830,6 +830,7 @@ int main()
 	else if (choosemodeNum == 3) {
 
 	int switchCase = 0;//0은 기본주행
+	int holdFlag = 0;//상태유지 flag
 		while (true)
 		{
 			DCmotor.go();
@@ -840,7 +841,6 @@ int main()
 			Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
 
 			bool overtakingFlag = true;	  //추월상황 판단
-			int holdFlag = 0;//상태유지 flag
 			const int MAX_holdFlag = 10;
 
 			switch (switchCase) {
