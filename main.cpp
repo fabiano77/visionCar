@@ -628,7 +628,7 @@ int main()
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 
 		//초음파 센서 하나인 경우
-		if (choosemodeNum == 0) {
+		if (choosemodeNum == 1) {
 			bool shortDistanceFlag = false;	  //너무 가까운지에 대한 판단
 			bool overtakingFlag = false;	  //추월상황 판단
 			int returnFlag = 0;
@@ -733,7 +733,7 @@ int main()
 			}
 		}
 
-		else if (choosemodeNum == 1) {
+		else if (choosemodeNum == 2) {
 			bool shortDistanceFlag = false;	  //너무 가까운지에 대한 판단
 			bool overtakingFlag = false;	  //추월상황 판단
 			int startOvertakingFlag = 0; //추월 시나리오 전환 flag MAX_flag넘으면 시작
