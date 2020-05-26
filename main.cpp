@@ -962,7 +962,7 @@ int main()
 					cout << "각도 조정중 및 직진상황" << endl;
 					if (Distance_second < MAX_ULTRASONIC)
 					{
-						if (holdFlag >= MAX_holdFlag) {
+						if (holdFlag >= 3*MAX_holdFlag) {
 							holdFlag = 0;
 							switchCase = 3;
 						}
@@ -970,22 +970,10 @@ int main()
 							holdFlag++;
 						}
 					}
-					else if (Distance_second > MAX_ULTRASONIC) { switchCase = 4; }
+					else if (Distance_second > MAX_ULTRASONIC)//
+					{ switchCase = 3; }
 					break;
 				case 3:
-					cout << "추월중 직진중" << endl;
-					steerVal = 50;
-
-
-					if (holdFlag >= 3 * MAX_holdFlag) {
-						holdFlag = 0;
-						switchCase = 4;
-					}
-					else {
-						holdFlag++;
-					}
-					break;
-				case 4:
 					steerVal = 90;
 					cout << "추월 후 복귀중" << endl;
 					if (Distance_second < MAX_ULTRASONIC) //오른쪽 탐지되면 원래대로 전환
@@ -993,7 +981,6 @@ int main()
 						holdFlag = 0;
 						switchCase = 0;
 					}
-					
 					if (holdFlag >= MAX_holdFlag) {//만약
 						holdFlag = 0;
 						switchCase = 0;
