@@ -565,61 +565,8 @@ int main()
 
 			int key = waitKey(10);
 			if (key == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
-			/*else if (key == 'w') DCmotor.go(37);
-			else if (key == 'x') DCmotor.backward(40);
-			else if (key == 's') DCmotor.stop();
-			else if (key == '0')
-			{
-				//ManualMode class & basic speed rate
-				ManualMode Manual(pca, 40);
-				Manual.guide();
-
-				//메인루프
-				int key(-1);
-				while (key != 27)//if not ESC
-				{
-					videocap >> distortedFrame;
-					remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
-
-					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-
-					namedWindow("frame", WINDOW_NORMAL);
-					imshow("frame", frame);
-					resizeWindow("frame", 480, 360);
-					moveWindow("frame", 320, 80 + 240);
-
-					key = waitKey(33);//if you not press, return -1
-					if (key == 27) break;
-					else if (key == '0') break;
-					else if (key != -1) Manual.input(key);//movement by keyboard
-					rewind(stdin);
-				}
-			}*/
 		}
 
-		/*double Distance;	//거리값
-
-		while (true)
-		{
-			videocap >> distortedFrame;
-			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);	//캘리된 영상 frame
-
-			Distance = firstSonic.distance();	//초음파 거리측정.
-
-			cout << "distance = " << Distance << endl;	//거리출력
-
-			steering.setRatio(50);	//바퀴조향
-			DCmotor.go();			//dc모터 전진 argument로 속도전달가능
-			DCmotor.backward();		//dc모터 후진 argument로 속도전달가능
-			DCmotor.stop();			//정지
-
-			namedWindow("frame", WINDOW_NORMAL);
-			imshow("frame", frame);
-			resizeWindow("frame", 480, 360);
-			moveWindow("frame", 0, 0);
-
-			if (waitKey(33) == 27) break;	//프로그램 종료 ESC키.
-		}*/
 	}
 	//End Rotary mode
 
