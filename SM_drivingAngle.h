@@ -16,7 +16,7 @@ public:
 	//PreCondition   :: 멈춰있는 상태. isWhite(frame, percent)가 동작.
 	//PostCondition  :: DCmoter.go 동작.
 	//Return         :: isWhite가 true에서 false로 된 후 일정 frame 이상 유지되면 false
-	bool isTunnel(Mat& frame, double percent);
+	bool isTunnel(Mat& frame, double percent); // 65%정도
 	//PreCondition   :: DCmoter.go 동작. isBlack(frame, percent)가 동작.
 	//PostCondition  :: 터널에서 차선을 검출할 함수 동작.
 	//Return         :: isBlack이 true로 된 후 몇 초가 지나면 true
