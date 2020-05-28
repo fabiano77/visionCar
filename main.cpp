@@ -707,6 +707,7 @@ int main()
 
 				case 2: //각도 다시 변환
 					cout << "2) 각도 조정중" << endl;
+					steerVal = 90;
 					rotaryFlag = true;
 					//차선인식되서 돌아가는지 확인 필요
 					delayFlag = false;
