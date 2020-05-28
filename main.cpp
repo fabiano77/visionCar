@@ -710,7 +710,7 @@ int main()
 					steerVal = 90;
 					rotaryFlag = true;
 					//차선인식되서 돌아가는지 확인 필요
-					delayFlag = false;
+					delayFlag = true;
 					if (steerVal <= 60 || steerVal >= 40) {
 						switchCase = 3;
 					}
