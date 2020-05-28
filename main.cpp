@@ -376,7 +376,7 @@ int main()
 					cout << "폭 감지 시간 = " << widthTime << endl;
 
 					//if (widthTime > 600)	//폭 길 경우 -> 수평
-					if (true)
+					if (false)
 					{
 						cout << "수평 주차로 판단한다." << endl;
 						DCmotor.stop();
@@ -419,7 +419,7 @@ int main()
 					waitKey(500);
 					DCmotor.go();
 					waitKey(700);
-					steering.setRatio(15); // 바퀴를 왼쪽으로 돌린 후 후진
+					steering.setRatio(12); // 바퀴를 왼쪽으로 돌린 후 후진
 					DCmotor.backward(40);
 					caseNum = 104;
 				}
@@ -438,6 +438,10 @@ int main()
 			case 105:
 				cout << "수평) 주차 완료 및 차량 복귀" << endl;
 				DCmotor.go(); // 바퀴 조향은 그대로 탈출
+				waitKey(700);
+				steering.setRatio(63);
+				waitKey(1200);
+				DCmotor.stop();
 				if (1)
 				{ // 주차 분기 탈출 구문으로 차선이 검출되면 주차 분기를 탈출한다.
 					waitKey(2000);
@@ -462,7 +466,7 @@ int main()
 				break;
 			case 205:
 				cout << "수직) 후진 진행 - 2 -" << endl;
-				if (backDistance < 6)
+				if (backDistance < 8)
 				{
 					DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
 					waitKey(3000);
@@ -471,6 +475,12 @@ int main()
 				break;
 			case 206:
 				DCmotor.go(); // 바퀴 조향은 그대로 탈출
+				waitKey(1000);
+				steering.setRatio(100);
+				waitKey(1500);
+				steering.setRatio(50);
+				waitKey(500);
+				DCmotor.stop();
 				if (1)
 				{ // 주차 분기 탈출 구문으로 차선이 검출되면 주차 분기를 탈출한다.
 					waitKey(3000);
@@ -504,7 +514,7 @@ int main()
 		DH.mappingSet(cornerFlag);	//조향수준 맵핑값 세팅
 		double steerVal(50.0);	//초기 각도(50이 중심)
 		double speedVal(40.0);	//초기 속도(0~100)
-		double speedVal_rotary(25.0);
+		double speedVal_rotary(38.0);
 		double Distance;	//거리값
 
 		bool rotaryFlag(true);
@@ -524,7 +534,7 @@ int main()
 			{
 				if (Rotary.isDelay(Distance)) { // 앞의 차량과 가까워졌을 시 정지
 					DCmotor.stop();
-					cout << "stop!" << endl;
+					cout << "<<< stop! >>>" << endl;
 				}
 				else { // 
 					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
@@ -555,61 +565,8 @@ int main()
 
 			int key = waitKey(10);
 			if (key == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
-			/*else if (key == 'w') DCmotor.go(37);
-			else if (key == 'x') DCmotor.backward(40);
-			else if (key == 's') DCmotor.stop();
-			else if (key == '0')
-			{
-				//ManualMode class & basic speed rate
-				ManualMode Manual(pca, 40);
-				Manual.guide();
-
-				//메인루프
-				int key(-1);
-				while (key != 27)//if not ESC
-				{
-					videocap >> distortedFrame;
-					remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
-
-					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-
-					namedWindow("frame", WINDOW_NORMAL);
-					imshow("frame", frame);
-					resizeWindow("frame", 480, 360);
-					moveWindow("frame", 320, 80 + 240);
-
-					key = waitKey(33);//if you not press, return -1
-					if (key == 27) break;
-					else if (key == '0') break;
-					else if (key != -1) Manual.input(key);//movement by keyboard
-					rewind(stdin);
-				}
-			}*/
 		}
 
-		/*double Distance;	//거리값
-
-		while (true)
-		{
-			videocap >> distortedFrame;
-			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);	//캘리된 영상 frame
-
-			Distance = firstSonic.distance();	//초음파 거리측정.
-
-			cout << "distance = " << Distance << endl;	//거리출력
-
-			steering.setRatio(50);	//바퀴조향
-			DCmotor.go();			//dc모터 전진 argument로 속도전달가능
-			DCmotor.backward();		//dc모터 후진 argument로 속도전달가능
-			DCmotor.stop();			//정지
-
-			namedWindow("frame", WINDOW_NORMAL);
-			imshow("frame", frame);
-			resizeWindow("frame", 480, 360);
-			moveWindow("frame", 0, 0);
-
-			if (waitKey(33) == 27) break;	//프로그램 종료 ESC키.
-		}*/
 	}
 	//End Rotary mode
 
@@ -806,6 +763,7 @@ int main()
 		double leftDistance; //좌측 거리값
 		double rightDistance; //우측 거리값
 
+		DetectColorSign detectColorSign(true);
 		CheckStart cs;
 		bool check_tunnel;
 		while (true)
@@ -813,7 +771,8 @@ int main()
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
 
-			check_tunnel = cs.isTunnel(frame, 60);
+			//check_tunnel = cs.isTunnel(frame, 65);
+			check_tunnel = detectColorSign.detectTunnel(frame, 50);
 
 			if (check_tunnel) // 터널 입장
 			{
