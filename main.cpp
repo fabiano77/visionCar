@@ -719,8 +719,7 @@ int main()
 				case 3:
 					cout << "3) 추월 직진 중" << endl;
 					//차선이 생기면 여기에 driving넣으면됨
-					if (Distance_second > MAX_SIDE_ULTRASONIC)
-						holdFlag++;
+					holdFlag++;
 					
 					if (Distance_second > MAX_SIDE_ULTRASONIC && holdFlag >= MAX_holdFlag) {
 						holdFlag = 0;
