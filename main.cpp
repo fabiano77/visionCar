@@ -718,8 +718,6 @@ int main()
 
 				case 3:
 					cout << "3) 추월 직진 중" << endl;
-					if (steerVal <= 55 || steerVal >= 45) steerVal = 50;
-					else if (steerVal > 70 || steerVal < 30) steerVal = 50;
 					//차선이 생기면 여기에 driving넣으면됨
 					if (Distance_second > MAX_SIDE_ULTRASONIC)
 						holdFlag++;
