@@ -585,7 +585,7 @@ int main()
 		bool rotaryFlag(false);
 		double Distance_first; //거리값
 		double Distance_second;
-		const double MAX_ULTRASONIC = 27; //30CM 최대
+		const double MAX_ULTRASONIC = 35; //30CM 최대
 		const double MAX_SIDE_ULTRASONIC = 60;
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 
@@ -620,7 +620,7 @@ int main()
 
 				case 1: //좌회전 중
 					cout << "1) 추월 시작 및 좌회전 중" << endl;
-					steerVal = 0;
+					steerVal = 10;
 					delayFlag = true;
 					switchCase = 2;
 					rotaryFlag = true;
@@ -639,6 +639,7 @@ int main()
 					steerVal = 50;//차선이 생기면 여기에 driving넣으면됨
 					if (Distance_second > MAX_SIDE_ULTRASONIC)
 						switchCase = 4;
+				
 					break;
 
 				case 4:
@@ -698,7 +699,7 @@ int main()
 
 				case 1: //좌회전 중
 					cout << "1) 추월 시작 및 좌회전 중" << endl;
-					steerVal = 10;
+					steerVal = 0;
 					delayFlag = true;
 					switchCase = 2;
 					break;
@@ -714,16 +715,17 @@ int main()
 					break;
 
 				case 3:
-					cout << "3) 직진 중" << endl;
+					cout << "3) 추월 직진 중" << endl;
 					if (steerVal <= 55 || steerVal >= 45) steerVal = 50;
 					else if (steerVal > 70 || steerVal < 30) steerVal = 50;
 					//차선이 생기면 여기에 driving넣으면됨
 					if (Distance_second > MAX_SIDE_ULTRASONIC)
+						delayFlag = true;
 						switchCase = 4;
 					break;
 
 				case 4:
-					steerVal = 90;
+					steerVal = 100;
 					cout << "4) 추월 후 복귀중" << endl;
 					delayFlag = true;
 					rotaryFlag = false;
