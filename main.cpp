@@ -590,7 +590,7 @@ int main()
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 
 		//초음파 센서 하나인 경우
-		int delay = 1200;
+		int delay = 1000;
 		cout << "delay = 1200";
 		int switchCase = 0;//0은 기본주행
 		bool delayFlag = false;//상태유지 flag
