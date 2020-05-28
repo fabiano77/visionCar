@@ -590,11 +590,12 @@ int main()
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 
 		//초음파 센서 하나인 경우
-		int delay = 1000;
+		int delay = 1200;
 		cout << "delay = 1200";
 		int switchCase = 0;//0은 기본주행
 		bool delayFlag = false;//상태유지 flag
 		const int MAX_holdFlag = 10;
+		int holdFlag = 0;
 		if (choosemodeNum != 3) {
 			while (true)
 			{
@@ -720,8 +721,13 @@ int main()
 					else if (steerVal > 70 || steerVal < 30) steerVal = 50;
 					//차선이 생기면 여기에 driving넣으면됨
 					if (Distance_second > MAX_SIDE_ULTRASONIC)
-						delayFlag = true;
+						holdFlag++;
+					
+					if (Distance_second > MAX_SIDE_ULTRASONIC && holdFlag >= MAX_holdFlag) {
+						holdFlag = 0;
 						switchCase = 4;
+					}
+
 					break;
 
 				case 4:
