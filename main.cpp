@@ -738,7 +738,7 @@ int main()
 
 				case 5:
 					cout << "5) 복귀 후 각도조정중" << endl;
-					delayFlag;
+					delayFlag=false;
 					switchCase = 0;
 					break;
 				}
