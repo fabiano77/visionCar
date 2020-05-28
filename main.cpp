@@ -749,6 +749,7 @@ int main()
 				{
 					delayFlag = false;
 					waitKey(delay);
+					if (switchCase == 4||switchCase==2) { waitKey(delay / 2); }//유의
 				}
 
 				if (waitKey(33) == 27) {
