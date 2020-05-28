@@ -617,7 +617,7 @@ int main()
 	else if (mode == 7) //Mode 7 : Overtaking(민수) ------------------------------------------
 	{
 		int choosemodeNum = 0;
-		cout << "MS'mode 1: Original , 2: 추월차선 만들었을시 사용 " << endl;
+		cout << "MS'mode 1: Original , 2: 추월차선 만들었을시 사용,3 " << endl;
 		cin >> choosemodeNum;
 		Driving_DH DH(true, 1.00);
 		bool cornerFlag(false);
@@ -638,79 +638,161 @@ int main()
 		int switchCase = 0;//0은 기본주행
 		bool delayFlag = false;//상태유지 flag
 		const int MAX_holdFlag = 10;
-		while (true)
-		{
-			DCmotor.go();
-			videocap >> distortedFrame;
-			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
-			DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
+		if (choosemodeNum != 3) {
+			while (true)
+			{
+				DCmotor.go();
+				videocap >> distortedFrame;
+				remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
+				DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 
-			Distance_first = firstSonic.distance();	  //초음파 거리측정 1번센서.
-			Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
-			cout << "전방 센서 거리 : " << Distance_first << endl;
-			cout << "측면 센서 거리 : " << Distance_second << endl;
+				Distance_first = firstSonic.distance();	  //초음파 거리측정 1번센서.
+				Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
+				cout << "전방 센서 거리 : " << Distance_first << endl;
+				cout << "측면 센서 거리 : " << Distance_second << endl;
 
-			switch (switchCase) {
-			case 0:
-				cout << "직진중" << endl;
-				if (Distance_first < MAX_ULTRASONIC) {
-					switchCase = 1;//회전부분으로 이동
+				switch (switchCase) {
+				case 0:
+					cout << "직진중" << endl;
+					if (Distance_first < MAX_ULTRASONIC) {
+						switchCase = 1;//회전부분으로 이동
+					}
+
+					rotaryFlag = false;
+					break;
+
+				case 1: //좌회전 중
+					cout << "1) 추월 시작 및 좌회전 중" << endl;
+					steerVal = 0;
+					delayFlag = true;
+					switchCase = 2;
+					rotaryFlag = true;
+					break;
+
+				case 2: //각도 다시 변환
+					cout << "2) 각도 조정중" << endl;
+					if (choosemodeNum == 1) steerVal = 100;
+					//차선인식되서 돌아가는지 확인 필요
+					delayFlag = true;
+					switchCase = 3;
+					break;
+
+				case 3:
+					cout << "3) 직진 중" << endl;
+					steerVal = 50;//차선이 생기면 여기에 driving넣으면됨
+					if (Distance_second > MAX_SIDE_ULTRASONIC)
+						switchCase = 4;
+					break;
+
+				case 4:
+					steerVal = 100;
+					cout << "4) 추월 후 복귀중" << endl;
+					delayFlag = true;
+					rotaryFlag = false;
+					switchCase = 5;
+					break;
+
+				case 5:
+					cout << "5) 복귀 후 각도조정중" << endl;
+					if (choosemodeNum == 1) {
+						steerVal = 0;
+						delayFlag = true;
+					}
+					else { delayFlag = false; }
+					switchCase = 0;
+					break;
+				}
+				//switch문 종료
+
+				steering.setRatio(steerVal);
+				if (delayFlag)
+				{
+					delayFlag = false;
+					waitKey(delay);
 				}
 
-				rotaryFlag = true;
-				break;
-
-			case 1: //좌회전 중
-				cout << "1) 추월 시작 및 좌회전 중" << endl;
-				steerVal = 0;
-				delayFlag = true;
-				switchCase = 2;
-				break;
-
-			case 2: //각도 다시 변환
-				cout << "2) 각도 조정중" << endl;
-				if(choosemodeNum==1) steerVal = 100;
-				//차선인식되서 돌아가는지 확인 필요
-				delayFlag = true;
-				switchCase = 3;
-				break;
-
-			case 3:
-				cout << "3) 직진 중" << endl;
-				steerVal = 50;//차선이 생기면 여기에 driving넣으면됨
-				if (Distance_second > MAX_SIDE_ULTRASONIC)
-					switchCase = 4;
-				break;
-
-			case 4:
-				steerVal = 100;
-				cout << "4) 추월 후 복귀중" << endl;
-				delayFlag = true;
-				rotaryFlag = false;
-				switchCase = 5;
-				break;
-
-			case 5:
-				cout << "5) 복귀 후 각도조정중" << endl;
-				if(choosemodeNum==1)steerVal = 0;
-				delayFlag = true;
-				switchCase = 0;
-				break;
-			}
-			//switch문 종료
-
-			steering.setRatio(steerVal);
-			if (delayFlag)
-			{
-				delayFlag = false;
-				waitKey(delay);
-			}
-
-			if (waitKey(33) == 27) {
-				break; //프로그램 종료 ESC키.
+				if (waitKey(33) == 27) {
+					break; //프로그램 종료 ESC키.
+				}
 			}
 		}
+		else if (choosemodeNum == 3) {
+			while (true)
+			{
+				DCmotor.go();
+				videocap >> distortedFrame;
+				remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
+				DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 
+				Distance_first = firstSonic.distance();	  //초음파 거리측정 1번센서.
+				Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
+				cout << "전방 센서 거리 : " << Distance_first << endl;
+				cout << "측면 센서 거리 : " << Distance_second << endl;
+
+				switch (switchCase) {
+				case 0:
+					cout << "직진중" << endl;
+					if (Distance_first < MAX_ULTRASONIC) {
+						switchCase = 1;//회전부분으로 이동
+					}
+
+					rotaryFlag = true;
+					break;
+
+				case 1: //좌회전 중
+					cout << "1) 추월 시작 및 좌회전 중" << endl;
+					steerVal = 10;
+					delayFlag = true;
+					switchCase = 2;
+					break;
+
+				case 2: //각도 다시 변환
+					cout << "2) 각도 조정중" << endl;
+					rotaryFlag = true;
+					//차선인식되서 돌아가는지 확인 필요
+					delayFlag = false;
+					if (steerVal <= 60 || steerVal >= 40) {
+						switchCase = 3;
+					}
+					break;
+
+				case 3:
+					cout << "3) 직진 중" << endl;
+					if (steerVal <= 55 || steerVal >= 45) steerVal = 50;
+					else if (steerVal > 70 || steerVal < 30) steerVal = 50;
+					//차선이 생기면 여기에 driving넣으면됨
+					if (Distance_second > MAX_SIDE_ULTRASONIC)
+						switchCase = 4;
+					break;
+
+				case 4:
+					steerVal = 90;
+					cout << "4) 추월 후 복귀중" << endl;
+					delayFlag = true;
+					rotaryFlag = false;
+					switchCase = 5;
+					break;
+
+				case 5:
+					cout << "5) 복귀 후 각도조정중" << endl;
+					delayFlag;
+					switchCase = 0;
+					break;
+				}
+				//switch문 종료
+
+				steering.setRatio(steerVal);
+				if (delayFlag)
+				{
+					delayFlag = false;
+					waitKey(delay);
+				}
+
+				if (waitKey(33) == 27) {
+					break; //프로그램 종료 ESC키.
+				}
+			}
+		}
 		//0.3초당 1frame 처리
 		// steering.setRatio(50);	//바퀴조향
 		// DCmotor.go();			//dc모터 전진 argument로 속도전달가능
