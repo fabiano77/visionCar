@@ -700,7 +700,7 @@ int main()
 
 				case 1: //좌회전 중
 					cout << "1) 추월 시작 및 좌회전 중" << endl;
-					steerVal = 0;
+					steerVal = 10;
 					delayFlag = true;
 					switchCase = 2;
 					break;
