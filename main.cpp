@@ -243,6 +243,10 @@ int main()
 				else
 					waitingFlag = false;
 			}
+			else if (detectColorSign.priorityStop(frame,1.5))
+			{
+				DCmotor.stop();
+			}
 			else //정상주행
 			{
 				DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
