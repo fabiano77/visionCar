@@ -569,37 +569,41 @@ int main()
 				DH.mappingSet(cornerFlag);
 				cout << "cornerFlag OFF" << '\n';
 			}
+			steering.setRatio(steerVal);
 			DCmotor.go(37);
-		}
 
-		namedWindow("frame", WINDOW_NORMAL);
-		imshow("frame", frame);
-		resizeWindow("frame", 480, 360);
-		moveWindow("frame", 320, 80 + 240);
-		waitKey(33);
 
-		// LED 관리코드
-		rightLed.off();
-		leftLed.off();
-		if (steerVal > 60)
-		{
-			rightLed.on();
-			whiteLed.off();
-		}
-		else if (steerVal < 40)
-		{
-			leftLed.on();
-			whiteLed.off();
-		}
-		else
-		{
-			if (!flicker)
-				flicker = 4;
-			if (2 < flicker--)
-				whiteLed.on();
-			else
+			namedWindow("frame", WINDOW_NORMAL);
+			imshow("frame", frame);
+			resizeWindow("frame", 480, 360);
+			moveWindow("frame", 320, 80 + 240);
+			waitKey(33);
+
+			// LED 관리코드
+			rightLed.off();
+			leftLed.off();
+			if (steerVal > 60)
+			{
+				rightLed.on();
 				whiteLed.off();
+			}
+			else if (steerVal < 40)
+			{
+				leftLed.on();
+				whiteLed.off();
+			}
+			else
+			{
+				if (!flicker)
+					flicker = 4;
+				if (2 < flicker--)
+					whiteLed.on();
+				else
+					whiteLed.off();
+			}
+
 		}
+
 	}
 	//End Parking mode
 
