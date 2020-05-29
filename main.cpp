@@ -371,6 +371,7 @@ int main()
 					flicker = 4;
 				if (2 < flicker--)
 				{
+					putText(frame, "~~Parking~~", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 123, 0), 2);
 					leftLed.on();
 					rightLed.on();
 				}
@@ -380,6 +381,7 @@ int main()
 					rightLed.off();
 				}
 			}
+			//ㄷ
 
 			sideDistance = secondSonic.distance();  //초음파 거리측정.
 			waitKey(50);
