@@ -322,6 +322,7 @@ int main()
 
 	else if (mode == 5) //Mode 5 : Parking(석준) ---------------------------------------------
 	{
+		//주차 기본세팅
 		double sideDistance = 0;	  // 측면 거리센서 값
 		double backDistance = 0;	  // 후방 거리센서 값
 		int caseNum = 0;			  // Switch - Case 문 변수
@@ -329,12 +330,56 @@ int main()
 		bool sensingFlag(false);
 		TickMeter tm;
 
+		//주행 기본세팅
+		Driving_DH DH(true, 1.00);
+		bool cornerFlag(false);
+		bool manualFlag(false);
+		bool rotaryFlag(false);
+		int detectedLineCnt(-1);
+		double steerVal(50.0);			//초기 각도(50이 중심)
+		DH.mappingSet(cornerFlag);		//조향수준 맵핑값 세팅
+		int flicker(4);
+
+
 		DCmotor.go(40);
 
 		while (!parkingComplete)
 		{
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
+			if (caseNum == 0) DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
+
+			namedWindow("frame", WINDOW_NORMAL);
+			imshow("frame", frame);
+			resizeWindow("frame", 480, 360);
+			moveWindow("frame", 320, 80 + 240);
+
+			//LED관리 코드
+			if (caseNum == 0)
+			{
+				if (!flicker)
+					flicker = 4;
+				if (2 < flicker--)
+					whiteLed.on();
+				else
+					whiteLed.off();
+			}
+			else
+			{
+				whiteLed.off();
+				if (!flicker)
+					flicker = 4;
+				if (2 < flicker--)
+				{
+					leftLed.on();
+					rightLed.on();
+				}
+				else
+				{
+					leftLed.off();
+					rightLed.off();
+				}
+			}
 
 			sideDistance = secondSonic.distance();  //초음파 거리측정.
 			waitKey(50);
@@ -477,13 +522,13 @@ int main()
 				DCmotor.go(); // 바퀴 조향은 그대로 탈출
 				waitKey(1000);
 				steering.setRatio(100);
-				waitKey(1500);
+				waitKey(1700);
 				steering.setRatio(50);
-				waitKey(500);
+				waitKey(300);
 				DCmotor.stop();
-				if (1)
+				if (true)
 				{ // 주차 분기 탈출 구문으로 차선이 검출되면 주차 분기를 탈출한다.
-					waitKey(3000);
+					waitKey(1000);
 					cout << "Detect line and keep going" << endl;
 					caseNum = 207;
 				}
@@ -498,7 +543,60 @@ int main()
 				DCmotor.stop();
 				break;
 			}
-			waitKey(150);
+			//waitKey(150);
+			waitKey(100);
+		}
+
+		while (parkingComplete)//주행코드
+		{
+			videocap >> distortedFrame;
+			remap(distortedFrame, frame, map1, map2, INTER_LINEAR);
+
+			DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
+
+			if (!cornerFlag && (steerVal == 90 || steerVal == 10))	//최대 각 검출되면 cornerFlag ON
+			{
+				cornerFlag = true;
+				DH.mappingSet(cornerFlag);
+				cout << "cornerFlag ON" << '\n';
+			}
+			//else if (cornerFlag && detectedLineCnt == 2)				//직선 두개 검출되면 cornerFlag OFF
+			else if (cornerFlag && (steerVal >= 40 && steerVal <= 60))	//각도가 좁아지면 cornerFlag OFF
+			{
+				cornerFlag = false;
+				DH.mappingSet(cornerFlag);
+				cout << "cornerFlag OFF" << '\n';
+			}
+			DCmotor.go(37);
+		}
+
+		namedWindow("frame", WINDOW_NORMAL);
+		imshow("frame", frame);
+		resizeWindow("frame", 480, 360);
+		moveWindow("frame", 320, 80 + 240);
+		waitKey(33);
+
+		// LED 관리코드
+		rightLed.off();
+		leftLed.off();
+		if (steerVal > 60)
+		{
+			rightLed.on();
+			whiteLed.off();
+		}
+		else if (steerVal < 40)
+		{
+			leftLed.on();
+			whiteLed.off();
+		}
+		else
+		{
+			if (!flicker)
+				flicker = 4;
+			if (2 < flicker--)
+				whiteLed.on();
+			else
+				whiteLed.off();
 		}
 	}
 	//End Parking mode
