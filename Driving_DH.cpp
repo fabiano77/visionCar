@@ -1,6 +1,6 @@
 #include "Driving_DH.h"
 
-const bool PRINT(true);				// 영상에 출력 표시 on&off
+const bool PRINT(false);				// 영상에 출력 표시 on&off
 const bool PRINT_RESULT(true);			// 결과직선 표시 on&off
 const bool IMAGE_DEBUG(true);
 double STRAIGHT_LEVEL(1.00);	// 직선 구간에서의 가중치 커지면 각도 쎄게틈
