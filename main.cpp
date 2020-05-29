@@ -778,34 +778,34 @@ int main()
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
 
-			//check_tunnel = cs.isTunnel(frame, 65);
-			check_tunnel = detectColorSign.detectTunnel(frame, 50);
-
-			if (check_tunnel) // 터널 입장
-			{
-				whiteLed.on();	//전조등 킨다.
-				//leftDistance = firstSonic.distance();	//좌측 거리측정.
-				//rightDistance = secondSonic.distance(); //우측 거리측정.
-				//double longDistance = (leftDistance > rightDistance) ? leftDistance : rightDistance;
-				//double shortDistance = (leftDistance > rightDistance) ? rightDistance : leftDistance;
-				//double angle = (longDistance / shortDistance) - 1;	//대략 0~0.5사이
-				//angle *= 100;	//대략0~50사이
-				//if (angle > 15) angle = 15;	//최대 15으로 제한.
-				//if (leftDistance > rightDistance)
-				//	angle = 50 + angle;
-				//else
-				//	angle = 50 - angle;
-				//steering.setRatio(angle);
-				//DCmotor.go(30);
+			check_tunnel = cs.isTunnel(frame, 65);
+			//check_tunnel = detectColorSign.detectTunnel(frame, 50);
+			if (!cs.isStop(frame, 65)) {
+				if (check_tunnel) // 터널 입장
+				{
+					whiteLed.on();	//전조등 킨다.
+					//leftDistance = firstSonic.distance();	//좌측 거리측정.
+					//rightDistance = secondSonic.distance(); //우측 거리측정.
+					//double longDistance = (leftDistance > rightDistance) ? leftDistance : rightDistance;
+					//double shortDistance = (leftDistance > rightDistance) ? rightDistance : leftDistance;
+					//double angle = (longDistance / shortDistance) - 1;	//대략 0~0.5사이
+					//angle *= 100;	//대략0~50사이
+					//if (angle > 15) angle = 15;	//최대 15으로 제한.
+					//if (leftDistance > rightDistance)
+					//	angle = 50 + angle;
+					//else
+					//	angle = 50 - angle;
+					//steering.setRatio(angle);
+					//DCmotor.go(30);
+				}
+				else	//기본주행
+				{
+					cs.GetFlag_tunnel();
+					whiteLed.off();
+					//steering.setRatio(50);
+					//DCmotor.go(40);
+				}
 			}
-			else	//기본주행
-			{
-				cs.GetFlag_tunnel();
-				whiteLed.off();
-				//steering.setRatio(50);
-				//DCmotor.go(40);
-			}
-
 			imshow("frame", frame);
 			if (waitKey(33) == 27)
 				break; //프로그램 종료 ESC키.
