@@ -643,6 +643,7 @@ int main()
 				//차선이 생기면 여기에 driving넣으면됨
 				rightLed.off();
 				holdFlag++;
+				delayFlag = false;
 				cout << "HoldFlag : " << holdFlag << endl;
 				if (Distance_second > MAX_SIDE_ULTRASONIC && holdFlag >= MAX_holdFlag) {
 					holdFlag = 0;
