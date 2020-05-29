@@ -893,7 +893,7 @@ int main()
 			   whiteLed.off();
 
 			   DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-
+			   steerVal = 51;
 			   if (!cornerFlag && (steerVal == 90 || steerVal == 10))   //최대 각 검출되면 cornerFlag ON
 			   {
 				   cornerFlag = true;
