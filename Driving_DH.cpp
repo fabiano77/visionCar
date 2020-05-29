@@ -52,10 +52,10 @@ void Driving_DH::basicSetting()
 	}
 	frame_ROI_Line = Mat(Size(frame_size.width, frame_size.height), CV_8UC3, Scalar(0));
 	rectangle(frame_ROI_Line		//높이 위에서 40%자르고 하단 60%남김
-		, Rect(0
-			, cvRound(frame_size.height * (47.0 / 100.0))//, cvRound(frame_size.height * (40.0 / 100.0))
-			, frame_size.width
-			, cvRound(frame_size.height * (53.0 / 100.0)))//, cvRound(frame_size.height * (60.0 / 100.0)))
+		, Rect(cvRound(frame_size.width * (5.0 / 100.0))//0
+			, cvRound(frame_size.height * (40.0 / 100.0))
+			, cvRound(frame_size.width * (90.0 / 100.0))//, frame_size.width
+			, cvRound(frame_size.height * (60.0 / 100.0)))
 		, Scalar(255, 255, 255)
 		, FILLED);
 
