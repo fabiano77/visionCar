@@ -340,23 +340,19 @@ int main()
 		DH.mappingSet(cornerFlag);		//조향수준 맵핑값 세팅
 		int flicker(4);
 
-
+		steering.setRatio(52);		//조향 우측으로 보정
 		DCmotor.go(40);
+
 
 		while (!parkingComplete)
 		{
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
-			if (caseNum == 0) DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
-
-			namedWindow("frame", WINDOW_NORMAL);
-			imshow("frame", frame);
-			resizeWindow("frame", 480, 360);
-			moveWindow("frame", 320, 80 + 240);
 
 			//LED관리 코드
 			if (caseNum == 0)
 			{
+				DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 				if (!flicker)
 					flicker = 4;
 				if (2 < flicker--)
@@ -382,6 +378,11 @@ int main()
 				}
 			}
 			//ㄷ
+
+			namedWindow("frame", WINDOW_NORMAL);
+			imshow("frame", frame);
+			resizeWindow("frame", 480, 360);
+			moveWindow("frame", 320, 80 + 240);
 
 			sideDistance = secondSonic.distance();  //초음파 거리측정.
 			waitKey(50);
@@ -448,7 +449,7 @@ int main()
 						DCmotor.go(40);
 						waitKey(1000);
 						DCmotor.stop();
-						steering.setRatio(80); // 바퀴를 오른쪽으로 돌린 후 후진
+						steering.setRatio(85); // 바퀴를 오른쪽으로 돌린 후 후진
 						DCmotor.backward(40);
 						caseNum = 203;
 					}
@@ -503,7 +504,7 @@ int main()
 				//수직 주차 시작---------------------------------------------
 			case 203:
 				cout << "수직) 후진 진행 - 1 -" << endl;
-				if (sideDistance < 10)
+				if (sideDistance < 12)
 				{ // 후진 중 어느정도 주차공간에 진입하였으면 다음 분기로 이동
 					DCmotor.stop();
 					steering.setRatio(50); // 바퀴를 왼쪽으로 돌린 후 후진
@@ -659,6 +660,25 @@ int main()
 					steering.setRatio(steerVal);
 
 					DCmotor.go(speedVal_rotary);
+
+					//
+					// LED 관리코드
+					rightLed.off();
+					leftLed.off();
+					if (steerVal > 60)
+					{
+						rightLed.on();
+						whiteLed.off();
+					}
+					else if (steerVal < 40)
+					{
+						leftLed.on();
+						whiteLed.off();
+					}
+					else
+					{
+						whiteLed.on();
+					}
 				}
 			}
 
@@ -667,7 +687,7 @@ int main()
 			resizeWindow("frame", 480, 360);
 			moveWindow("frame", 320, 80 + 240);
 
-			int key = waitKey(10);
+			int key = waitKey(33);
 			if (key == 27) break;	//프로그램 종료 ESC(아스키코드 = 27)키.
 		}
 
@@ -702,22 +722,31 @@ int main()
 			DCmotor.go();
 			videocap >> distortedFrame;
 			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
-			DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 
 			Distance_first = firstSonic.distance();	  //초음파 거리측정 1번센서.
 			Distance_second = secondSonic.distance(); //초음파 거리측정 2번센서.
 			cout << "전방 센서 거리 : " << Distance_first << endl;
 			cout << "측면 센서 거리 : " << Distance_second << endl;
 
+			DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
+			if (switchCase != 0)	//추월중일때 frame에 표시용도
+			{
+				putText(frame, "~~Overtaking~~", Point(frame.cols / 4, frame.rows * 0.80), FONT_HERSHEY_COMPLEX, 1, Scalar(0, 255, 0), 2);
+			}
+
 			switch (switchCase) {
 			case 0:
 				cout << "직진중" << endl;
+				leftLed.off();
+				rightLed.off();
+				whiteLed.off();
+
 				if (Distance_first < MAX_ULTRASONIC) {
 					switchCase = 1;//회전부분으로 이동
 				}
-				if (steerVal > 70) { rightLed.on(); }
-				else if (steerVal < 30) { leftLed.on(); }
-				else { rightLed.off(); leftLed.off(); }
+				if (steerVal > 60) { rightLed.on(); }
+				else if (steerVal < 40) { leftLed.on(); }
+				else { whiteLed.on(); }
 				rotaryFlag = false;
 				break;
 
@@ -731,8 +760,7 @@ int main()
 
 			case 2: //각도 다시 변환
 				cout << "2) 각도 조정중" << endl;
-				leftLed.off();
-				rightLed.on();
+				leftLed.on();
 				steerVal = 90;
 				rotaryFlag = true;
 				//차선인식되서 돌아가는지 확인 필요
@@ -745,7 +773,8 @@ int main()
 			case 3:
 				cout << "3) 추월 직진 중" << endl;
 				//차선이 생기면 여기에 driving넣으면됨
-				rightLed.off();
+				leftLed.off();
+				whiteLed.on();
 				holdFlag++;
 				delayFlag = false;
 				cout << "HoldFlag : " << holdFlag << endl;
@@ -759,6 +788,7 @@ int main()
 			case 4:
 				steerVal = 90;
 				cout << "4) 추월 후 복귀중" << endl;
+				whiteLed.off();
 				rightLed.on();
 				delayFlag = true;
 				rotaryFlag = false;
@@ -767,7 +797,7 @@ int main()
 
 			case 5:
 				cout << "5) 복귀 후 각도조정중" << endl;
-				rightLed.off();
+				rightLed.on();
 				delayFlag = false;
 				switchCase = 0;
 				break;
@@ -786,6 +816,10 @@ int main()
 				break; //프로그램 종료 ESC키.
 			}
 		}
+		namedWindow("frame", WINDOW_NORMAL);
+		imshow("frame", frame);
+		resizeWindow("frame", 480, 360);
+		moveWindow("frame", 320, 80 + 240);
 		waitKey(150);
 		//0.3초당 1frame 처리
 		// steering.setRatio(50);	//바퀴조향
@@ -836,7 +870,10 @@ int main()
 					//DCmotor.go(40);
 				}
 			}
+			namedWindow("frame", WINDOW_NORMAL);
 			imshow("frame", frame);
+			resizeWindow("frame", 480, 360);
+			moveWindow("frame", 320, 80 + 240);
 			if (waitKey(33) == 27)
 				break; //프로그램 종료 ESC키.
 		}
