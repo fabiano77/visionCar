@@ -16,7 +16,7 @@ int HLP_maxLineGap = 500;	//260
 
 int h1 = 14;
 int h2 = 46;
-int s = 30;		//40
+int s = 10;		//40
 int v = 220;	//90
 
 Scalar lower_yellow(h1, s, v);
@@ -52,9 +52,9 @@ void Driving_DH::basicSetting()
 	}
 	frame_ROI_Line = Mat(Size(frame_size.width, frame_size.height), CV_8UC3, Scalar(0));
 	rectangle(frame_ROI_Line		//높이 위에서 40%자르고 하단 60%남김
-		, Rect(cvRound(frame_size.width * (5.0 / 100.0))//0
+		, Rect(0
 			, cvRound(frame_size.height * (40.0 / 100.0))
-			, cvRound(frame_size.width * (90.0 / 100.0))//, frame_size.width
+			, frame_size.width
 			, cvRound(frame_size.height * (60.0 / 100.0)))
 		, Scalar(255, 255, 255)
 		, FILLED);
@@ -165,13 +165,13 @@ void Driving_DH::imgProcess(Mat& frame, double& steerVal, int& resultLineCnt, bo
 
 	if (IMAGE_DEBUG)
 	{
-		//createTrackbar("s", "trackbar", &s, 255, on_trackbar);
-		//createTrackbar("v", "trackbar", &v, 255, on_trackbar);
-		//createTrackbar("H_thresh", "trackbar", &HLP_threshold, 500, on_trackbar);
-		//createTrackbar("H_minLen", "trackbar", &HLP_minLineLength, 500, on_trackbar);
-		//createTrackbar("H_maxGap", "trackbar", &HLP_maxLineGap, 500, on_trackbar);
-		//namedWindow("trackbar", WINDOW_NORMAL);
-		//moveWindow("trackbar", 700, 40);
+		createTrackbar("s", "trackbar", &s, 255, on_trackbar);
+		createTrackbar("v", "trackbar", &v, 255, on_trackbar);
+		createTrackbar("H_thresh", "trackbar", &HLP_threshold, 500, on_trackbar);
+		createTrackbar("H_minLen", "trackbar", &HLP_minLineLength, 500, on_trackbar);
+		createTrackbar("H_maxGap", "trackbar", &HLP_maxLineGap, 500, on_trackbar);
+		namedWindow("trackbar", WINDOW_NORMAL);
+		moveWindow("trackbar", 700, 40);
 
 		namedWindow("frame_yellow", WINDOW_NORMAL);
 		imshow("frame_yellow", frame_yellow);
