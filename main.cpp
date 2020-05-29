@@ -884,7 +884,7 @@ int main()
 				   angle = 50 + angle;
 			   else
 				   angle = 50 - angle;
-			   steering.setRatio(angle);
+			   steering.setRatio(51);
 			   DCmotor.go(30);
 		   }
 		   else   //기본주행
