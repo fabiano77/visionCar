@@ -137,7 +137,7 @@ bool DetectColorSign::waitingCheck(Mat& frame, double difference)
 		}
 	}
 
-	putText(frame, "wating~~", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 153, 0), 2);
+	putText(frame, "waiting~~", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 153, 0), 2);
 
 	return true;
 }

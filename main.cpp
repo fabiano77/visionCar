@@ -214,7 +214,7 @@ int main()
 		ManualMode Manual(pca, 40);
 
 		//Self-driving class configuration
-		Driving_DH DH(true, 1.00);
+		Driving_DH DH(false, 1.00);
 		bool cornerFlag(false);
 		bool manualFlag(false);
 		int detectedLineCnt(-1);
@@ -243,6 +243,10 @@ int main()
 				else
 					waitingFlag = false;
 			}
+			else if (detectColorSign.priorityStop(frame,1.5))
+			{
+				DCmotor.stop();
+			}
 			else //정상주행
 			{
 				DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
@@ -262,7 +266,7 @@ int main()
 				}
 				if (!manualFlag) steering.setRatio(steerVal);
 
-				//DCmotor.go(37);
+				DCmotor.go(37);
 			}
 
 			namedWindow("frame", WINDOW_NORMAL);
@@ -405,7 +409,7 @@ int main()
 
 			case 1:
 				cout << "벽 처음 감지" << endl;
-				if (sideDistance > 45) // 벽을 지나 주차공간을 만나면 다음 분기로 이동
+				if (sideDistance > 30) // 벽을 지나 주차공간을 만나면 다음 분기로 이동
 					caseNum = 2;
 				break;
 
@@ -430,7 +434,7 @@ int main()
 						DCmotor.stop();
 						waitKey(500);
 						DCmotor.go();
-						waitKey(700);
+						waitKey(1100);
 						DCmotor.stop();
 						waitKey(500);
 						steering.setRatio(90); // 바퀴를 오른쪽으로 돌린 후 후진
@@ -449,7 +453,7 @@ int main()
 						DCmotor.go(40);
 						waitKey(1000);
 						DCmotor.stop();
-						steering.setRatio(85); // 바퀴를 오른쪽으로 돌린 후 후진
+						steering.setRatio(95); // 바퀴를 오른쪽으로 돌린 후 후진
 						DCmotor.backward(40);
 						caseNum = 203;
 					}
@@ -461,36 +465,36 @@ int main()
 				//수평 주차 시작---------------------------------------------
 			case 103:
 				cout << "수평) 후진 진행 - 1 -" << endl;
-				if ((backDistance < 18) || (sideDistance < 12))
+				if ((backDistance < 14))
 				{ // 후진 중 어느정도 주차공간에 진입하였으면 다음 분기로 이동
 					DCmotor.stop();
 					waitKey(500);
 					DCmotor.go();
-					waitKey(300);
+					waitKey(800);
 					DCmotor.stop();
 					waitKey(500);
-					steering.setRatio(12); // 바퀴를 왼쪽으로 돌린 후 후진
+					steering.setRatio(10); // 바퀴를 왼쪽으로 돌린 후 후진
 					DCmotor.backward(40);
 					caseNum = 104;
 				}
 				break;
 			case 104:
 				cout << "수평) 후진 진행 - 2 -" << endl;
-				if ((sideDistance < 10) || (backDistance < 10))
+				if (/*(sideDistance < 12) ||*/ (backDistance < 10))
 				{
 					DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
 					steering.setRatio(50);
 					waitKey(3000);
-					steering.setRatio(15);
+					steering.setRatio(0);
 					caseNum = 105;
 				}
 				break;
 			case 105:
 				cout << "수평) 주차 완료 및 차량 복귀" << endl;
 				DCmotor.go(); // 바퀴 조향은 그대로 탈출
-				waitKey(700);
-				steering.setRatio(75);
 				waitKey(1000);
+				steering.setRatio(90);
+				waitKey(1500);
 				DCmotor.stop();
 				if (1)
 				{ // 주차 분기 탈출 구문으로 차선이 검출되면 주차 분기를 탈출한다.
@@ -716,8 +720,8 @@ int main()
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 
 		//초음파 센서 하나인 경우
-		int delay = 1050;
-		cout << "delay = 1200";
+		int delay = 900;
+		cout << "delay = 900";
 		int switchCase = 0;//0은 기본주행
 		bool delayFlag = false;//상태유지 flag
 		const int MAX_holdFlag = 3;
@@ -809,6 +813,11 @@ int main()
 			}
 			//switch문 종료
 
+			namedWindow("frame", WINDOW_NORMAL);
+			imshow("frame", frame);
+			resizeWindow("frame", 480, 360);
+			moveWindow("frame", 320, 80 + 240);
+
 			steering.setRatio(steerVal);
 			if (delayFlag)
 			{
@@ -817,15 +826,12 @@ int main()
 				if (switchCase == 3) { waitKey(delay / 2); }//유의
 			}
 
-			if (waitKey(33) == 27) {
+			if (waitKey(50) == 27) {
 				break; //프로그램 종료 ESC키.
 			}
 		}
-		namedWindow("frame", WINDOW_NORMAL);
-		imshow("frame", frame);
-		resizeWindow("frame", 480, 360);
-		moveWindow("frame", 320, 80 + 240);
-		waitKey(150);
+
+		//waitKey(100);
 		//0.3초당 1frame 처리
 		// steering.setRatio(50);	//바퀴조향
 		// DCmotor.go();			//dc모터 전진 argument로 속도전달가능

@@ -1,6 +1,6 @@
 #include "Driving_DH.h"
 
-const bool PRINT(true);				// 영상에 출력 표시 on&off
+const bool PRINT(false);				// 영상에 출력 표시 on&off
 const bool PRINT_RESULT(true);			// 결과직선 표시 on&off
 const bool IMAGE_DEBUG(true);
 double STRAIGHT_LEVEL(1.00);	// 직선 구간에서의 가중치 커지면 각도 쎄게틈
@@ -16,8 +16,8 @@ int HLP_maxLineGap = 500;	//260
 
 int h1 = 14;
 int h2 = 46;
-int s = 30;		//40
-int v = 220;	//90
+int s = 0;		//40
+int v = 240;	//90
 
 Scalar lower_yellow(h1, s, v);
 Scalar upper_yellow(h2, 255, 255);
@@ -53,9 +53,9 @@ void Driving_DH::basicSetting()
 	frame_ROI_Line = Mat(Size(frame_size.width, frame_size.height), CV_8UC3, Scalar(0));
 	rectangle(frame_ROI_Line		//높이 위에서 40%자르고 하단 60%남김
 		, Rect(0
-			, cvRound(frame_size.height * (40.0 / 100.0))//, cvRound(frame_size.height * (65.0 / 100.0))
+			, cvRound(frame_size.height * (40.0 / 100.0))
 			, frame_size.width
-			, cvRound(frame_size.height * (60.0 / 100.0)))//, cvRound(frame_size.height * (35.0 / 100.0)))
+			, cvRound(frame_size.height * (60.0 / 100.0)))
 		, Scalar(255, 255, 255)
 		, FILLED);
 
