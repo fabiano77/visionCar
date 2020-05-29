@@ -615,7 +615,6 @@ int main()
 	//End Parking mode
 
 
-
 	else if (mode == 6)//Mode 6 : Rotary(상민) ----------------------------------------------
 	{
 		//Self-driving class configuration
@@ -840,87 +839,87 @@ int main()
 	}
 	//End Overtaking mode
 
-	else if (mode == 8) //Mode 8 : Tunnel(대희) ----------------------------------------------------
-	{
-		double leftDistance; //좌측 거리값
-		double rightDistance; //우측 거리값
+   else if (mode == 8) //Mode 8 : Tunnel(대희) ----------------------------------------------------
+   {
+   double leftDistance; //좌측 거리값
+   double rightDistance; //우측 거리값
 
-		ManualMode Manual(pca, 40);
+   ManualMode Manual(pca, 40);
 
-		Driving_DH DH(false, 1.00);
-		bool cornerFlag(false);
-		bool manualFlag(false);
-		int detectedLineCnt(-1);
-		double steerVal(50.0);			//초기 각도(50이 중심)
-		DH.mappingSet(cornerFlag);		//조향수준 맵핑값 세팅
+   Driving_DH DH(false, 1.00);
+   bool cornerFlag(false);
+   bool manualFlag(false);
+   int detectedLineCnt(-1);
+   double steerVal(50.0);         //초기 각도(50이 중심)
+   DH.mappingSet(cornerFlag);      //조향수준 맵핑값 세팅
 
-		bool rotaryFlag(false);
-		int flicker(4);
+   bool rotaryFlag(false);
+   int flicker(4);
 
-		//color detecting class ganerate
-		bool waitingFlag(true);
+   //color detecting class ganerate
+   bool waitingFlag(true);
 
-		DetectColorSign detectColorSign(true);
-		CheckStart cs;
-		bool check_tunnel;
-		while (true)
-		{
-			videocap >> distortedFrame;
-			remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
+   DetectColorSign detectColorSign(true);
+   CheckStart cs;
+   bool check_tunnel;
+   while (true)
+   {
+	   videocap >> distortedFrame;
+	   remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
 
-			check_tunnel = cs.isTunnel(frame, 65);
-			//check_tunnel = detectColorSign.detectTunnel(frame, 50);
-			if (!cs.isStop(frame, 65)) {
-				if (check_tunnel) // 터널 입장
-				{
-					whiteLed.on();	//전조등 킨다.
-					leftDistance = firstSonic.distance();	//좌측 거리측정.
-					rightDistance = secondSonic.distance(); //우측 거리측정.
-					double longDistance = (leftDistance > rightDistance) ? leftDistance : rightDistance;
-					double shortDistance = (leftDistance > rightDistance) ? rightDistance : leftDistance;
-					double angle = (longDistance / shortDistance) - 1;	//대략 0~0.5사이
-					angle *= 100;	//대략0~50사이
-					if (angle > 15) angle = 15;	//최대 15으로 제한.
-					if (leftDistance > rightDistance)
-						angle = 50 + angle;
-					else
-						angle = 50 - angle;
-					steering.setRatio(angle);
-					DCmotor.go(30);
-				}
-				else	//기본주행
-				{
-					cs.GetFlag_tunnel();
-					whiteLed.off();
+	   check_tunnel = cs.isTunnel(frame, 65);
+	   //check_tunnel = detectColorSign.detectTunnel(frame, 50);
+	   if (!cs.isStop(frame, 65)) {
+		   if (check_tunnel) // 터널 입장
+		   {
+			   whiteLed.on();   //전조등 킨다.
+			   leftDistance = firstSonic.distance();   //좌측 거리측정.
+			   rightDistance = secondSonic.distance(); //우측 거리측정.
+			   double longDistance = (leftDistance > rightDistance) ? leftDistance : rightDistance;
+			   double shortDistance = (leftDistance > rightDistance) ? rightDistance : leftDistance;
+			   double angle = (longDistance / shortDistance) - 1;   //대략 0~0.5사이
+			   angle *= 100;   //대략0~50사이
+			   if (angle > 15) angle = 15;   //최대 15으로 제한.
+			   if (leftDistance > rightDistance)
+				   angle = 50 + angle;
+			   else
+				   angle = 50 - angle;
+			   steering.setRatio(angle);
+			   DCmotor.go(30);
+		   }
+		   else   //기본주행
+		   {
+			   cs.GetFlag_tunnel();
+			   whiteLed.off();
 
-					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
+			   DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
 
-					if (!cornerFlag && (steerVal == 90 || steerVal == 10))	//최대 각 검출되면 cornerFlag ON
-					{
-						cornerFlag = true;
-						DH.mappingSet(cornerFlag);
-						cout << "cornerFlag ON" << '\n';
-					}
-					//else if (cornerFlag && detectedLineCnt == 2)				//직선 두개 검출되면 cornerFlag OFF
-					else if (cornerFlag && (steerVal >= 40 && steerVal <= 60))	//각도가 좁아지면 cornerFlag OFF
-					{
-						cornerFlag = false;
-						DH.mappingSet(cornerFlag);
-						cout << "cornerFlag OFF" << '\n';
-					}
-					if (!manualFlag) steering.setRatio(steerVal);
+			   if (!cornerFlag && (steerVal == 90 || steerVal == 10))   //최대 각 검출되면 cornerFlag ON
+			   {
+				   cornerFlag = true;
+				   DH.mappingSet(cornerFlag);
+				   cout << "cornerFlag ON" << '\n';
+			   }
+			   //else if (cornerFlag && detectedLineCnt == 2)            //직선 두개 검출되면 cornerFlag OFF
+			   else if (cornerFlag && (steerVal >= 40 && steerVal <= 60))   //각도가 좁아지면 cornerFlag OFF
+			   {
+				   cornerFlag = false;
+				   DH.mappingSet(cornerFlag);
+				   cout << "cornerFlag OFF" << '\n';
+			   }
+			   if (!manualFlag) steering.setRatio(steerVal);
 
-					DCmotor.go(37);
-				}
-			}
-			namedWindow("frame", WINDOW_NORMAL);
-			imshow("frame", frame);
-			resizeWindow("frame", 480, 360);
-			moveWindow("frame", 320, 80 + 240);
-			if (waitKey(33) == 27)
-				break; //프로그램 종료 ESC키.
-		}
-	}
+			   DCmotor.go(37);
+		   }
+	   }
+	   namedWindow("frame", WINDOW_NORMAL);
+	   imshow("frame", frame);
+	   resizeWindow("frame", 480, 360);
+	   moveWindow("frame", 320, 80 + 240);
+	   if (waitKey(33) == 27)
+		   break; //프로그램 종료 ESC키.
+   }
+   }
 	//End Tunnel mode
 
 	else if (mode == 9) //Mode 9 : Tunnel(대희) ----------------------------------------------------
