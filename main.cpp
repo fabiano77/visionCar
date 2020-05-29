@@ -422,9 +422,9 @@ int main()
 					tm.stop();
 					double widthTime = tm.getTimeMilli();
 					cout << "폭 감지 시간 = " << widthTime << endl;
-
+					//sfsf
 					//if (widthTime > 600)	//폭 길 경우 -> 수평
-					if (false)
+					if (true)
 					{
 						cout << "수평 주차로 판단한다." << endl;
 						DCmotor.stop();
