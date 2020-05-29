@@ -22,7 +22,7 @@ int main()
 	Wheel DCmotor(pca, LeftWheel, RightWheel);
 	allServoReset(pca);				// 3 Servo motor center reset
 	UltraSonic firstSonic(28, 27);	// 초음파센서 객체
-	UltraSonic secondSonic(26, 25); // 초음파센서 객체 2(민수: 우측) 
+	UltraSonic secondSonic(26, 25); 
 	PicarLED whiteLed(24);
 	PicarLED rightLed(23);
 	PicarLED leftLed(22);
@@ -611,8 +611,11 @@ int main()
 				if (Distance_first < MAX_ULTRASONIC) {
 					switchCase = 1;//회전부분으로 이동
 				}
+				if (steerVal > 70) { rightLed.on(); }
+				else if (steerVal < 30) { leftLed.on(); }
+				else { rightLed.off(); leftLed.off(); }
 
-				rotaryFlag = true;
+				rotaryFlag = false;
 				break;
 
 			case 1: //좌회전 중
@@ -620,10 +623,13 @@ int main()
 				steerVal = 0;
 				delayFlag = true;
 				switchCase = 2;
+				leftLed.on();
 				break;
 
 			case 2: //각도 다시 변환
 				cout << "2) 각도 조정중" << endl;
+				leftLed.off();
+				rightLed.on();
 				steerVal = 90;
 				rotaryFlag = true;
 				//차선인식되서 돌아가는지 확인 필요
@@ -636,6 +642,7 @@ int main()
 			case 3:
 				cout << "3) 추월 직진 중" << endl;
 				//차선이 생기면 여기에 driving넣으면됨
+				rightLed.off();
 				holdFlag++;
 
 				if (Distance_second > MAX_SIDE_ULTRASONIC && holdFlag >= MAX_holdFlag) {
@@ -648,6 +655,7 @@ int main()
 			case 4:
 				steerVal = 90;
 				cout << "4) 추월 후 복귀중" << endl;
+				rightLed.on();
 				delayFlag = true;
 				rotaryFlag = false;
 				switchCase = 5;
@@ -655,6 +663,7 @@ int main()
 
 			case 5:
 				cout << "5) 복귀 후 각도조정중" << endl;
+				rightLed.off();
 				delayFlag = false;
 				switchCase = 0;
 				break;
