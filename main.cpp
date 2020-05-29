@@ -22,7 +22,7 @@ int main()
 	Wheel DCmotor(pca, LeftWheel, RightWheel);
 	allServoReset(pca);				// 3 Servo motor center reset
 	UltraSonic firstSonic(28, 27);	// 초음파센서 객체
-	UltraSonic secondSonic(26, 25); 
+	UltraSonic secondSonic(26, 25);
 	PicarLED whiteLed(24);
 	PicarLED rightLed(23);
 	PicarLED leftLed(22);
@@ -583,7 +583,7 @@ int main()
 		double Distance_first; //거리값
 		double Distance_second;
 		const double MAX_ULTRASONIC = 35; //30CM 최대
-		const double MAX_SIDE_ULTRASONIC = 60;
+		const double MAX_SIDE_ULTRASONIC = 50;
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 
 		//초음파 센서 하나인 경우
@@ -591,7 +591,7 @@ int main()
 		cout << "delay = 1200";
 		int switchCase = 0;//0은 기본주행
 		bool delayFlag = false;//상태유지 flag
-		const int MAX_holdFlag = 10;
+		const int MAX_holdFlag = 3;
 		int holdFlag = 0;
 		while (true)
 		{
@@ -614,7 +614,6 @@ int main()
 				if (steerVal > 70) { rightLed.on(); }
 				else if (steerVal < 30) { leftLed.on(); }
 				else { rightLed.off(); leftLed.off(); }
-
 				rotaryFlag = false;
 				break;
 
