@@ -178,7 +178,7 @@ RoundAbout::RoundAbout() {
 	uper1_distance = 40;
 	flag_wait = -1;
 
-	flag2_start = -1;
+	flag2_start = 0;
 	check2_start = -1;
 	lower2_distance = 20;
 	uper2_distance = 40;
@@ -234,7 +234,7 @@ bool RoundAbout::isDelay(const double Distance) {
 		}
 		if (flag_wait == 3) {
 			flag_wait = -1;
-			flag2_start = 35;
+			flag2_start = 30;
 		}
 		return true; // 정지
 	}
@@ -243,13 +243,17 @@ bool RoundAbout::isDelay(const double Distance) {
 			flag_wait--;
 		}
 		if (flag2_start < 0) { // flag가 비활성화 되었을 때
+			flag2_start = 0;
 			return false; // 출발
 		}
-		else { // flag가 활성화 되어 있을 때
+		else if(flag2_start > 0) { // flag가 활성화 되어 있을 때
 			if (Distance >= uper2_distance) { // 앞의 차량이 일정 거리 이상으로 멀어질 경우				
 				flag2_start--;
 			}
 			return true;
+		}
+		else {
+			return false;
 		}
 	}
 }

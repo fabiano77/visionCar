@@ -642,6 +642,7 @@ int main()
 				if (Rotary.isDelay(Distance)) { // 앞의 차량과 가까워졌을 시 정지
 					DCmotor.stop();
 					cout << "<<< stop! >>>" << endl;
+					putText(frame, "Stop!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 3.5, Scalar(255), 2);
 				}
 				else { // 
 					DH.driving(frame, steerVal, detectedLineCnt, rotaryFlag);
@@ -683,7 +684,9 @@ int main()
 					}
 				}
 			}
-
+			else {
+				putText(frame, "Waiting!!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 3.5, Scalar(255), 2);
+			}
 			namedWindow("frame", WINDOW_NORMAL);
 			imshow("frame", frame);
 			resizeWindow("frame", 480, 360);
