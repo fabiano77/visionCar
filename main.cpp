@@ -405,7 +405,7 @@ int main()
 
 			case 1:
 				cout << "벽 처음 감지" << endl;
-				if (sideDistance > 45) // 벽을 지나 주차공간을 만나면 다음 분기로 이동
+				if (sideDistance > 30) // 벽을 지나 주차공간을 만나면 다음 분기로 이동
 					caseNum = 2;
 				break;
 
@@ -488,9 +488,9 @@ int main()
 			case 105:
 				cout << "수평) 주차 완료 및 차량 복귀" << endl;
 				DCmotor.go(); // 바퀴 조향은 그대로 탈출
-				waitKey(700);
+				waitKey(1200);
 				steering.setRatio(75);
-				waitKey(1000);
+				waitKey(1500);
 				DCmotor.stop();
 				if (1)
 				{ // 주차 분기 탈출 구문으로 차선이 검출되면 주차 분기를 탈출한다.
