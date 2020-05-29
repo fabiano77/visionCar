@@ -16,8 +16,8 @@ int HLP_maxLineGap = 500;	//260
 
 int h1 = 14;
 int h2 = 46;
-int s = 10;		//40
-int v = 220;	//90
+int s = 0;		//40
+int v = 240;	//90
 
 Scalar lower_yellow(h1, s, v);
 Scalar upper_yellow(h2, 255, 255);

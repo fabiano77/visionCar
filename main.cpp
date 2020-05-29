@@ -214,7 +214,7 @@ int main()
 		ManualMode Manual(pca, 40);
 
 		//Self-driving class configuration
-		Driving_DH DH(true, 1.00);
+		Driving_DH DH(false, 1.00);
 		bool cornerFlag(false);
 		bool manualFlag(false);
 		int detectedLineCnt(-1);
