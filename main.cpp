@@ -461,7 +461,7 @@ int main()
 				//수평 주차 시작---------------------------------------------
 			case 103:
 				cout << "수평) 후진 진행 - 1 -" << endl;
-				if ((backDistance < 18) || (sideDistance < 12))
+				if ((backDistance < 18))
 				{ // 후진 중 어느정도 주차공간에 진입하였으면 다음 분기로 이동
 					DCmotor.stop();
 					waitKey(500);
@@ -476,7 +476,7 @@ int main()
 				break;
 			case 104:
 				cout << "수평) 후진 진행 - 2 -" << endl;
-				if ((sideDistance < 10) || (backDistance < 10))
+				if ((sideDistance < 12) || (backDistance < 10))
 				{
 					DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
 					steering.setRatio(50);
