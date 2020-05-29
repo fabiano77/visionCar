@@ -675,7 +675,7 @@ int main()
 			{
 				delayFlag = false;
 				waitKey(delay);
-				if (switchCase == 5 || switchCase == 3) { waitKey(delay / 2); }//유의
+				if (switchCase == 3) { waitKey(delay / 2); }//유의
 			}
 
 			if (waitKey(33) == 27) {
