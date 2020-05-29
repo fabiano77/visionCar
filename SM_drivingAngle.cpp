@@ -106,9 +106,9 @@ bool CheckStart::isDark(Mat& frame, double percent) {
 	int totalValue = pixelCnt * 255;
 	double brightRate = ((double)pixelValue / totalValue) * 100.0;
 
+	cout << "brightRate : " << brightRate << endl;
 	if (brightRate < (100 - percent))
 	{
-		putText(grayFrame, "detect tunnel!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 3, Scalar(255), 2);
 		returnVal = true;
 	}
 	else returnVal = false;
