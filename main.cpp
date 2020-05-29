@@ -430,7 +430,7 @@ int main()
 						DCmotor.stop();
 						waitKey(500);
 						DCmotor.go();
-						waitKey(700);
+						waitKey(1100);
 						DCmotor.stop();
 						waitKey(500);
 						steering.setRatio(90); // 바퀴를 오른쪽으로 돌린 후 후진
