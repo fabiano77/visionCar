@@ -481,14 +481,14 @@ int main()
 					DCmotor.stop(); // 3초 정도 대기, sleep 함수 이용 or clock 함수로 시간 측정하여 이용
 					steering.setRatio(50);
 					waitKey(3000);
-					steering.setRatio(15);
+					steering.setRatio(0);
 					caseNum = 105;
 				}
 				break;
 			case 105:
 				cout << "수평) 주차 완료 및 차량 복귀" << endl;
 				DCmotor.go(); // 바퀴 조향은 그대로 탈출
-				waitKey(800);
+				waitKey(1000);
 				steering.setRatio(90);
 				waitKey(1500);
 				DCmotor.stop();
