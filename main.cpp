@@ -587,7 +587,7 @@ int main()
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 
 		//초음파 센서 하나인 경우
-		int delay = 1200;
+		int delay = 1050;
 		cout << "delay = 1200";
 		int switchCase = 0;//0은 기본주행
 		bool delayFlag = false;//상태유지 flag
@@ -682,6 +682,7 @@ int main()
 				break; //프로그램 종료 ESC키.
 			}
 		}
+		waitKey(150);
 		//0.3초당 1frame 처리
 		// steering.setRatio(50);	//바퀴조향
 		// DCmotor.go();			//dc모터 전진 argument로 속도전달가능
