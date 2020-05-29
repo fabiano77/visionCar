@@ -713,7 +713,7 @@ int main()
 		const double MIN_ULTRASONIC = 5;  //4CM 최소
 
 		//초음파 센서 하나인 경우
-		int delay = 1050;
+		int delay = 1100;
 		cout << "delay = 1200";
 		int switchCase = 0;//0은 기본주행
 		bool delayFlag = false;//상태유지 flag
@@ -806,6 +806,11 @@ int main()
 			}
 			//switch문 종료
 
+			namedWindow("frame", WINDOW_NORMAL);
+			imshow("frame", frame);
+			resizeWindow("frame", 480, 360);
+			moveWindow("frame", 320, 80 + 240);
+
 			steering.setRatio(steerVal);
 			if (delayFlag)
 			{
@@ -814,15 +819,12 @@ int main()
 				if (switchCase == 3) { waitKey(delay / 2); }//유의
 			}
 
-			if (waitKey(33) == 27) {
+			if (waitKey(50) == 27) {
 				break; //프로그램 종료 ESC키.
 			}
 		}
-		namedWindow("frame", WINDOW_NORMAL);
-		imshow("frame", frame);
-		resizeWindow("frame", 480, 360);
-		moveWindow("frame", 320, 80 + 240);
-		waitKey(150);
+
+		//waitKey(100);
 		//0.3초당 1frame 처리
 		// steering.setRatio(50);	//바퀴조향
 		// DCmotor.go();			//dc모터 전진 argument로 속도전달가능
