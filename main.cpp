@@ -262,7 +262,7 @@ int main()
 				}
 				if (!manualFlag) steering.setRatio(steerVal);
 
-				//DCmotor.go(37);
+				DCmotor.go(37);
 			}
 
 			namedWindow("frame", WINDOW_NORMAL);
