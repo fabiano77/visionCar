@@ -24,7 +24,7 @@ public:
 	//Return :: red가 percent보다 많이 검출되고 사각형이 검출되면 true
 
 
-	bool isRedStop(Mat& frame, double percent);
+	bool isRedStop(Mat& frame, double percent, bool pFlag);
 	//PreCondition :: percent에 붉은색이 몇퍼센트 존재해야 검출할건지 입력
 	//PostCondition :: none
 	//Return :: red가 percent보다 많이 검출되면 true

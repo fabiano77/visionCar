@@ -151,7 +151,7 @@ int main()
 			rightLed.off();
 			leftLed.off();
 
-			if (detectColorSign.priorityStop(frame, 1.5))
+			if (detectColorSign.priorityStop(frame, 1.2))
 			{
 				if ((flicker % 2) == 1)
 				{
@@ -164,7 +164,7 @@ int main()
 				}
 				cout << "A priority stop signal was detected." << '\n';
 			}
-			else if (detectColorSign.isRedStop(frame, 1.5)) //빨간색 표지판 감지
+			else if (detectColorSign.isRedStop(frame, 1.2, true)) //빨간색 표지판 감지
 			{
 				if ((flicker % 3) == 1)
 				{
@@ -174,7 +174,7 @@ int main()
 				}
 				cout << "A red stop sign was detected." << '\n';
 			}
-			else if (detectColorSign.isYellow(frame, 1.5)) //노란색 표지판 감지
+			else if (detectColorSign.isYellow(frame, 1.2)) //노란색 표지판 감지
 			{
 				if ((flicker % 3) == 1)
 				{
@@ -183,12 +183,12 @@ int main()
 				}
 				cout << "A yellow sign was detected." << '\n';
 			}
-			else if (detectColorSign.isGreenTurnSignal(frame, 1.0) == 1) //초록색 표지판 감지
+			else if (detectColorSign.isGreenTurnSignal(frame, 0.9) == 1) //초록색 표지판 감지
 			{
 				if ((flicker % 3) == 1) leftLed.on();
 				cout << "<----- signal was detected." << '\n';
 			}
-			else if (detectColorSign.isGreenTurnSignal(frame, 1.5) == 2) //초록색 표지판 감지
+			else if (detectColorSign.isGreenTurnSignal(frame, 1.2) == 2) //초록색 표지판 감지
 			{
 				if ((flicker % 3) == 1) rightLed.on();
 				cout << "-----> signal was detected." << '\n';
@@ -875,16 +875,12 @@ int main()
 			   whiteLed.on();   //전조등 킨다.
 			   leftDistance = firstSonic.distance();   //좌측 거리측정.
 			   rightDistance = secondSonic.distance(); //우측 거리측정.
-			   double longDistance = (leftDistance > rightDistance) ? leftDistance : rightDistance;
-			   double shortDistance = (leftDistance > rightDistance) ? rightDistance : leftDistance;
-			   double angle = (longDistance / shortDistance) - 1;   //대략 0~0.5사이
-			   angle *= 100;   //대략0~50사이
-			   if (angle > 15) angle = 15;   //최대 15으로 제한.
-			   if (leftDistance > rightDistance)
-				   angle = 50 + angle;
-			   else
-				   angle = 50 - angle;
-			   steering.setRatio(51);
+			   angle = rightDistance - leftDistance;
+			   angle *= 2;	//민감도
+			   if (angle > 10) angle = 10;   //최대 15으로 제한.
+			   else if (angle < -10)angle = -10;
+			   angle = 50 + angle;
+			   steering.setRatio(angle);
 			   DCmotor.go(30);
 		   }
 		   else   //기본주행

@@ -30,16 +30,16 @@ DetectColorSign::DetectColorSign()
 	print = true;
 	waiting = true;
 	startCount = 0;
-	lower_red1 = Scalar(0, 100, 200);
+	lower_red1 = Scalar(0, 100, 150);
 	upper_red1 = Scalar(12, 255, 255);
-	lower_red2 = Scalar(168, 100, 200);
+	lower_red2 = Scalar(168, 100, 150);
 	upper_red2 = Scalar(180, 255, 255);
 
-	lower_yellow = Scalar(18, 100, 200);
+	lower_yellow = Scalar(18, 100, 150);
 	upper_yellow = Scalar(42, 255, 255);
 
-	lower_green = Scalar(45, 70, 150);
-	upper_green = Scalar(75, 255, 255);
+	lower_green = Scalar(43, 50, 130);
+	upper_green = Scalar(77, 255, 255);
 }
 DetectColorSign::DetectColorSign(bool onPrint)
 {
@@ -68,7 +68,7 @@ bool DetectColorSign::detectTunnel(Mat& frame, double percent)
 
 	if (brightRate < (100 - percent))
 	{
-		putText(grayFrame, "detect tunnel!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+		putText(grayFrame, "detect tunnel!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255), 3);
 		returnVal = true;
 	}
 	else returnVal = false;
@@ -145,7 +145,7 @@ bool DetectColorSign::waitingCheck(Mat& frame, double difference)
 bool DetectColorSign::priorityStop(Mat& frame, double percent)
 {
 	bool returnVal;
-	if (isRedStop(frame, percent))
+	if (isRedStop(frame, percent, false))
 	{
 		//클래스멤버로 저장되어있는 frame_red 활용.
 		Mat frame_red = store_red;
@@ -163,7 +163,8 @@ bool DetectColorSign::priorityStop(Mat& frame, double percent)
 		{
 			putText(frame_red, "red Pixel : " + to_string(m_redRatio) + '%', Point(30, 30), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 0, 0), 2);
 			putText(frame_red, "Line Count : " + to_string(lines.size()), Point(30, 60), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
-			putText(frame_red, "Priority STOP signal!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+			putText(frame_red, "[Priority STOP!]", Point(frame.cols / 12, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255), 3);
+			putText(frame, "[Priority STOP!]", Point(frame.cols / 12, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255, 123, 0), 3);
 			namedWindow("frame_red", WINDOW_NORMAL);
 			imshow("frame_red", frame_red);
 			resizeWindow("frame_red", 320, 240);
@@ -175,7 +176,7 @@ bool DetectColorSign::priorityStop(Mat& frame, double percent)
 	return returnVal;
 }
 
-bool DetectColorSign::isRedStop(Mat& frame, double percent)
+bool DetectColorSign::isRedStop(Mat& frame, double percent, bool pFlag)
 {
 	//Mat frame_hsv;
 	//Mat frame_red1;
@@ -208,7 +209,11 @@ bool DetectColorSign::isRedStop(Mat& frame, double percent)
 
 	if (redRatio > percent)
 	{
-		putText(frame_red, "Red stop signal!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+		if (pFlag == true)
+		{
+			putText(frame_red, "RED signal!", Point(frame.cols / 5, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255), 3);
+			putText(frame, "RED signal!", Point(frame.cols / 5, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255, 255, 0), 3);
+		}
 		returnVal = true;
 	}
 	else
@@ -255,7 +260,8 @@ bool DetectColorSign::isYellow(Mat& frame, double percent)
 
 	if (yellowRatio > percent)
 	{
-		putText(frame_yellow, "yellow signal!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+		putText(frame_yellow, "YELLOW signal!", Point(frame.cols / 8, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255), 3);
+		putText(frame, "YELLOW signal!", Point(frame.cols / 8, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255, 0, 123), 3);
 		returnVal = true;
 	}
 	else
@@ -308,12 +314,20 @@ int DetectColorSign::isGreenTurnSignal(Mat& frame, double percent)
 	{
 		if (lines.size() >= 3)
 		{
-			if (print)putText(frame_green, "Green LEFT signal", Point(frame.cols / 5, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+			if (print)
+			{
+				putText(frame_green, "Green LEFT(<-) signal", Point(frame.cols / 10, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255, 0, 255), 3);
+				putText(frame, "Green LEFT(<-) signal", Point(frame.cols / 10, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255, 0, 255), 3);
+			}
 			returnVal = 1;
 		}
 		else
 		{
-			if (print)putText(frame_green, "Green RIGHT signal", Point(frame.cols / 5, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+			if (print)
+			{
+				putText(frame_green, "Green signal", Point(frame.cols / 6, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255, 0, 255), 3);
+				putText(frame, "Green signal", Point(frame.cols / 6, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255, 0, 255), 3);
+			}
 			returnVal = 2;
 		}
 	}

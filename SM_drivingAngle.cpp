@@ -153,7 +153,7 @@ bool CheckStart::isTunnel(Mat& frame, double percent) {
 	}
 
 	if (flag_tunnel >= 10) { // 최소 임계값. flag가 이보다 크면 터널 안에 있다고 인식
-		putText(frame, "Tunnel!", Point(frame.cols / 4, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 3.5, Scalar(255), 2);
+		putText(frame, "[ Tunnel ]", Point(frame.cols / 4.3, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(0,123,255), 3);
 		return true;
 	}
 	else { // 최소 임계값보다 flag가 작으면 터널 밖이라고 인식
