@@ -867,8 +867,8 @@ int main()
 	   videocap >> distortedFrame;
 	   remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
 
-	   if(!check_tunnel_start)check_tunnel_start = cs.isTunnel(frame, 80);
-	   if(check_tunnel_start)check_tunnel_start = cs.isTunnel(frame, 50);
+	   if(!check_tunnel_start)check_tunnel_start = cs.isTunnel(frame, 73);
+	   if(check_tunnel_start)check_tunnel_start = cs.isTunnel(frame, 45);
 	   //check_tunnel = detectColorSign.detectTunnel(frame, 50);
 	   if (!cs.isStop(frame, 65)) {
 		   if (check_tunnel_start) // 터널 입장
