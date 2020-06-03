@@ -156,15 +156,18 @@ bool DetectColorSign::priorityStop(Mat& frame, double percent)
 		HoughLinesP(frame_edge, lines, 1, CV_PI / 180, DCS_HLP_threshold, DCS_HLP_minLineLength, DCS_HLP_maxLineGap);
 
 
-		if (lines.size() >= 2) returnVal = true;
+		if (lines.size() >= 2)
+		{
+			putText(frame_red, "Line Count : " + to_string(lines.size()), Point(30, 60), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
+			putText(frame_red, "[Priority STOP!]", Point(frame.cols / 12, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255), 3);
+			putText(frame, "[Priority STOP!]", Point(frame.cols / 12, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255, 123, 0), 3);
+			returnVal = true;
+		}
 		else returnVal = false;
 
 		if (print)
 		{
 			putText(frame_red, "red Pixel : " + to_string(m_redRatio) + '%', Point(30, 30), FONT_HERSHEY_COMPLEX, 1, Scalar(255, 0, 0), 2);
-			putText(frame_red, "Line Count : " + to_string(lines.size()), Point(30, 60), FONT_HERSHEY_COMPLEX, 1, Scalar(255), 2);
-			putText(frame_red, "[Priority STOP!]", Point(frame.cols / 12, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255), 3);
-			putText(frame, "[Priority STOP!]", Point(frame.cols / 12, frame.rows * 0.65), FONT_HERSHEY_COMPLEX, 2, Scalar(255, 123, 0), 3);
 			namedWindow("frame_red", WINDOW_NORMAL);
 			imshow("frame_red", frame_red);
 			resizeWindow("frame_red", 320, 240);
