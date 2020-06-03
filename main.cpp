@@ -875,7 +875,7 @@ int main()
 			   whiteLed.on();   //전조등 킨다.
 			   leftDistance = firstSonic.distance();   //좌측 거리측정.
 			   rightDistance = secondSonic.distance(); //우측 거리측정.
-			   angle = rightDistance - leftDistance;
+			   double angle = rightDistance - leftDistance;
 			   angle *= 2;	//민감도
 			   if (angle > 10) angle = 10;   //최대 15으로 제한.
 			   else if (angle < -10)angle = -10;
