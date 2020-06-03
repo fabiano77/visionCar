@@ -861,16 +861,17 @@ int main()
 
    DetectColorSign detectColorSign(true);
    CheckStart cs;
-   bool check_tunnel;
+   bool check_tunnel_start(false);
    while (true)
    {
 	   videocap >> distortedFrame;
 	   remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
 
-	   check_tunnel = cs.isTunnel(frame, 80);
+	   if(!check_tunnel_start)check_tunnel_start = cs.isTunnel(frame, 80);
+	   if(check_tunnel_start)check_tunnel_start = cs.isTunnel(frame, 50);
 	   //check_tunnel = detectColorSign.detectTunnel(frame, 50);
 	   if (!cs.isStop(frame, 65)) {
-		   if (check_tunnel) // 터널 입장
+		   if (check_tunnel_start) // 터널 입장
 		   {
 			   whiteLed.on();   //전조등 킨다.
 			   steerVal = 51;
