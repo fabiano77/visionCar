@@ -867,20 +867,23 @@ int main()
 	   videocap >> distortedFrame;
 	   remap(distortedFrame, frame, map1, map2, INTER_LINEAR); //캘리된 영상 frame
 
-	   check_tunnel = cs.isTunnel(frame, 55);
+	   check_tunnel = cs.isTunnel(frame, 80);
 	   //check_tunnel = detectColorSign.detectTunnel(frame, 50);
 	   if (!cs.isStop(frame, 65)) {
 		   if (check_tunnel) // 터널 입장
 		   {
 			   whiteLed.on();   //전조등 킨다.
-			   leftDistance = firstSonic.distance();   //좌측 거리측정.
-			   rightDistance = secondSonic.distance(); //우측 거리측정.
-			   double angle = rightDistance - leftDistance;
-			   angle *= 2;	//민감도
-			   if (angle > 10) angle = 10;   //최대 15으로 제한.
-			   else if (angle < -10)angle = -10;
-			   angle = 50 + angle;
-			   steering.setRatio(angle);
+			   steerVal = 51;
+			   DCmotor.go(37);
+
+			   //leftDistance = firstSonic.distance();   //좌측 거리측정.
+			   //rightDistance = secondSonic.distance(); //우측 거리측정.
+			   //double angle = rightDistance - leftDistance;
+			   //angle *= 2;	//민감도
+			   //if (angle > 10) angle = 10;   //최대 15으로 제한.
+			   //else if (angle < -10)angle = -10;
+			   //angle = 50 + angle;
+			   //steering.setRatio(angle);
 			   DCmotor.go(30);
 		   }
 		   else   //기본주행
