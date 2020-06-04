@@ -1,4 +1,4 @@
-#ifndef DETECT_COLOR_SIGN_H
+#ifndef DETECT_COLOR_SIGN_H//
 #define DETECT_COLOR_SIGN_H
 
 #include"opencv2/opencv.hpp"

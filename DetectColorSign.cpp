@@ -1,4 +1,4 @@
-#include "DetectColorSign.h"
+#include "DetectColorSign.h"//
 
 //createTrackbar("circleSize", "trackbar", &circleSize, 500, on_trackbar);
 //namedWindow("trackbar", WINDOW_NORMAL);
