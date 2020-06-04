@@ -13,40 +13,40 @@ void DoCalib(Mat& distCoeffs, Mat& intrinsic, int& numBoards);
 
 void DoCalib(Mat& distCoeffs, Mat& intrinsic, int& numBoards) {
 
-	int numCornerHor = 9; // ¼öÆò Á¡ÀÇ °³¼ö
-	int numCornerVer = 9; // ¼öÁ÷ Á¡ÀÇ °³¼ö
-	int numSquare = numCornerHor * numCornerVer; // »ç°¢ÇüÀÇ °³¼ö
+	int numCornerHor = 9; // ìˆ˜í‰ ì ì˜ ê°œìˆ˜
+	int numCornerVer = 9; // ìˆ˜ì§ ì ì˜ ê°œìˆ˜
+	int numSquare = numCornerHor * numCornerVer; // ì‚¬ê°í˜•ì˜ ê°œìˆ˜
 
 	Size board_sz = Size(numCornerHor, numCornerVer);
 
-	vector<vector<Point3f>> object_point; // ½ÇÁ¦ 3D Â÷¿øÀ» ÀÇ¹ÌÇÏ´Â °´Ã¤
-	vector<vector<Point2f>> image_point; // Ã¼½º ÆÇÀ» XYÆò¸é¿¡ À§Ä¡½ÃÅ² »óÅÂ¸¦ ÀÇ¹ÌÇÏ´Â °´Ã¤
+	vector<vector<Point3f>> object_point; // ì‹¤ì œ 3D ì°¨ì›ì„ ì˜ë¯¸í•˜ëŠ” ê°ì±„
+	vector<vector<Point2f>> image_point; // ì²´ìŠ¤ íŒì„ XYí‰ë©´ì— ìœ„ì¹˜ì‹œí‚¨ ìƒíƒœë¥¼ ì˜ë¯¸í•˜ëŠ” ê°ì±„
 
 	vector<Point2f> corners;
-	int successes = 0; // ÇÏ³ªÀÇ ÀÌ¹ÌÁö¿¡ ´ëÇØ CalibÀ» ¼öÇàÇÒ ¶§ »ç¿ëµÇ´Â Ä«¿îÅÍ
-					   // Ã¼½º ÆÇÀÇ ÀÌ¹ÌÁö ¼ö ¸¸Å­ ¼öÇàµÇ¾î¾ß ÇÑ´Ù.
+	int successes = 0; // í•˜ë‚˜ì˜ ì´ë¯¸ì§€ì— ëŒ€í•´ Calibì„ ìˆ˜í–‰í•  ë•Œ ì‚¬ìš©ë˜ëŠ” ì¹´ìš´í„°
+					   // ì²´ìŠ¤ íŒì˜ ì´ë¯¸ì§€ ìˆ˜ ë§Œí¼ ìˆ˜í–‰ë˜ì–´ì•¼ í•œë‹¤.
 
-	Mat image; // Ã¼½º ÆÇÀÇ ÀÌ¹ÌÁö¸¦ ÀúÀåÇÒ Mat °´Ã¤
+	Mat image; // ì²´ìŠ¤ íŒì˜ ì´ë¯¸ì§€ë¥¼ ì €ì¥í•  Mat ê°ì±„
 	Mat gray_image;
 
 	vector<Point3f> obj;
 	for (int i = 0; i < numSquare; i++) {
 		obj.push_back(Point3f(i / numCornerHor, i % numCornerHor, 0.0f));
-		//Ã¼½º ÆÇ¿¡ ´ëÇØ XYÃà¿¡ °íÁ¤µÈ »óÅÂ·Î °¡Á¤ÇÑ´Ù.
-		//ÁÂÇ¥¿¡ ´ëÇÑ ·£´ıÇÑ ½Ã½ºÅÛÀ» À§ÇÏ¿© obj º¤ÅÍ¿¡ Ã¼½º ÆÇÀÇ °¡´ÉÇÑ ÁÂÇ¥¸¦ ¸ğµÎ ÀúÀåÇÑ´Ù.
-	   // (0~numCornerVer, 0~numCornerHor, 0.0f) ¹üÀ§
+		//ì²´ìŠ¤ íŒì— ëŒ€í•´ XYì¶•ì— ê³ ì •ëœ ìƒíƒœë¡œ ê°€ì •í•œë‹¤.
+		//ì¢Œí‘œì— ëŒ€í•œ ëœë¤í•œ ì‹œìŠ¤í…œì„ ìœ„í•˜ì—¬ obj ë²¡í„°ì— ì²´ìŠ¤ íŒì˜ ê°€ëŠ¥í•œ ì¢Œí‘œë¥¼ ëª¨ë‘ ì €ì¥í•œë‹¤.
+	   // (0~numCornerVer, 0~numCornerHor, 0.0f) ë²”ìœ„
 	}
 
-	ostringstream osstream; // imread¸¦ À§ÇÑ sstream
+	ostringstream osstream; // imreadë¥¼ ìœ„í•œ sstream
 
-	while (successes < numBoards) { // ¸ğµç Ã¼½º ÆÇÀÇ »çÁøÀ» Ã³¸® ÇÒ ¶§ ±îÁö loop¸¦ ½ÇÇàÇÑ´Ù.
+	while (successes < numBoards) { // ëª¨ë“  ì²´ìŠ¤ íŒì˜ ì‚¬ì§„ì„ ì²˜ë¦¬ í•  ë•Œ ê¹Œì§€ loopë¥¼ ì‹¤í–‰í•œë‹¤.
 
 		osstream.str("");
-		osstream << "calib_pictures/capture" << successes + 1 << ".jpg"; // »çÁøÀÇ Á¦¸ñ Ã³¸®
+		osstream << "calib_pictures/capture" << successes + 1 << ".jpg"; // ì‚¬ì§„ì˜ ì œëª© ì²˜ë¦¬
 
-		image = imread(osstream.str(), IMREAD_COLOR); // Ã¹ ¹øÂ° »çÁøºÎÅÍ image°´Ã¤¿¡ read½ÃÅ²´Ù.
+		image = imread(osstream.str(), IMREAD_COLOR); // ì²« ë²ˆì§¸ ì‚¬ì§„ë¶€í„° imageê°ì±„ì— readì‹œí‚¨ë‹¤.
 
-		if (image.empty()) { // image °´Ã¤¿¡ ´ëÇÑ ¿À·ù °ËÃâ
+		if (image.empty()) { // image ê°ì±„ì— ëŒ€í•œ ì˜¤ë¥˜ ê²€ì¶œ
 			cout << "IMAGE IS EMPTY!" << endl;
 			return;
 		}
@@ -54,9 +54,9 @@ void DoCalib(Mat& distCoeffs, Mat& intrinsic, int& numBoards) {
 		cvtColor(image, gray_image, COLOR_BGR2GRAY);
 
 		bool found = findChessboardCorners(image, board_sz, corners, CALIB_CB_ADAPTIVE_THRESH | CALIB_CB_FILTER_QUADS);
-		//Ã¹ ¹øÂ° ÀÎÀÚ´Â 3-Ã¤³Î color ÀÌ¹ÌÁöÀÎ InputOutputArray°¡ µé¾î¿Í¾ßÇÑ´Ù.
-		//µÎ ¹øÂ° ÀÎÀÚ´Â Ã¼½º ÆÇÀÇ ¸ğ¼­¸®ÀÇ SizeÀÌ´Ù. Ä­ÀÇ ¼ö°¡ ¾Æ´Ñ ¸ğ¼­¸®ÀÇ ¼ö·Î ¼¾´Ù.
-		//¼¼ ¹øÂ° ÀÎÀÚ´Â °ËÃâµÈ ¸ğ¼­¸®ÀÇ ÁÂÇ¥°¡ ÀÔ·ÂµÈ´Ù.
+		//ì²« ë²ˆì§¸ ì¸ìëŠ” 3-ì±„ë„ color ì´ë¯¸ì§€ì¸ InputOutputArrayê°€ ë“¤ì–´ì™€ì•¼í•œë‹¤.
+		//ë‘ ë²ˆì§¸ ì¸ìëŠ” ì²´ìŠ¤ íŒì˜ ëª¨ì„œë¦¬ì˜ Sizeì´ë‹¤. ì¹¸ì˜ ìˆ˜ê°€ ì•„ë‹Œ ëª¨ì„œë¦¬ì˜ ìˆ˜ë¡œ ì„¼ë‹¤.
+		//ì„¸ ë²ˆì§¸ ì¸ìëŠ” ê²€ì¶œëœ ëª¨ì„œë¦¬ì˜ ì¢Œí‘œê°€ ì…ë ¥ëœë‹¤.
 
 		if (found) {
 			//cornerSubPix(gray_image, corners, Size(11, 11), Size(-1, -1), TermCriteria(TermCriteria::EPS | TermCriteria::MAX_ITER), 30, 0.1);
@@ -66,21 +66,21 @@ void DoCalib(Mat& distCoeffs, Mat& intrinsic, int& numBoards) {
 		//imshow("GRAY", gray_image);
 		//waitKey(10);
 
-		//if (key == 27) // esc ÀÔ·Â ½Ã Á¾·á
+		//if (key == 27) // esc ì…ë ¥ ì‹œ ì¢…ë£Œ
 		//	return 0;
 
-		//if (key == ' ' && found != 0) { // space bar ÀÔ·Â ½Ã ÁÂÇ¥ °ªÀÌ °´Ã¤·Î ÀúÀåµÊ
+		//if (key == ' ' && found != 0) { // space bar ì…ë ¥ ì‹œ ì¢Œí‘œ ê°’ì´ ê°ì±„ë¡œ ì €ì¥ë¨
 
 		image_point.push_back(corners);
 		object_point.push_back(obj);
 
-		cout << successes + 1 << "th snap stored!" << endl; // ConsoleÃ¢¿¡ Ãâ·Â
+		cout << successes + 1 << "th snap stored!" << endl; // Consoleì°½ì— ì¶œë ¥
 
-		successes++; // ´ÙÀ½ »çÁø¿¡ ´ëÇØ loop ½ÇÇà
+		successes++; // ë‹¤ìŒ ì‚¬ì§„ì— ëŒ€í•´ loop ì‹¤í–‰
 
-		osstream.clear(); // Á¦¸ñÀ» ´ãÀ» osstream ÃÊ±âÈ­
+		osstream.clear(); // ì œëª©ì„ ë‹´ì„ osstream ì´ˆê¸°í™”
 
-		if (successes >= numBoards) // ¸ğµç »çÁø¿¡ ´ëÇØ °è»êÀÌ ¿Ï·áµÇ¸é loop Å»Ãâ
+		if (successes >= numBoards) // ëª¨ë“  ì‚¬ì§„ì— ëŒ€í•´ ê³„ì‚°ì´ ì™„ë£Œë˜ë©´ loop íƒˆì¶œ
 			break;
 		/*}*/
 
@@ -93,8 +93,8 @@ void DoCalib(Mat& distCoeffs, Mat& intrinsic, int& numBoards) {
 	intrinsic.ptr<float>(0)[0] = 1;
 
 	calibrateCamera(object_point, image_point, image.size(), intrinsic, distCoeffs, rvecs, tvecs);
-	// ¾ÕÀÇ ¼¼ ÀÎÀÚ¸¦ ÀÌ¿ëÇÏ¿© intrinsic, distCoeffs¸¦ ±¸ÇÑ´Ù.
-	// µÎ ÀÎÀÚ´Â Ä«¸Ş¶óÀÇ Æ¯¼º°ªÀÌ´Ù.
+	// ì•ì˜ ì„¸ ì¸ìë¥¼ ì´ìš©í•˜ì—¬ intrinsic, distCoeffsë¥¼ êµ¬í•œë‹¤.
+	// ë‘ ì¸ìëŠ” ì¹´ë©”ë¼ì˜ íŠ¹ì„±ê°’ì´ë‹¤.
 }
-
+//
 #endif //CALIBRAION_H
