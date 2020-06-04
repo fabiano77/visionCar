@@ -12,7 +12,7 @@ int R = 80;
 static void on_trackbar(int, void*)
 {
 }
-
+//
 CheckStart::CheckStart() {
 	lower_white = Scalar(180, 180, 180);
 	upper_white = Scalar(255, 255, 255);

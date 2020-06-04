@@ -5,7 +5,7 @@
 #include <opencv2/core/matx.hpp>
 #include <iostream>
 
-using namespace cv;
+using namespace cv;//
 using namespace std;
 
 class CheckStart {
