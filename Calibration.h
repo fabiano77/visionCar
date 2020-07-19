@@ -13,8 +13,8 @@ void DoCalib(Mat& distCoeffs, Mat& intrinsic, int& numBoards);
 
 void DoCalib(Mat& distCoeffs, Mat& intrinsic, int& numBoards) {
 
-	int numCornerHor = 9; // 수평 점의 개수
-	int numCornerVer = 9; // 수직 점의 개수
+	int numCornerHor = 7; // 수평 점의 개수
+	int numCornerVer = 7; // 수직 점의 개수
 	int numSquare = numCornerHor * numCornerVer; // 사각형의 개수
 
 	Size board_sz = Size(numCornerHor, numCornerVer);
@@ -42,7 +42,7 @@ void DoCalib(Mat& distCoeffs, Mat& intrinsic, int& numBoards) {
 	while (successes < numBoards) { // 모든 체스 판의 사진을 처리 할 때 까지 loop를 실행한다.
 
 		osstream.str("");
-		osstream << "calib_pictures/capture" << successes + 1 << ".jpg"; // 사진의 제목 처리
+		osstream << "CarSDK/Calib_img/frame_" << successes << ".png"; // 사진의 제목 처리
 
 		image = imread(osstream.str(), IMREAD_COLOR); // 첫 번째 사진부터 image객채에 read시킨다.
 
