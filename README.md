@@ -16,12 +16,12 @@
 ![동작 사진](https://github.com/fabiano77/visionCar/blob/master/%EB%8F%99%EC%9E%91%EC%82%AC%EC%A7%84.png?raw=true)
 
 ## 주요 코드파일
--CustomPicar.h, cpp : 라즈베리파이 개발환경 구축 클래스 및 함수 \
--Driving_DH.h, cpp : 차선인식 및 자율주행 클래스 및 함수 \
--DetectColorSign.h, cpp : 신호등 인식 및 우선정지 신호 감지 클래스 및 함수 \
--Calibration.h : 카메라 캘리브레이션 코드 \
--SM_drivingAngle.h, cpp : 터널 인식 및 회전교차로 주행 클래스 및 함수.\
--main.cpp : 위 클래스 포함 및 수직,수평주차 그리고 장애물 추월 코드 포함 통합코드\
+- CustomPicar.h, cpp : 라즈베리파이 개발환경 구축 클래스 및 함수
+- Driving_DH.h, cpp : 차선인식 및 자율주행 클래스 및 함수
+- DetectColorSign.h, cpp : 신호등 인식 및 우선정지 신호 감지 클래스 및 함수 
+- Calibration.h : 카메라 캘리브레이션 코드
+- SM_drivingAngle.h, cpp : 터널 인식 및 회전교차로 주행 클래스 및 함수.
+- main.cpp : 위 클래스 포함 및 수직,수평주차 그리고 장애물 추월 코드 포함 통합코드
 
 
 ### Contributors
